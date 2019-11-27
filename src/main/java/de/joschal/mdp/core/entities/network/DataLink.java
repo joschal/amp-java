@@ -23,8 +23,10 @@ public class DataLink {
     boolean exchange(Datagram datagram, NetworkInterface sender) {
 
         if (sender == A) {
+            log.debug("{} --> {}", A.getName(), B.getName());
             return B.receiveDatagram(datagram);
         } else if (sender == B) {
+            log.debug("{} --> {}", B.getName(), A.getName());
             return A.receiveDatagram(datagram);
         } else {
             log.error("Something went horribly wrong in the data link layer! Sender: {} Datagram {}", sender, datagram);
@@ -32,4 +34,10 @@ public class DataLink {
         }
     }
 
+    @Override
+    public String toString() {
+        return "DataLink{" +
+                "name='" + name + '\'' +
+                A.getName() + " <-> " + B.getName() + '}';
+    }
 }

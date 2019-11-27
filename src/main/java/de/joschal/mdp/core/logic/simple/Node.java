@@ -1,4 +1,4 @@
-package de.joschal.mdp.core.logic;
+package de.joschal.mdp.core.logic.simple;
 
 import de.joschal.mdp.core.entities.network.AbstractNode;
 import de.joschal.mdp.core.entities.network.AbstractRouter;
@@ -13,13 +13,14 @@ public class Node extends AbstractNode {
     }
 
     public boolean receiveFromNetwork(String message, Address source) {
-        log.info("Received message from {} with content {}", source, message);
+        log.info("[{}]Received message from {} with content {}", this.getAddress(), source, message);
         return true;
     }
 
     // For testing
-    public void action(String message, Address destnation) {
-        this.router.sendToNetwork(message, destnation);
+    public void action(String message, Address destination) {
+        log.info("Action triggered in node {}", this.address);
+        this.router.sendToNetwork(message, destination);
     }
 
 }

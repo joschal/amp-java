@@ -10,7 +10,7 @@ public abstract class AbstractRouter implements INetworkSender {
 
     protected AbstractNode node;
 
-    private Set<Route> routingTable;
+    protected Set<Route> routingTable;
 
     void setNode(AbstractNode node) {
         this.node = node;

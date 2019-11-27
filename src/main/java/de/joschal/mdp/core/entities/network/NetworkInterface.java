@@ -3,16 +3,13 @@ package de.joschal.mdp.core.entities.network;
 import de.joschal.mdp.core.entities.protocol.Datagram;
 import de.joschal.mdp.core.inbound.IDataLinkReceiver;
 import de.joschal.mdp.core.outbound.IDataLinkSender;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
 
     public NetworkInterface(String name) {
         this.name = name;
-    }
-
-    public NetworkInterface(String name, DataLink dataLink) {
-        this.name = name;
-        this.dataLink = dataLink;
     }
 
     private String name;
@@ -22,10 +19,19 @@ public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
     @Override
     public boolean receiveDatagram(Datagram datagram) {
 
-        if (node.getAddress().equals(datagram.getDestinationAddress())) {
-            return node.receiveFromNetwork(datagram.getPayload(), datagram.getSourceAddress());
+        log.info("[{}] Received a datagram {}", this.node.getAddress(), datagram);
+        if (datagram.triggerHopCounter()) {
+
+            log.info("Datagram expired: {}", datagram);
+            return false;
+
         } else {
-            return node.router.forwardDatagram(datagram);
+
+            if (node.getAddress().equals(datagram.getDestinationAddress())) {
+                return node.receiveFromNetwork(datagram.getPayload(), datagram.getSourceAddress());
+            } else {
+                return node.router.forwardDatagram(datagram);
+            }
         }
     }
 
@@ -40,5 +46,9 @@ public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
 
     void setNode(AbstractNode node) {
         this.node = node;
+    }
+
+    public String getName() {
+        return name;
     }
 }

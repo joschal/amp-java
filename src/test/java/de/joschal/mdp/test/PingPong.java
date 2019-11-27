@@ -3,8 +3,8 @@ package de.joschal.mdp.test;
 import de.joschal.mdp.core.entities.network.DataLink;
 import de.joschal.mdp.core.entities.network.NetworkInterface;
 import de.joschal.mdp.core.entities.protocol.Address;
-import de.joschal.mdp.core.logic.Node;
-import de.joschal.mdp.core.logic.Router;
+import de.joschal.mdp.core.logic.simple.Node;
+import de.joschal.mdp.core.logic.simple.Router;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,7 +25,7 @@ public class PingPong {
     DataLink dataLink;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         aAlice = new Address("Alice");
         aBob = new Address("Bob");
 
@@ -38,7 +38,7 @@ public class PingPong {
         iAlice = new NetworkInterface("iAlice");
         iBob = new NetworkInterface("iBob");
 
-        DataLink dataLink = new DataLink("dataLink", iAlice, iBob);
+        new DataLink("dataLink", iAlice, iBob);
 
         alice.addNetworkInterface(iAlice);
         bob.addNetworkInterface(iBob);

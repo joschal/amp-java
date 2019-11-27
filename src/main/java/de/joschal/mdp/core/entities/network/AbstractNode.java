@@ -3,8 +3,8 @@ package de.joschal.mdp.core.entities.network;
 import de.joschal.mdp.core.entities.protocol.Address;
 import de.joschal.mdp.core.inbound.INetworkReceiver;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractNode implements INetworkReceiver {
 
@@ -16,7 +16,7 @@ public abstract class AbstractNode implements INetworkReceiver {
 
     protected Address address;
 
-    private Set<NetworkInterface> dataNetworkInterfaces = new HashSet<>();
+    private List<NetworkInterface> dataNetworkInterfaces = new ArrayList<>();
 
     protected AbstractRouter router;
 
@@ -25,11 +25,15 @@ public abstract class AbstractNode implements INetworkReceiver {
         this.dataNetworkInterfaces.add(networkInterface);
     }
 
+    public void addRoute(Route route){
+        this.router.routingTable.add(route);
+    }
+
     public Address getAddress() {
         return address;
     }
 
-    public Set<NetworkInterface> getDataNetworkInterfaces() {
+    public List<NetworkInterface> getInterfaces() {
         return dataNetworkInterfaces;
     }
 }
