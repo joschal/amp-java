@@ -1,4 +1,4 @@
-package de.joschal.mdp.test.simulaiton;
+package de.joschal.mdp.simulaiton;
 
 import de.joschal.mdp.core.entities.network.NetworkInterface;
 import de.joschal.mdp.core.entities.network.Route;
@@ -7,10 +7,10 @@ import de.joschal.mdp.core.logic.simple.Node;
 import de.joschal.mdp.core.logic.staticrouting.StaticRouter;
 import org.junit.Test;
 
-import static de.joschal.mdp.simulation.Setup.linkInterfaces;
-import static de.joschal.mdp.simulation.Setup.setUpNode;
+import static de.joschal.mdp.sim.Setup.linkInterfaces;
+import static de.joschal.mdp.sim.Setup.setUpNode;
 
-public class WithRouting {
+public class StaticNetStaticRouting {
 
     @Test
     public void circle() {

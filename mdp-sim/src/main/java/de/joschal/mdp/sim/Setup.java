@@ -1,4 +1,4 @@
-package de.joschal.mdp.simulation;
+package de.joschal.mdp.sim;
 
 import de.joschal.mdp.core.entities.network.AbstractNode;
 import de.joschal.mdp.core.entities.network.AbstractRouter;
@@ -9,6 +9,7 @@ import de.joschal.mdp.core.logic.simple.Node;
 import de.joschal.mdp.core.logic.simple.Router;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,19 +47,25 @@ public class Setup {
         return node;
     }
 
-    public static DataLink linkTwoNodes(AbstractNode node1, AbstractNode node2) {
-
-        return new DataLink(
-                UUID.randomUUID().toString(),
-                node1.getInterfaces().get(0),
-                node2.getInterfaces().get(0));
-    }
-
     public static DataLink linkInterfaces(NetworkInterface networkInterface1, NetworkInterface networkInterface2) {
 
         return new DataLink(
                 UUID.randomUUID().toString(),
                 networkInterface1,
                 networkInterface2);
+    }
+
+    public static DataLink linkNodes(Address A, Address B, HashMap<Address, Node> nodes) {
+
+        AbstractNode node1 = nodes.get(A);
+        AbstractNode node2 = nodes.get(B);
+
+        NetworkInterface networkInterface1 = new NetworkInterface("to " + node2.getAddress());
+        node1.addNetworkInterface(networkInterface1);
+
+        NetworkInterface networkInterface2 = new NetworkInterface("to " + node1.getAddress());
+        node2.addNetworkInterface(networkInterface2);
+
+        return linkInterfaces(networkInterface1, networkInterface2);
     }
 }

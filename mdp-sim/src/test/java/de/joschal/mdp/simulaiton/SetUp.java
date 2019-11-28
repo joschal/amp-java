@@ -1,4 +1,4 @@
-package de.joschal.mdp.test.simulaiton;
+package de.joschal.mdp.simulaiton;
 
 import de.joschal.mdp.core.entities.network.DataLink;
 import de.joschal.mdp.core.entities.network.NetworkInterface;
@@ -9,7 +9,7 @@ import org.junit.Test;
 import java.util.LinkedList;
 import java.util.List;
 
-import static de.joschal.mdp.simulation.Setup.*;
+import static de.joschal.mdp.sim.Setup.*;
 import static org.junit.Assert.assertEquals;
 
 public class SetUp {
@@ -39,7 +39,7 @@ public class SetUp {
                 new NetworkInterface("2a"),
                 new NetworkInterface("2b"));
 
-        linkTwoNodes(node1, node2);
+        linkInterfaces(node1.getInterfaces().get(0), node2.getInterfaces().get(0));
 
         node1.action("foo", node2.getAddress());
     }

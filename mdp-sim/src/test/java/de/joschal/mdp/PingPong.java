@@ -1,4 +1,4 @@
-package de.joschal.mdp.test;
+package de.joschal.mdp;
 
 import de.joschal.mdp.core.entities.network.DataLink;
 import de.joschal.mdp.core.entities.network.NetworkInterface;
