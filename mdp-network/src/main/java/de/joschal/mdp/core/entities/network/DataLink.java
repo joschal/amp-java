@@ -1,9 +1,11 @@
 package de.joschal.mdp.core.entities.network;
 
 import de.joschal.mdp.core.entities.protocol.Datagram;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Getter
 public class DataLink {
 
     private String name;

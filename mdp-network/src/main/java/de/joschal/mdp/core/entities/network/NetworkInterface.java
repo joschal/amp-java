@@ -51,4 +51,8 @@ public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
     public String getName() {
         return name;
     }
+
+    public AbstractNode getNode() {
+        return node;
+    }
 }
