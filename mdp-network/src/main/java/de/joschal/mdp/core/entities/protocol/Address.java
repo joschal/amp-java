@@ -12,4 +12,5 @@ import lombok.ToString;
 public class Address {
 
     private String address;
+
 }

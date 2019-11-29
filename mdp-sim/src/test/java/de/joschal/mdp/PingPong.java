@@ -3,8 +3,8 @@ package de.joschal.mdp;
 import de.joschal.mdp.core.entities.network.DataLink;
 import de.joschal.mdp.core.entities.network.NetworkInterface;
 import de.joschal.mdp.core.entities.protocol.Address;
-import de.joschal.mdp.core.logic.simple.Node;
-import de.joschal.mdp.core.logic.simple.Router;
+import de.joschal.mdp.core.logic.simple.NonForwardingRouter;
+import de.joschal.mdp.core.logic.simple.SimpleNode;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,11 +13,11 @@ public class PingPong {
     Address aAlice;
     Address aBob;
 
-    Router rAlice;
-    Router rBob;
+    NonForwardingRouter rAlice;
+    NonForwardingRouter rBob;
 
-    Node alice;
-    Node bob;
+    SimpleNode alice;
+    SimpleNode bob;
 
     NetworkInterface iAlice;
     NetworkInterface iBob;
@@ -29,11 +29,11 @@ public class PingPong {
         aAlice = new Address("Alice");
         aBob = new Address("Bob");
 
-        rAlice = new Router();
-        rBob = new Router();
+        rAlice = new NonForwardingRouter();
+        rBob = new NonForwardingRouter();
 
-        alice = new Node(aAlice, rAlice);
-        bob = new Node(aBob, rBob);
+        alice = new SimpleNode("Alice", aAlice, rAlice);
+        bob = new SimpleNode("Bob", aBob, rBob);
 
         iAlice = new NetworkInterface("iAlice");
         iBob = new NetworkInterface("iBob");

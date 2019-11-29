@@ -19,7 +19,7 @@ public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
     @Override
     public boolean receiveDatagram(Datagram datagram) {
 
-        log.info("[{}] Received a datagram {}", this.node.getAddress(), datagram);
+        log.info("[{}] Received a datagram {}", this.node.getId(), datagram);
         if (datagram.triggerHopCounter()) {
 
             log.info("Datagram expired: {}", datagram);

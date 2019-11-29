@@ -12,7 +12,8 @@
     <artifactId>mdp-sim</artifactId>
 
     <dependencies>
-        <!-- Dot File Integraiton -->
+        <!-- Dot File Integration -->
+        <!-- https://github.com/nidi3/graphviz-java -->
         <dependency>
             <groupId>guru.nidi</groupId>
             <artifactId>graphviz-java</artifactId>
