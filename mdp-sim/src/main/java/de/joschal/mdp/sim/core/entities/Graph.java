@@ -2,20 +2,25 @@ package de.joschal.mdp.sim.core.entities;
 
 import de.joschal.mdp.core.entities.network.AbstractNode;
 import de.joschal.mdp.core.entities.network.DataLink;
-import de.joschal.mdp.core.entities.protocol.Address;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class Graph {
 
-    private HashMap<Address, AbstractNode> nodes = new HashMap<>();
-    private HashMap<String, DataLink> edges = new HashMap<>();
+    public Graph() {
+        this.nodes = new HashMap<>();
+        this.edges = new HashMap<>();
+    }
+
+    private Map<String, AbstractNode> nodes;
+    private Map<String, DataLink> edges;
 
     public boolean addNode(AbstractNode node) {
-        if (nodes.containsKey(node.getAddress())) {
+        if (nodes.containsKey(node.getId())) {
             return false;
         } else {
-            nodes.put(node.getAddress(), node);
+            nodes.put(node.getId(), node);
             return true;
         }
     }
@@ -29,16 +34,20 @@ public class Graph {
         }
     }
 
-    public AbstractNode getNode(Address address) {
-        return nodes.get(address);
+    public AbstractNode getNodebyId(String id) {
+        return nodes.get(id);
     }
 
     public DataLink getEdge(String name) {
         return edges.get(name);
     }
 
-    public Iterable<DataLink> getEdges() {
-        return edges.values();
+    public Map<String, AbstractNode> getNodes() {
+        return nodes;
+    }
+
+    public Map<String, DataLink> getEdges() {
+        return edges;
     }
 
 }

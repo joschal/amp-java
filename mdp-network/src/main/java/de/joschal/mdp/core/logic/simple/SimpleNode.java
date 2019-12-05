@@ -3,9 +3,11 @@ package de.joschal.mdp.core.logic.simple;
 import de.joschal.mdp.core.entities.network.AbstractNode;
 import de.joschal.mdp.core.entities.network.AbstractRouter;
 import de.joschal.mdp.core.entities.protocol.Address;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@ToString
 public class SimpleNode extends AbstractNode {
 
 

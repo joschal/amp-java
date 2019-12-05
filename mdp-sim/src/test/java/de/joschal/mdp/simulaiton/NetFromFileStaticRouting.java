@@ -12,11 +12,15 @@ public class NetFromFileStaticRouting {
     @Test
     public void netFromFileStaticRouting() {
 
-        Graph graph = new GraphReader().readGraph("/123.dot");
+        Graph graph = new GraphReader().readGraph(getClass().getResource("/testGraph.dot").getFile());
 
-        SimpleNode simpleNode1 = (SimpleNode) graph.getNode(new Address("1"));
-        SimpleNode simpleNode2 = (SimpleNode) graph.getNode(new Address("2"));
-        SimpleNode simpleNode3 = (SimpleNode) graph.getNode(new Address("3"));
+        SimpleNode simpleNode1 = (SimpleNode) graph.getNodebyId("1");
+        SimpleNode simpleNode2 = (SimpleNode) graph.getNodebyId("2");
+        SimpleNode simpleNode3 = (SimpleNode) graph.getNodebyId("3");
+
+        simpleNode1.setAddress(new Address("1"));
+        simpleNode2.setAddress(new Address("2"));
+        simpleNode3.setAddress(new Address("3"));
 
         simpleNode1.addRoute(new Route(simpleNode1.getInterfaces().get(0), simpleNode2.getAddress()));
         simpleNode1.addRoute(new Route(simpleNode1.getInterfaces().get(0), simpleNode3.getAddress()));

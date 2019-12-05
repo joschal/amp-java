@@ -1,5 +1,6 @@
 package de.joschal.mdp.sim.outbound;
 
+import de.joschal.mdp.core.entities.network.AbstractNode;
 import de.joschal.mdp.core.entities.network.DataLink;
 import de.joschal.mdp.sim.core.entities.Graph;
 import de.joschal.mdp.sim.core.outbound.IGraphWriter;
@@ -11,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static guru.nidi.graphviz.model.Factory.mutNode;
 
@@ -22,45 +25,58 @@ public class GraphWriter implements IGraphWriter {
 
         MutableGraph dotGraph = Factory.mutGraph().setDirected(false);
 
-        for (DataLink link : networkGraph.getEdges()) {
+        // Linked nodes
+        for (DataLink link : networkGraph.getEdges().values()) {
             dotGraph.add(
-                    mutNode(link.getA().getNode().getAddress().toString())
-                            .addLink(mutNode(link.getB().getNode().getAddress().toString())));
+                    mutNode(link.getA().getNode().getId())
+                            .addLink(mutNode(link.getB().getNode().getId())));
+        }
+
+        // Unlinked nodes
+        for (AbstractNode abstractNode : networkGraph.getNodes().values()) {
+            dotGraph.add(mutNode(abstractNode.getId()));
         }
 
         try {
             Graphviz.fromGraph(dotGraph).width(1024).render(Format.PNG).toFile(new File(filename));
+
+            Runtime.getRuntime().exec(String.format("open %s", filename));
         } catch (IOException e) {
             log.error("Dot File could not be written", e);
         }
 
     }
 
+    public static final String PREFIX = "graph {\n";
+    public static final String POSTFIX = "}";
+    public static final String SEPARATOR = " -- ";
+
     @Override
     public void graphToDot(Graph graph, String filename) {
 
-        //TODO list all nodes in the beginning, to include unlinked nodes
-        String prefix = "graph {\n";
-        String postfix = "}";
-        String seperator = " -- ";
+        StringBuilder sb = new StringBuilder().append(PREFIX);
 
-        StringBuilder sb = new StringBuilder().append(prefix);
+        // List all nodes explicitly to inlclude nodes which are not linked to anything
+        for (AbstractNode node : graph.getNodes().values()) {
+            sb.append("    " + node.getId() + "\n");
+        }
 
-        for (DataLink edge : graph.getEdges()) {
-            sb.append("\t");
-            sb.append(edge.getA().getNode().getAddress().toString());
-            sb.append(seperator);
-            sb.append(edge.getB().getNode().getAddress().toString());
+        // List all individual connections
+        for (DataLink edge : graph.getEdges().values()) {
+            sb.append("    ");
+            sb.append(edge.getA().getNode().getId());
+            sb.append(SEPARATOR);
+            sb.append(edge.getB().getNode().getId());
             sb.append("\n");
         }
 
-        sb.append(postfix);
+        sb.append(POSTFIX);
 
-        String outputString = sb.toString();
-        outputString.replace("[", "");
-        outputString.replace("]", "");
-
-        System.out.println(outputString);
+        try {
+            Files.write(Paths.get(filename), sb.toString().getBytes());
+        } catch (IOException e) {
+            log.error("Dot file could not be written to {}", filename, e);
+        }
 
     }
 }
