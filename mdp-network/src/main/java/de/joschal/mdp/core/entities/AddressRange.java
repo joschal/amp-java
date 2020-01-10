@@ -35,7 +35,12 @@ public class AddressRange implements Comparable<AddressRange> {
         } else if (this.size < addressRange.size) {
             return -1;
         } else if (this.size == addressRange.size) {
-            return 0;
+
+            if (this.getHighest().getValue() > addressRange.getHighest().getValue()){
+                return 1;
+            } else {
+                return -1;
+            }
         }
 
         throw new RuntimeException("Something went wrong");

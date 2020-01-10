@@ -14,7 +14,7 @@ public class AddressManager {
     }
 
     // Range of available addresses
-    List<AddressRange> unassignedRanges = new LinkedList<>();
+    List<AddressRange> unassignedRanges = new ArrayList<>();
 
     // Range of assigned addresses
     Map<NetworkInterface, AddressRange> assignedRanges = new HashMap<>();
@@ -45,38 +45,32 @@ public class AddressManager {
     void unassignAddressRange(NetworkInterface networkInterface) {
 
         AddressRange removed = assignedRanges.remove(networkInterface);
+        unassignedRanges.add(removed);
 
-        defragment(removed);
+        defragment();
     }
 
     // defragment ranges. This could probably be optimized
-    private void defragment(AddressRange removed) {
-        for (AddressRange range : unassignedRanges) {
+    private void defragment() {
 
-            if (range.getHighest().getValue() + 1 == removed.getLowest().getValue()) {
-                AddressRange newRange = new AddressRange(
-                        new Address(range.getLowest().getValue()),
-                        new Address(removed.getHighest().getValue()));
+        unassignedRanges.sort(Comparator.reverseOrder());
 
-                unassignedRanges.remove(range);
-                unassignedRanges.add(newRange);
-                unassignedRanges.sort(Comparator.reverseOrder());
-                break;
+        for (int i = 0; i < unassignedRanges.size() - 1; i++) {
 
-            } else if (removed.getHighest().getValue() + 1 == range.getLowest().getValue()) {
-                AddressRange newRange = new AddressRange(
-                        new Address(removed.getLowest().getValue()),
-                        new Address(range.getHighest().getValue()));
+            AddressRange current = unassignedRanges.get(i);
+            AddressRange next = unassignedRanges.get(i + 1);
 
-                unassignedRanges.remove(range);
-                unassignedRanges.add(newRange);
-                unassignedRanges.sort(Comparator.reverseOrder());
+            if (current.getLowest().getValue() - 1 == next.getHighest().getValue()) {
+                AddressRange combinedRange = new AddressRange(
+                        new Address(next.getLowest().getValue()),
+                        new Address(current.getHighest().getValue()));
+
+                unassignedRanges.remove(current);
+                unassignedRanges.remove(next);
+                unassignedRanges.add(combinedRange);
+                defragment();
                 break;
             }
         }
-
-        // If not adjacent to another range, just add it back to the list
-        unassignedRanges.add(removed);
-        unassignedRanges.sort(Comparator.reverseOrder());
     }
 }
