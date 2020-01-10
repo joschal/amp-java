@@ -1,6 +1,6 @@
 package de.joschal.mdp.core.entities.network;
 
-import de.joschal.mdp.core.entities.protocol.Datagram;
+import de.joschal.mdp.core.entities.protocol.AbstractMessage;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,16 +22,16 @@ public class DataLink {
 
     }
 
-    boolean exchange(Datagram datagram, NetworkInterface sender) {
+    boolean exchange(AbstractMessage message, NetworkInterface sender) {
 
         if (sender == A) {
             log.debug("{} --> {}", A.getName(), B.getName());
-            return B.receiveDatagram(datagram);
+            return B.receiveMessage(message);
         } else if (sender == B) {
             log.debug("{} --> {}", B.getName(), A.getName());
-            return A.receiveDatagram(datagram);
+            return A.receiveMessage(message);
         } else {
-            log.error("Something went horribly wrong in the data link layer! Sender: {} Datagram {}", sender, datagram);
+            log.error("Something went horribly wrong in the data link layer! Sender: {} Datagram {}", sender, message);
             throw new RuntimeException("Something went horribly wrong in the data link layer!");
         }
     }

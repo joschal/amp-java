@@ -1,6 +1,7 @@
 package de.joschal.mdp.sim.core.logic;
 
-import de.joschal.mdp.core.entities.protocol.Datagram;
+import de.joschal.mdp.core.entities.protocol.AbstractMessage;
+import de.joschal.mdp.core.entities.protocol.data.Datagram;
 import de.joschal.mdp.sim.core.entities.Graph;
 import de.joschal.mdp.sim.core.inbound.IDatagramController;
 import de.joschal.mdp.sim.core.inbound.IMessageController;
@@ -19,7 +20,7 @@ public class MessageController implements IMessageController {
     @Override
     public void sendMessage(String source, String destination, String message) {
 
-        Datagram datagram = new Datagram(
+        AbstractMessage datagram = new Datagram(
                 graph.getNodebyId(source).getAddress(),
                 graph.getNodebyId(destination).getAddress(),
                 DEFAULT_MAX_HOPS,

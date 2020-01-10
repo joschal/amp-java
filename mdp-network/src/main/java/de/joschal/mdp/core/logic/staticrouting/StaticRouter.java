@@ -3,8 +3,10 @@ package de.joschal.mdp.core.logic.staticrouting;
 import de.joschal.mdp.core.entities.network.AbstractRouter;
 import de.joschal.mdp.core.entities.network.NetworkInterface;
 import de.joschal.mdp.core.entities.network.Route;
+import de.joschal.mdp.core.entities.protocol.AbstractMessage;
 import de.joschal.mdp.core.entities.protocol.Address;
-import de.joschal.mdp.core.entities.protocol.Datagram;
+import de.joschal.mdp.core.entities.protocol.data.AbstractDataMessage;
+import de.joschal.mdp.core.entities.protocol.data.Datagram;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashSet;
@@ -21,26 +23,28 @@ public class StaticRouter extends AbstractRouter {
     }
 
     @Override
-    protected boolean forwardDatagram(Datagram datagram) {
+    protected boolean forwardDatagram(AbstractDataMessage datagram) {
 
-        log.info("[{}] Will try to forward datagram: {}", this.node.getAddress(), datagram);
-        NetworkInterface networkInterface = getRoute(datagram.getDestinationAddress());
+        AbstractMessage message = (AbstractMessage) datagram;
+
+        log.info("[{}] Will try to forward datagram: {}", this.node.getAddress(), message);
+        NetworkInterface networkInterface = getRoute(message.getDestinationAddress());
 
         if (networkInterface != null) {
-            return networkInterface.sendDatagram(datagram);
+            return networkInterface.sendMessage(message);
         }
-        log.error("No route found for datagram {}", datagram);
+        log.error("No route found for message {}", message);
         return false;
     }
 
     @Override
-    public boolean sendToNetwork(String message, Address destination) {
-        return sendToNetwork(message, destination, this.node.getInterfaces().get(0));
+    public boolean sendDatagram(String message, Address destination) {
+        return sendDatagram(message, destination, this.node.getInterfaces().get(0));
     }
 
     @Override
-    public boolean sendToNetwork(String message, Address destination, NetworkInterface networkInterface) {
-        return networkInterface.sendDatagram(new Datagram(node.getAddress(), destination, 5, message));
+    public boolean sendDatagram(String message, Address destination, NetworkInterface networkInterface) {
+        return networkInterface.sendMessage(new Datagram(node.getAddress(), destination, 5, message));
     }
 
     private NetworkInterface getRoute(Address destination) {

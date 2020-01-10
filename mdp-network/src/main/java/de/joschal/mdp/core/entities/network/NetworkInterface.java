@@ -1,6 +1,10 @@
 package de.joschal.mdp.core.entities.network;
 
-import de.joschal.mdp.core.entities.protocol.Datagram;
+import de.joschal.mdp.core.entities.protocol.AbstractMessage;
+import de.joschal.mdp.core.entities.protocol.addressing.AbstractAddressingMessage;
+import de.joschal.mdp.core.entities.protocol.control.AbstractControlMessage;
+import de.joschal.mdp.core.entities.protocol.data.AbstractDataMessage;
+import de.joschal.mdp.core.entities.protocol.routing.AbstractRoutingMessage;
 import de.joschal.mdp.core.inbound.IDataLinkReceiver;
 import de.joschal.mdp.core.outbound.IDataLinkSender;
 import lombok.extern.slf4j.Slf4j;
@@ -17,26 +21,41 @@ public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
     private AbstractNode node;
 
     @Override
-    public boolean receiveDatagram(Datagram datagram) {
+    public boolean receiveMessage(AbstractMessage message) {
 
-        log.info("[{}] Received a datagram {}", this.node.getId(), datagram);
-        if (datagram.triggerHopCounter()) {
+        log.info("[{}] Received a message {}", this.node.getId(), message);
+        if (message.hop()) {
 
-            log.info("Datagram expired: {}", datagram);
+            log.info("Message expired: {}", message);
             return false;
 
         } else {
 
-            if (node.getAddress().equals(datagram.getDestinationAddress())) {
-                return node.receiveFromNetwork(datagram.getPayload(), datagram.getSourceAddress());
+            // Distinguish between message types
+            /*
+            if (node.getAddress().equals(message.getDestinationAddress()) && message instanceof Datagram) {
+                return node.receiveFromNetwork(((Datagram) message).getPayload(), message.getSourceAddress());
             } else {
-                return node.router.forwardDatagram(datagram);
+                return node.router.forwardDatagram(message);
+            }*/
+
+            if (message instanceof AbstractAddressingMessage) {
+                node.receiveAddressingMessage((AbstractAddressingMessage) message);
+            } else if (message instanceof AbstractControlMessage) {
+                node.receiveControlMessage((AbstractControlMessage) message);
+            } else if (message instanceof AbstractDataMessage) {
+                node.receiveDataMessage((AbstractDataMessage) message);
+            } else if (message instanceof AbstractRoutingMessage) {
+                node.receiveRoutingMessage((AbstractRoutingMessage) message);
+            } else {
+                log.error("Received a message of unknown type");
             }
+            return true;
         }
     }
 
     @Override
-    public boolean sendDatagram(Datagram datagram) {
+    public boolean sendMessage(AbstractMessage datagram) {
         return dataLink.exchange(datagram, this);
     }
 

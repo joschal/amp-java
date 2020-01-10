@@ -1,6 +1,6 @@
 package de.joschal.mdp.sim.core.logic;
 
-import de.joschal.mdp.core.entities.protocol.Datagram;
+import de.joschal.mdp.core.entities.protocol.AbstractMessage;
 import de.joschal.mdp.sim.core.entities.Graph;
 import de.joschal.mdp.sim.core.inbound.IDatagramController;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ public class DatagramController implements IDatagramController {
     Graph graph;
 
     @Override
-    public void sendDatagram(Datagram datagram) {
+    public void sendDatagram(AbstractMessage datagram) {
         log.error("Not implemented yet");
     }
 }

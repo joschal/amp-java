@@ -1,6 +1,6 @@
 package de.joschal.mdp.sim.inbound;
 
-import de.joschal.mdp.core.logic.simple.SimpleNode;
+import de.joschal.mdp.core.logic.simple.LoggingNode;
 import de.joschal.mdp.core.logic.staticrouting.StaticRouter;
 import de.joschal.mdp.sim.core.inbound.INodeController;
 import lombok.AllArgsConstructor;
@@ -18,7 +18,7 @@ public class NodeShell {
 
     @ShellMethod(value = "Add node to network", key = "node add")
     public boolean addNode(@ShellOption String id) {
-        SimpleNode node = new SimpleNode(id, new StaticRouter());
+        LoggingNode node = new LoggingNode(id, new StaticRouter());
         return nodeController.addNode(node);
     }
 
