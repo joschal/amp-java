@@ -7,8 +7,8 @@ import lombok.ToString;
 @Getter
 @ToString
 @AllArgsConstructor
-public class Address {
+public class Address{
 
-    private int address;
+    private int value;
 
 }

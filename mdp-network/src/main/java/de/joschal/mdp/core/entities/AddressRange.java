@@ -13,14 +13,11 @@ public class AddressRange implements Comparable<AddressRange> {
         if (lowest.getValue() == 0){
             throw new RuntimeException("Invalid Address range " + lowest + " -> " + highest + ". 0 is a reserved address");
         }
-        if (highest.getValue() > lowest.getValue()) {
+        if (highest.getValue() >= lowest.getValue()) {
             this.highest = highest;
             this.lowest = lowest;
             this.size = highest.getValue() - lowest.getValue() + 1;
 
-            if (size % 2 != 0) {
-                throw new RuntimeException("Invalid Address range " + lowest + " -> " + highest + ". Range size must be even!");
-            }
         } else {
             throw new RuntimeException("Invalid Address range " + lowest + " -> " + highest);
         }

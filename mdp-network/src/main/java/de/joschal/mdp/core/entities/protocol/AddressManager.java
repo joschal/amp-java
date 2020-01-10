@@ -74,5 +74,9 @@ public class AddressManager {
                 break;
             }
         }
+
+        // If not adjacent to another range, just add it back to the list
+        unassignedRanges.add(removed);
+        unassignedRanges.sort(Comparator.reverseOrder());
     }
 }
