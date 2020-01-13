@@ -2,6 +2,7 @@ package de.joschal.mdp.core.logic;
 
 import de.joschal.mdp.core.entities.Address;
 import de.joschal.mdp.core.entities.AddressPool;
+import de.joschal.mdp.core.entities.network.AbstractNode;
 import de.joschal.mdp.core.entities.network.NetworkInterface;
 
 import java.util.*;
@@ -9,10 +10,15 @@ import java.util.*;
 public class AddressManager {
 
     // Supports multiple disjointed address ranges
-    public AddressManager(AddressPool... ranges) {
+    public AddressManager(AbstractNode node, AddressPool... ranges) {
+        this.node = node;
+
         unassignedRanges.addAll(Arrays.asList(ranges));
         unassignedRanges.sort(Comparator.reverseOrder());
     }
+
+    // Referece to node, used to assign address
+    AbstractNode node;
 
     // Range of available addresses
     List<AddressPool> unassignedRanges = new ArrayList<>();
@@ -20,8 +26,31 @@ public class AddressManager {
     // Range of assigned addresses
     Map<NetworkInterface, AddressPool> assignedRanges = new HashMap<>();
 
+    public Address assignAddressToSelf() {
+
+        // Node has an assigned address already
+        if (node.getAddress() != null) {
+            throw new RuntimeException("Node already has an assigned address");
+        }
+
+        // No addresses available
+        if (unassignedRanges.isEmpty()) {
+            return null;
+        }
+
+        AddressPool pool = unassignedRanges.remove(0);
+        AddressPool newPool = new AddressPool(
+                new Address(pool.getLowest().getValue() + 1),
+                pool.getHighest());
+        unassignedRanges.add(newPool);
+        unassignedRanges.sort(Comparator.reverseOrder());
+
+        return pool.getLowest();
+
+    }
 
     // Select the largest available address range, and set it's state to "assigned"
+    // Future work: combine address ranges to counter fragmentation
     public AddressPool assignAddressPool(NetworkInterface networkInterface) {
 
         AddressPool largestRange = unassignedRanges.remove(0);

@@ -33,7 +33,7 @@ public class ControlMessageHandler implements INetworkReceiver {
         if (helloMessage.getSourceAddress().getValue() == 0) {
 
             // This early assignment of an address pool is not fully compliant with ZAL. It might result in address leakage. But this should be ok for the simulation
-            PoolAdvertisement poolAdvertisement = new PoolAdvertisement(node.getAddress(), new Address(0), node.addressManager.assignAddressPool(networkInterface));
+            PoolAdvertisement poolAdvertisement = new PoolAdvertisement(node.getAddress(), new Address(0), node.getAddressManager().assignAddressPool(networkInterface));
             // Send prefix advertisement
             node.addressingMessageSender.sendAddressAdvertisement(poolAdvertisement);
         } else {

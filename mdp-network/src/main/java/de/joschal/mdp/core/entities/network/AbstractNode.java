@@ -22,7 +22,7 @@ public abstract class AbstractNode {
         this.id = id;
         this.router = router;
         this.router.setNode(this); // Set reference to self
-        this.addressManager = new AddressManager(addressPools);
+        this.addressManager = new AddressManager(this, addressPools);
 
         // Message Handler
         this.addressingMessageHandler = new AddressingMessageHandler();
@@ -37,9 +37,9 @@ public abstract class AbstractNode {
     // Basics
     protected String id;
     protected Address address;
-    private List<NetworkInterface> dataNetworkInterfaces = new ArrayList<>();
+    protected List<NetworkInterface> networkInterfaces = new ArrayList<>();
     protected AbstractRouter router;
-    public AddressManager addressManager;
+    protected AddressManager addressManager;
 
     // Message Handler
     public AddressingMessageHandler addressingMessageHandler;
@@ -52,7 +52,7 @@ public abstract class AbstractNode {
 
     public void addNetworkInterface(NetworkInterface networkInterface) {
         networkInterface.setNode(this);
-        this.dataNetworkInterfaces.add(networkInterface);
+        this.networkInterfaces.add(networkInterface);
     }
 
     public void addRoute(Route route) {
@@ -61,7 +61,7 @@ public abstract class AbstractNode {
 
 
     public List<NetworkInterface> getInterfaces() {
-        return dataNetworkInterfaces;
+        return networkInterfaces;
     }
 
     public String getId() {
@@ -83,5 +83,7 @@ public abstract class AbstractNode {
         return false;
     }
 
-
+    public AddressManager getAddressManager() {
+        return addressManager;
+    }
 }

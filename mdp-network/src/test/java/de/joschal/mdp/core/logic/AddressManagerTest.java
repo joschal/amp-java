@@ -16,7 +16,7 @@ public class AddressManagerTest {
         AddressPool range = new AddressPool(new Address(1), new Address(4));
         NetworkInterface networkInterface = new NetworkInterface("interface");
 
-        AddressManager addressManager = new AddressManager(range);
+        AddressManager addressManager = new AddressManager(null, range);
 
         assertEquals(4, addressManager.unassignedRanges.get(0).getSize());
 
@@ -42,7 +42,7 @@ public class AddressManagerTest {
         AddressPool range = new AddressPool(new Address(1), new Address(5));
         NetworkInterface networkInterface = new NetworkInterface("interface");
 
-        AddressManager addressManager = new AddressManager(range);
+        AddressManager addressManager = new AddressManager(null, range);
 
         assertEquals(5, addressManager.unassignedRanges.get(0).getSize());
 
@@ -69,7 +69,7 @@ public class AddressManagerTest {
         NetworkInterface networkInterface1 = new NetworkInterface("1");
         NetworkInterface networkInterface2 = new NetworkInterface("2");
 
-        AddressManager addressManager = new AddressManager(originAddressPool);
+        AddressManager addressManager = new AddressManager(null, originAddressPool);
 
         AddressPool addressPool1 = addressManager.assignAddressPool(networkInterface1);
         AddressPool addressPool2 = addressManager.assignAddressPool(networkInterface2);

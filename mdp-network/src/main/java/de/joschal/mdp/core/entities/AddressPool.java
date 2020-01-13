@@ -2,7 +2,6 @@ package de.joschal.mdp.core.entities;
 
 import lombok.Getter;
 
-// This implementation effectively halves the address space, since only even ranges can be assigned.
 @Getter
 public class AddressPool implements Comparable<AddressPool> {
 
@@ -44,4 +43,6 @@ public class AddressPool implements Comparable<AddressPool> {
 
         throw new RuntimeException("Something went wrong");
     }
+
+
 }
