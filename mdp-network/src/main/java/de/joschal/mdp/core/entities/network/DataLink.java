@@ -1,6 +1,6 @@
 package de.joschal.mdp.core.entities.network;
 
-import de.joschal.mdp.core.entities.protocol.AbstractMessage;
+import de.joschal.mdp.core.entities.AbstractMessage;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 

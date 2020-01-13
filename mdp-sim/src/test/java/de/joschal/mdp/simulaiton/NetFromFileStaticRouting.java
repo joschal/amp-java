@@ -1,8 +1,8 @@
 package de.joschal.mdp.simulaiton;
 
 import de.joschal.mdp.core.entities.network.Route;
-import de.joschal.mdp.core.entities.protocol.Address;
-import de.joschal.mdp.core.logic.simple.LoggingNode;
+import de.joschal.mdp.core.entities.Address;
+import de.joschal.mdp.core.logic.simple.SimpleNode;
 import de.joschal.mdp.sim.core.entities.Graph;
 import de.joschal.mdp.sim.outbound.GraphReader;
 import org.junit.Test;
@@ -14,9 +14,9 @@ public class NetFromFileStaticRouting {
 
         Graph graph = new GraphReader().readGraph(getClass().getResource("/testGraph.dot").getFile());
 
-        LoggingNode loggingNode1 = (LoggingNode) graph.getNodebyId("1");
-        LoggingNode loggingNode2 = (LoggingNode) graph.getNodebyId("2");
-        LoggingNode loggingNode3 = (LoggingNode) graph.getNodebyId("3");
+        SimpleNode loggingNode1 = (SimpleNode) graph.getNodebyId("1");
+        SimpleNode loggingNode2 = (SimpleNode) graph.getNodebyId("2");
+        SimpleNode loggingNode3 = (SimpleNode) graph.getNodebyId("3");
 
         loggingNode1.setAddress(new Address(1));
         loggingNode2.setAddress(new Address(2));

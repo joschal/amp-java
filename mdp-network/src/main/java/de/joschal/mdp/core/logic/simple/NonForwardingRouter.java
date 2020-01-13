@@ -2,10 +2,10 @@ package de.joschal.mdp.core.logic.simple;
 
 import de.joschal.mdp.core.entities.network.AbstractRouter;
 import de.joschal.mdp.core.entities.network.NetworkInterface;
-import de.joschal.mdp.core.entities.protocol.AbstractMessage;
-import de.joschal.mdp.core.entities.protocol.Address;
-import de.joschal.mdp.core.entities.protocol.data.AbstractDataMessage;
-import de.joschal.mdp.core.entities.protocol.data.Datagram;
+import de.joschal.mdp.core.entities.AbstractMessage;
+import de.joschal.mdp.core.entities.Address;
+import de.joschal.mdp.core.entities.messages.data.AbstractDataMessage;
+import de.joschal.mdp.core.entities.messages.data.Datagram;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

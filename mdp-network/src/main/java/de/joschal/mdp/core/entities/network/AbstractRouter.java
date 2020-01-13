@@ -1,6 +1,6 @@
 package de.joschal.mdp.core.entities.network;
 
-import de.joschal.mdp.core.entities.protocol.data.AbstractDataMessage;
+import de.joschal.mdp.core.entities.messages.data.AbstractDataMessage;
 import de.joschal.mdp.core.outbound.IDatagramSender;
 
 import java.util.Arrays;

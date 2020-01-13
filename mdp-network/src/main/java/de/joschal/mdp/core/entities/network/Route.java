@@ -1,6 +1,6 @@
 package de.joschal.mdp.core.entities.network;
 
-import de.joschal.mdp.core.entities.protocol.Address;
+import de.joschal.mdp.core.entities.Address;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

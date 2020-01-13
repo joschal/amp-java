@@ -1,10 +1,10 @@
 package de.joschal.mdp.core.entities.network;
 
-import de.joschal.mdp.core.entities.protocol.AbstractMessage;
-import de.joschal.mdp.core.entities.protocol.addressing.AbstractAddressingMessage;
-import de.joschal.mdp.core.entities.protocol.control.AbstractControlMessage;
-import de.joschal.mdp.core.entities.protocol.data.AbstractDataMessage;
-import de.joschal.mdp.core.entities.protocol.routing.AbstractRoutingMessage;
+import de.joschal.mdp.core.entities.AbstractMessage;
+import de.joschal.mdp.core.entities.messages.addressing.AbstractAddressingMessage;
+import de.joschal.mdp.core.entities.messages.control.AbstractControlMessage;
+import de.joschal.mdp.core.entities.messages.data.AbstractDataMessage;
+import de.joschal.mdp.core.entities.messages.routing.AbstractRoutingMessage;
 import de.joschal.mdp.core.inbound.IDataLinkReceiver;
 import de.joschal.mdp.core.outbound.IDataLinkSender;
 import lombok.extern.slf4j.Slf4j;
@@ -31,22 +31,14 @@ public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
 
         } else {
 
-            // Distinguish between message types
-            /*
-            if (node.getAddress().equals(message.getDestinationAddress()) && message instanceof Datagram) {
-                return node.receiveFromNetwork(((Datagram) message).getPayload(), message.getSourceAddress());
-            } else {
-                return node.router.forwardDatagram(message);
-            }*/
-
             if (message instanceof AbstractAddressingMessage) {
-                node.receiveAddressingMessage((AbstractAddressingMessage) message);
+                node.addressingMessageHandler.handleMessage(message, this);
             } else if (message instanceof AbstractControlMessage) {
-                node.receiveControlMessage((AbstractControlMessage) message);
+                node.controlMessageHandler.handleMessage(message, this);
             } else if (message instanceof AbstractDataMessage) {
-                node.receiveDataMessage((AbstractDataMessage) message);
+                node.dataMessageHandler.handleMessage(message, this);
             } else if (message instanceof AbstractRoutingMessage) {
-                node.receiveRoutingMessage((AbstractRoutingMessage) message);
+                node.routingMessageHandler.handleMessage(message, this);
             } else {
                 log.error("Received a message of unknown type");
             }

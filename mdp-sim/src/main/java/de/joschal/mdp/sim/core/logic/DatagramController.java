@@ -1,6 +1,6 @@
 package de.joschal.mdp.sim.core.logic;
 
-import de.joschal.mdp.core.entities.protocol.AbstractMessage;
+import de.joschal.mdp.core.entities.AbstractMessage;
 import de.joschal.mdp.sim.core.entities.Graph;
 import de.joschal.mdp.sim.core.inbound.IDatagramController;
 import lombok.AllArgsConstructor;

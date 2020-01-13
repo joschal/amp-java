@@ -1,36 +1,54 @@
 package de.joschal.mdp.core.entities.network;
 
-import de.joschal.mdp.core.entities.protocol.Address;
-import de.joschal.mdp.core.inbound.INetworkReceiver;
+import de.joschal.mdp.core.entities.AddressPool;
+import de.joschal.mdp.core.entities.Address;
+import de.joschal.mdp.core.logic.AddressManager;
+import de.joschal.mdp.core.logic.handler.AddressingMessageHandler;
+import de.joschal.mdp.core.logic.handler.ControlMessageHandler;
+import de.joschal.mdp.core.logic.handler.DataMessageHandler;
+import de.joschal.mdp.core.logic.handler.RoutingMessageHandler;
+import de.joschal.mdp.core.logic.sender.AddressingMessageSender;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public abstract class AbstractNode implements INetworkReceiver {
+public abstract class AbstractNode {
 
-    public AbstractNode(String id, AbstractRouter router) {
+    public AbstractNode(String id, AbstractRouter router, AddressPool ... addressPools) {
+
+        // Basics
         this.id = id;
         this.router = router;
         this.router.setNode(this); // Set reference to self
+        this.addressManager = new AddressManager(addressPools);
+
+        // Message Handler
+        this.addressingMessageHandler = new AddressingMessageHandler();
+        this.controlMessageHandler = new ControlMessageHandler(this);
+        this.dataMessageHandler = new DataMessageHandler();
+        this.routingMessageHandler = new RoutingMessageHandler();
+
+        // Message Sender
+        this.addressingMessageSender = new AddressingMessageSender(this);
     }
 
-    @Deprecated // Should not be used, since address should be acquired automatically
-    public AbstractNode(String id, Address address, AbstractRouter router) {
-        this.id = id;
-        this.address = address;
-        this.router = router;
-        this.router.setNode(this); // Set reference to self
-    }
-
+    // Basics
     protected String id;
-
     protected Address address;
-
     private List<NetworkInterface> dataNetworkInterfaces = new ArrayList<>();
-
     protected AbstractRouter router;
+    public AddressManager addressManager;
+
+    // Message Handler
+    public AddressingMessageHandler addressingMessageHandler;
+    public ControlMessageHandler controlMessageHandler;
+    public DataMessageHandler dataMessageHandler;
+    public RoutingMessageHandler routingMessageHandler;
+
+    // MessageSender
+    public AddressingMessageSender addressingMessageSender;
 
     public void addNetworkInterface(NetworkInterface networkInterface) {
         networkInterface.setNode(this);
@@ -50,7 +68,6 @@ public abstract class AbstractNode implements INetworkReceiver {
         return id;
     }
 
-    @Deprecated // Should not be used, since address should be acquired automatically
     public Address getAddress() {
         return address;
     }

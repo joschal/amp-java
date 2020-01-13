@@ -1,7 +1,7 @@
 package de.joschal.mdp.sim.outbound;
 
 import de.joschal.mdp.core.entities.network.DataLink;
-import de.joschal.mdp.core.logic.simple.LoggingNode;
+import de.joschal.mdp.core.logic.simple.SimpleNode;
 import de.joschal.mdp.core.logic.staticrouting.StaticRouter;
 import de.joschal.mdp.sim.core.entities.Graph;
 import de.joschal.mdp.sim.core.outbound.IGraphReader;
@@ -31,7 +31,7 @@ public class GraphReader implements IGraphReader {
 
             // Create all Network Nodes on first pass
             for (MutableNode dotNode : dotGraph.nodes()) {
-                LoggingNode loggingNode = new LoggingNode(dotNode.name().toString(), new StaticRouter());
+                SimpleNode loggingNode = new SimpleNode(dotNode.name().toString(), new StaticRouter());
                 graph.addNode(loggingNode);
             }
 

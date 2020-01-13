@@ -1,7 +1,7 @@
 package de.joschal.mdp.core.outbound;
 
 import de.joschal.mdp.core.entities.network.NetworkInterface;
-import de.joschal.mdp.core.entities.protocol.Address;
+import de.joschal.mdp.core.entities.Address;
 
 // Invoked by routing logic
 public interface IDatagramSender {

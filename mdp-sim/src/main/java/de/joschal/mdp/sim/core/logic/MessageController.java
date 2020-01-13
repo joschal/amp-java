@@ -1,7 +1,7 @@
 package de.joschal.mdp.sim.core.logic;
 
-import de.joschal.mdp.core.entities.protocol.AbstractMessage;
-import de.joschal.mdp.core.entities.protocol.data.Datagram;
+import de.joschal.mdp.core.entities.AbstractMessage;
+import de.joschal.mdp.core.entities.messages.data.Datagram;
 import de.joschal.mdp.sim.core.entities.Graph;
 import de.joschal.mdp.sim.core.inbound.IDatagramController;
 import de.joschal.mdp.sim.core.inbound.IMessageController;

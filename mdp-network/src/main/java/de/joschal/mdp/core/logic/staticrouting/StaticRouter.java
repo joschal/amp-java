@@ -1,12 +1,11 @@
 package de.joschal.mdp.core.logic.staticrouting;
 
+import de.joschal.mdp.core.entities.Address;
+import de.joschal.mdp.core.entities.messages.data.AbstractDataMessage;
+import de.joschal.mdp.core.entities.messages.data.Datagram;
 import de.joschal.mdp.core.entities.network.AbstractRouter;
 import de.joschal.mdp.core.entities.network.NetworkInterface;
 import de.joschal.mdp.core.entities.network.Route;
-import de.joschal.mdp.core.entities.protocol.AbstractMessage;
-import de.joschal.mdp.core.entities.protocol.Address;
-import de.joschal.mdp.core.entities.protocol.data.AbstractDataMessage;
-import de.joschal.mdp.core.entities.protocol.data.Datagram;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashSet;
@@ -24,16 +23,13 @@ public class StaticRouter extends AbstractRouter {
 
     @Override
     protected boolean forwardDatagram(AbstractDataMessage datagram) {
-
-        AbstractMessage message = (AbstractMessage) datagram;
-
-        log.info("[{}] Will try to forward datagram: {}", this.node.getAddress(), message);
-        NetworkInterface networkInterface = getRoute(message.getDestinationAddress());
+        log.info("[{}] Will try to forward datagram: {}", this.node.getAddress(), datagram);
+        NetworkInterface networkInterface = getRoute(datagram.getDestinationAddress());
 
         if (networkInterface != null) {
-            return networkInterface.sendMessage(message);
+            return networkInterface.sendMessage(datagram);
         }
-        log.error("No route found for message {}", message);
+        log.error("No route found for message {}", datagram);
         return false;
     }
 
