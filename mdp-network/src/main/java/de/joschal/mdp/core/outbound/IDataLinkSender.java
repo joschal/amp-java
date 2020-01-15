@@ -2,10 +2,10 @@ package de.joschal.mdp.core.outbound;
 
 import de.joschal.mdp.core.entities.AbstractMessage;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface IDataLinkSender {
 
-    Optional<AbstractMessage> sendMessage(AbstractMessage message);
+    List<AbstractMessage> sendMessage(AbstractMessage message);
 
 }

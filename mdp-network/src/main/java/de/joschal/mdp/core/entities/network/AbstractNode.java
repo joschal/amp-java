@@ -15,12 +15,15 @@ import de.joschal.mdp.core.logic.handler.RoutingMessageHandler;
 import de.joschal.mdp.core.logic.sender.AddressingMessageSender;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 
 @Slf4j
 public abstract class AbstractNode {
 
-    public AbstractNode(String id, AbstractRouter router, AddressPool ... addressPools) {
+    public AbstractNode(String id, AbstractRouter router, AddressPool... addressPools) {
 
         // Basics
         this.id = id;
@@ -124,13 +127,14 @@ public abstract class AbstractNode {
         List<PoolAdvertisement> advertisements = new LinkedList<>();
 
         for (NetworkInterface networkInterface : this.networkInterfaces) {
-            Optional<AbstractMessage> response = networkInterface.sendMessage(new Hello());
+            List<AbstractMessage> responses = networkInterface.sendMessage(new Hello());
 
-            response.ifPresent(message -> {
+            for (AbstractMessage message : responses) {
                 advertisements.add((PoolAdvertisement) message);
-                this.router.addRoute(new Route(networkInterface, message.getSourceAddress(), 1));
+                Route route = new Route(networkInterface, message.getSourceAddress(), 1);
+                this.router.addRoute(route);
                 log.info("Received address pool advertisement: {}");
-            });
+            }
 
         }
 
@@ -145,10 +149,10 @@ public abstract class AbstractNode {
     private AddressPool getBestAddressPool(List<PoolAdvertisement> advertisements) {
         for (PoolAdvertisement advertisement : advertisements) {
             PoolAccepted accepted = new PoolAccepted(advertisement);
-            Optional<AbstractMessage> response = this.router.sendMessage(accepted);
+            List<AbstractMessage> responses = this.router.sendMessage(accepted);
 
-            if (response.isPresent()) {
-                PoolAssigned assigned = (PoolAssigned) response.get();
+            for (AbstractMessage response : responses) {
+                PoolAssigned assigned = (PoolAssigned) response;
                 if (assigned.isAssigned()) {
                     return assigned.getAddressPool();
                 }

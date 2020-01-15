@@ -17,7 +17,7 @@ public class Route {
     }
 
     public Route(NetworkInterface networkInterface, Address address, int hops) {
-        new Route(DEFAULT_TIMEOUT_MS, networkInterface, address, hops);
+        this(DEFAULT_TIMEOUT_MS, networkInterface, address, hops);
     }
 
     private DateTime creationTime;

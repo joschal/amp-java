@@ -7,32 +7,33 @@ import de.joschal.mdp.core.entities.network.AbstractRouter;
 import de.joschal.mdp.core.entities.network.NetworkInterface;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Optional;
+import java.util.Collections;
+import java.util.List;
 
 @Slf4j
 public class NonForwardingRouter extends AbstractRouter {
 
     @Override
-    public Optional<AbstractMessage> forwardMessage(AbstractMessage message) {
+    public List<AbstractMessage> forwardMessage(AbstractMessage message) {
         log.info("[{}] Received a message, which needs to be forwarded: {}", this.node.getId(), message);
         // TODO routing algorithm goes here
-        return Optional.empty();
+        return Collections.emptyList();
     }
 
     @Override
-    public Optional<AbstractMessage> sendDatagram(String message, Address destination) {
+    public List<AbstractMessage> sendDatagram(String message, Address destination) {
         AbstractMessage datagram = new Datagram(this.node.getAddress(), destination, 5, message);
         log.info("[{}] Will send datagram to Network: {}", this.node.getId(), datagram);
         return node.getInterfaces().iterator().next().sendMessage(datagram);
     }
 
     @Override
-    public Optional<AbstractMessage> sendDatagram(String message, Address destination, NetworkInterface networkInterface) {
-        return Optional.empty();
+    public List<AbstractMessage> sendDatagram(String message, Address destination, NetworkInterface networkInterface) {
+        return Collections.emptyList();
     }
 
     @Override
-    public Optional<AbstractMessage> sendMessage(AbstractMessage abstractMessage) {
-        return Optional.empty();
+    public List<AbstractMessage> sendMessage(AbstractMessage abstractMessage) {
+        return Collections.emptyList();
     }
 }

@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -27,26 +29,34 @@ public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
     private AbstractNode node;
 
     @Override
-    public Optional<AbstractMessage> sendMessage(AbstractMessage message) {
+    public List<AbstractMessage> sendMessage(AbstractMessage message) {
         return dataLink.exchange(message, this);
     }
 
     @Override
-    public Optional<AbstractMessage> receiveMessage(AbstractMessage message) {
+    public List<AbstractMessage> receiveMessage(AbstractMessage message) {
 
         this.node.router.updateRoutingTable(this, message);
         message.hop();
 
-        if (message.getDestinationAddress().equals(this.node.getAddress())) {
+        List<AbstractMessage> returnMessages = new LinkedList<>();
+
+        if (message.getDestinationAddress().equals(this.node.getAddress()) ||
+                message.getDestinationAddress().getValue() == 0) {
+
             log.debug("[{}] Received a message to handle locally {}", this.node.getId(), message);
-            return handleMessageLocally(message);
-        } else if (message instanceof AbstractDataMessage) {
+            handleMessageLocally(message).ifPresent(returnMessages::add);
+
+        } else if (message instanceof AbstractDataMessage ||
+                message instanceof AbstractRoutingMessage) {
+
             log.debug("[{}] Received a message to forward {}", this.node.getId(), message);
-            return this.node.router.forwardMessage(message);
+            returnMessages.addAll(this.node.router.forwardMessage(message));
+
         } else {
             log.error("[{}] Received an unknown message {}", this.node.getId(), message);
-            return Optional.empty();
         }
+        return returnMessages;
     }
 
     /**

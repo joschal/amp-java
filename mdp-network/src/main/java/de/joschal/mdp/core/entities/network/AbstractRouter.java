@@ -4,7 +4,7 @@ import de.joschal.mdp.core.entities.AbstractMessage;
 import de.joschal.mdp.core.outbound.IDatagramSender;
 import de.joschal.mdp.core.outbound.IMessageSender;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -18,11 +18,11 @@ public abstract class AbstractRouter implements IDatagramSender, IMessageSender 
         this.node = node;
     }
 
-    public void addRoute(Route... routes) {
-        routingTable.addAll(Arrays.asList(routes));
+    public void addRoute(Route route) {
+        routingTable.add(route);
     }
 
-    protected abstract Optional<AbstractMessage> forwardMessage(AbstractMessage datagram);
+    protected abstract List<AbstractMessage> forwardMessage(AbstractMessage datagram);
 
     public void updateRoutingTable(NetworkInterface networkInterface, AbstractMessage message) {
 

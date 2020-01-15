@@ -29,23 +29,25 @@ public class AddressManager {
     public Address assignAddressToSelf() {
 
         // Node has an assigned address already
-        if (node.getAddress() != null) {
+        if (node.getAddress().getValue() == 0) {
+
+
+            // No addresses available
+            if (unassignedRanges.isEmpty()) {
+                return null;
+            }
+
+            AddressPool pool = unassignedRanges.remove(0);
+            AddressPool newPool = new AddressPool(
+                    new Address(pool.getLowest().getValue() + 1),
+                    pool.getHighest());
+            unassignedRanges.add(newPool);
+            unassignedRanges.sort(Comparator.reverseOrder());
+
+            return pool.getLowest();
+        } else {
             throw new RuntimeException("Node already has an assigned address");
         }
-
-        // No addresses available
-        if (unassignedRanges.isEmpty()) {
-            return null;
-        }
-
-        AddressPool pool = unassignedRanges.remove(0);
-        AddressPool newPool = new AddressPool(
-                new Address(pool.getLowest().getValue() + 1),
-                pool.getHighest());
-        unassignedRanges.add(newPool);
-        unassignedRanges.sort(Comparator.reverseOrder());
-
-        return pool.getLowest();
 
     }
 
