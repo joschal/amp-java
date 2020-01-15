@@ -54,7 +54,9 @@ public class AddressManager {
     public AddressPool assignAddressPool(NetworkInterface networkInterface) {
 
         AddressPool largestRange = unassignedRanges.remove(0);
-        int halfwayPoint = largestRange.getSize() / 2;
+
+        // Halfway point needs to be offset by the start addresses value
+        int halfwayPoint = (largestRange.getSize() / 2) + (largestRange.getLowest().getValue() - 1);
 
 
         AddressPool unAssigned = new AddressPool(
@@ -102,5 +104,18 @@ public class AddressManager {
                 break;
             }
         }
+    }
+
+    public void addAddressPool(AddressPool... addressPools) {
+        unassignedRanges.addAll(Arrays.asList(addressPools));
+        unassignedRanges.sort(Comparator.reverseOrder());
+    }
+
+    public boolean isPoolAvailable() {
+        return !unassignedRanges.isEmpty();
+    }
+
+    public boolean isPoolAvailable(AddressPool pool) {
+        return !unassignedRanges.contains(pool);
     }
 }

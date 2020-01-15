@@ -9,6 +9,8 @@ import de.joschal.mdp.core.inbound.IDataLinkReceiver;
 import de.joschal.mdp.core.outbound.IDataLinkSender;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Optional;
+
 @Slf4j
 public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
 
@@ -21,33 +23,29 @@ public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
     private AbstractNode node;
 
     @Override
-    public boolean receiveMessage(AbstractMessage message) {
+    public Optional<AbstractMessage> receiveMessage(AbstractMessage message) {
 
         log.info("[{}] Received a message {}", this.node.getId(), message);
-        if (message.hop()) {
+        message.hop();
 
-            log.info("Message expired: {}", message);
-            return false;
 
+        if (message instanceof AbstractAddressingMessage) {
+            return node.addressingMessageHandler.handleMessage(message, this);
+        } else if (message instanceof AbstractControlMessage) {
+            return node.controlMessageHandler.handleMessage(message, this);
+        } else if (message instanceof AbstractDataMessage) {
+            return node.dataMessageHandler.handleMessage(message, this);
+        } else if (message instanceof AbstractRoutingMessage) {
+            return node.routingMessageHandler.handleMessage(message, this);
         } else {
-
-            if (message instanceof AbstractAddressingMessage) {
-                node.addressingMessageHandler.handleMessage(message, this);
-            } else if (message instanceof AbstractControlMessage) {
-                node.controlMessageHandler.handleMessage(message, this);
-            } else if (message instanceof AbstractDataMessage) {
-                node.dataMessageHandler.handleMessage(message, this);
-            } else if (message instanceof AbstractRoutingMessage) {
-                node.routingMessageHandler.handleMessage(message, this);
-            } else {
-                log.error("Received a message of unknown type");
-            }
-            return true;
+            log.error("Received a message of unknown type");
+            return Optional.empty();
         }
     }
 
+
     @Override
-    public boolean sendMessage(AbstractMessage datagram) {
+    public Optional<AbstractMessage> sendMessage(AbstractMessage datagram) {
         return dataLink.exchange(datagram, this);
     }
 

@@ -1,5 +1,6 @@
 package de.joschal.mdp.core.logic.staticrouting;
 
+import de.joschal.mdp.core.entities.AbstractMessage;
 import de.joschal.mdp.core.entities.Address;
 import de.joschal.mdp.core.entities.messages.data.AbstractDataMessage;
 import de.joschal.mdp.core.entities.messages.data.Datagram;
@@ -9,6 +10,7 @@ import de.joschal.mdp.core.entities.network.Route;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashSet;
+import java.util.Optional;
 
 /**
  * This Router forwards Datagrams according to it's static routing table.
@@ -22,7 +24,7 @@ public class StaticRouter extends AbstractRouter {
     }
 
     @Override
-    protected boolean forwardDatagram(AbstractDataMessage datagram) {
+    protected Optional<AbstractMessage> forwardDatagram(AbstractDataMessage datagram) {
         log.info("[{}] Will try to forward datagram: {}", this.node.getAddress(), datagram);
         NetworkInterface networkInterface = getRoute(datagram.getDestinationAddress());
 
@@ -30,16 +32,16 @@ public class StaticRouter extends AbstractRouter {
             return networkInterface.sendMessage(datagram);
         }
         log.error("No route found for message {}", datagram);
-        return false;
+        return Optional.empty();
     }
 
     @Override
-    public boolean sendDatagram(String message, Address destination) {
+    public Optional<AbstractMessage> sendDatagram(String message, Address destination) {
         return sendDatagram(message, destination, this.node.getInterfaces().get(0));
     }
 
     @Override
-    public boolean sendDatagram(String message, Address destination, NetworkInterface networkInterface) {
+    public Optional<AbstractMessage> sendDatagram(String message, Address destination, NetworkInterface networkInterface) {
         return networkInterface.sendMessage(new Datagram(node.getAddress(), destination, 5, message));
     }
 
@@ -50,5 +52,17 @@ public class StaticRouter extends AbstractRouter {
             }
         }
         return null;
+    }
+
+    @Override
+    public Optional<AbstractMessage> sendMessage(AbstractMessage message) {
+        log.info("[{}] Sending message: {}", this.node.getId(), message);
+        NetworkInterface networkInterface = getRoute(message.getDestinationAddress());
+
+        if (networkInterface != null) {
+            return networkInterface.sendMessage(message);
+        }
+        log.error("No route found for message {}", message);
+        return Optional.empty();
     }
 }

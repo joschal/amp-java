@@ -1,6 +1,7 @@
 package de.joschal.mdp.core.entities.messages.control;
 
 import de.joschal.mdp.core.entities.Address;
+import lombok.ToString;
 
 /**
  * Destination Address is always empty, since this is the first message of a given connection and there is no way to
@@ -14,6 +15,7 @@ import de.joschal.mdp.core.entities.Address;
  *
  * HopLimit is always 1, since the message MUST NOT be forwarded
  */
+@ToString
 public class Hello extends AbstractControlMessage {
 
     /**

@@ -1,10 +1,12 @@
 package de.joschal.mdp.core.inbound;
 
-import de.joschal.mdp.core.entities.network.NetworkInterface;
 import de.joschal.mdp.core.entities.AbstractMessage;
+import de.joschal.mdp.core.entities.network.NetworkInterface;
+
+import java.util.Optional;
 
 public interface INetworkReceiver {
 
-    void handleMessage(AbstractMessage message, NetworkInterface networkInterface);
+    Optional<AbstractMessage> handleMessage(AbstractMessage message, NetworkInterface networkInterface);
 
 }

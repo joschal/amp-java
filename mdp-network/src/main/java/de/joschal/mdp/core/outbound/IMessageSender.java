@@ -4,8 +4,7 @@ import de.joschal.mdp.core.entities.AbstractMessage;
 
 import java.util.Optional;
 
-public interface IDataLinkSender {
+public interface IMessageSender {
 
-    Optional<AbstractMessage> sendMessage(AbstractMessage message);
-
+    Optional<AbstractMessage> sendMessage(AbstractMessage abstractMessage);
 }

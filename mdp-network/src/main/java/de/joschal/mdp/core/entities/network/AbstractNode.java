@@ -1,7 +1,7 @@
 package de.joschal.mdp.core.entities.network;
 
-import de.joschal.mdp.core.entities.AddressPool;
 import de.joschal.mdp.core.entities.Address;
+import de.joschal.mdp.core.entities.AddressPool;
 import de.joschal.mdp.core.logic.AddressManager;
 import de.joschal.mdp.core.logic.handler.AddressingMessageHandler;
 import de.joschal.mdp.core.logic.handler.ControlMessageHandler;
@@ -25,7 +25,7 @@ public abstract class AbstractNode {
         this.addressManager = new AddressManager(this, addressPools);
 
         // Message Handler
-        this.addressingMessageHandler = new AddressingMessageHandler();
+        this.addressingMessageHandler = new AddressingMessageHandler(this);
         this.controlMessageHandler = new ControlMessageHandler(this);
         this.dataMessageHandler = new DataMessageHandler();
         this.routingMessageHandler = new RoutingMessageHandler();
@@ -86,4 +86,6 @@ public abstract class AbstractNode {
     public AddressManager getAddressManager() {
         return addressManager;
     }
+
+
 }

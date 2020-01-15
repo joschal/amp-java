@@ -1,8 +1,10 @@
 package de.joschal.mdp.core.entities;
 
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class AddressPool implements Comparable<AddressPool> {
 
     public AddressPool(Address lowest, Address highest) {

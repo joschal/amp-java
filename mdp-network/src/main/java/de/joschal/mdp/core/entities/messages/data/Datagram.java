@@ -2,8 +2,10 @@ package de.joschal.mdp.core.entities.messages.data;
 
 import de.joschal.mdp.core.entities.Address;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 public class Datagram extends AbstractDataMessage {
 
     public Datagram(Address sourceAddress, Address destinationAddress, int hopLimit) {

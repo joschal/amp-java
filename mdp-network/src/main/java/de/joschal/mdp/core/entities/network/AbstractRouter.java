@@ -1,12 +1,15 @@
 package de.joschal.mdp.core.entities.network;
 
+import de.joschal.mdp.core.entities.AbstractMessage;
 import de.joschal.mdp.core.entities.messages.data.AbstractDataMessage;
 import de.joschal.mdp.core.outbound.IDatagramSender;
+import de.joschal.mdp.core.outbound.IMessageSender;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Set;
 
-public abstract class AbstractRouter implements IDatagramSender {
+public abstract class AbstractRouter implements IDatagramSender, IMessageSender {
 
     protected AbstractNode node;
 
@@ -21,6 +24,6 @@ public abstract class AbstractRouter implements IDatagramSender {
     }
 
     // Data Messages are the only message type to be forwarded
-    protected abstract boolean forwardDatagram(AbstractDataMessage datagram);
+    protected abstract Optional<AbstractMessage> forwardDatagram(AbstractDataMessage datagram);
 
 }
