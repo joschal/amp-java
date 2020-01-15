@@ -11,8 +11,8 @@ import java.util.Optional;
 public class DataMessageHandler implements INetworkReceiver {
 
     @Override
-    public Optional<AbstractMessage> handleMessage(AbstractMessage message, NetworkInterface networkInterface) {
-        log.error("Not Implemented");
+    public Optional<AbstractMessage> handleMessage(AbstractMessage message, NetworkInterface source) {
+        log.info("Received message {} from interface {}", message, source);
         return Optional.empty();
     }
 }

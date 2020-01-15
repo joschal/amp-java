@@ -51,7 +51,7 @@ public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
                 message instanceof AbstractRoutingMessage) {
 
             log.debug("[{}] Received a message to forward {}", this.node.getId(), message);
-            returnMessages.addAll(this.node.router.forwardMessage(message));
+            returnMessages.addAll(this.node.router.forwardMessage(message, this));
 
         } else {
             log.error("[{}] Received an unknown message {}", this.node.getId(), message);

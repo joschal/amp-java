@@ -53,6 +53,7 @@ public class AddressManager {
 
     // Select the largest available address range, and set it's state to "assigned"
     // Future work: combine address ranges to counter fragmentation
+    // TODO handle edge cases for small ranges
     public AddressPool assignAddressPool(NetworkInterface networkInterface) {
 
         AddressPool largestRange = unassignedRanges.remove(0);

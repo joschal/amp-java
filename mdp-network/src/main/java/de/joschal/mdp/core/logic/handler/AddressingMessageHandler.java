@@ -18,7 +18,7 @@ public class AddressingMessageHandler implements INetworkReceiver {
     private AbstractNode node;
 
     @Override
-    public Optional<AbstractMessage> handleMessage(AbstractMessage message, NetworkInterface networkInterface) {
+    public Optional<AbstractMessage> handleMessage(AbstractMessage message, NetworkInterface source) {
 
         if (message instanceof PoolAccepted) {
             return handlePoolAccepted(message);

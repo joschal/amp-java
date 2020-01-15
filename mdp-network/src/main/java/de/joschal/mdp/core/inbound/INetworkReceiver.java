@@ -7,6 +7,6 @@ import java.util.Optional;
 
 public interface INetworkReceiver {
 
-    Optional<AbstractMessage> handleMessage(AbstractMessage message, NetworkInterface networkInterface);
+    Optional<AbstractMessage> handleMessage(AbstractMessage message, NetworkInterface source);
 
 }

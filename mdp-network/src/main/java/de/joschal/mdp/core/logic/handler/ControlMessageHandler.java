@@ -18,10 +18,10 @@ public class ControlMessageHandler implements INetworkReceiver {
     private AbstractNode node;
 
     @Override
-    public Optional<AbstractMessage> handleMessage(AbstractMessage message, NetworkInterface networkInterface) {
+    public Optional<AbstractMessage> handleMessage(AbstractMessage message, NetworkInterface source) {
 
         if (message instanceof Hello) {
-            return handleHelloMessage((Hello) message, networkInterface);
+            return handleHelloMessage((Hello) message, source);
         } else if (message instanceof Goodbye) {
             return handleGoodbyeMessage((Goodbye) message);
         }

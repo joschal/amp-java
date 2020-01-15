@@ -11,7 +11,7 @@ import java.util.Optional;
 public class RoutingMessageHandler implements INetworkReceiver {
 
     @Override
-    public Optional<AbstractMessage> handleMessage(AbstractMessage message, NetworkInterface networkInterface) {
+    public Optional<AbstractMessage> handleMessage(AbstractMessage message, NetworkInterface source) {
         log.error("Not Implemented");
         return Optional.empty();
     }

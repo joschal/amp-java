@@ -11,10 +11,11 @@ import java.util.Collections;
 import java.util.List;
 
 @Slf4j
+@Deprecated
 public class NonForwardingRouter extends AbstractRouter {
 
     @Override
-    public List<AbstractMessage> forwardMessage(AbstractMessage message) {
+    public List<AbstractMessage> forwardMessage(AbstractMessage message, NetworkInterface source) {
         log.info("[{}] Received a message, which needs to be forwarded: {}", this.node.getId(), message);
         // TODO routing algorithm goes here
         return Collections.emptyList();

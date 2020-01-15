@@ -22,7 +22,7 @@ public abstract class AbstractRouter implements IDatagramSender, IMessageSender 
         routingTable.add(route);
     }
 
-    protected abstract List<AbstractMessage> forwardMessage(AbstractMessage datagram);
+    protected abstract List<AbstractMessage> forwardMessage(AbstractMessage message, NetworkInterface source);
 
     public void updateRoutingTable(NetworkInterface networkInterface, AbstractMessage message) {
 

@@ -17,6 +17,7 @@ import java.util.List;
  * There is no
  */
 @Slf4j
+@Deprecated
 public class NonFloodingRouter extends AbstractRouter {
 
     public NonFloodingRouter() {
@@ -24,7 +25,7 @@ public class NonFloodingRouter extends AbstractRouter {
     }
 
     @Override
-    protected List<AbstractMessage> forwardMessage(AbstractMessage message) {
+    protected List<AbstractMessage> forwardMessage(AbstractMessage message, NetworkInterface source) {
         log.info("[{}] Will try to forward message: {}", this.node.getAddress(), message);
         NetworkInterface networkInterface = getRoute(message.getDestinationAddress());
 
