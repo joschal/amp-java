@@ -1,10 +1,8 @@
 package de.joschal.mdp.core.entities;
 
 import lombok.Getter;
-import lombok.ToString;
 
 @Getter
-@ToString
 public abstract class AbstractMessage {
 
     public AbstractMessage(Address sourceAddress, Address destinationAddress, int hopLimit) {
