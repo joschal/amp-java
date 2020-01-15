@@ -33,7 +33,7 @@ public class DataLink {
             log.debug("{} --> {}", B.getName(), A.getName());
             return A.receiveMessage(message);
         } else {
-            log.error("Something went horribly wrong in the data link layer! Sender: {} Datagram {}", sender, message);
+            log.error("Something went horribly wrong in the data link layer! Sender: {} Message: {}", sender, message);
             throw new RuntimeException("Something went horribly wrong in the data link layer!");
         }
     }

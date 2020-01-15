@@ -1,8 +1,7 @@
-package de.joschal.mdp.core.logic.staticrouting;
+package de.joschal.mdp.core.logic.router;
 
 import de.joschal.mdp.core.entities.AbstractMessage;
 import de.joschal.mdp.core.entities.Address;
-import de.joschal.mdp.core.entities.messages.data.AbstractDataMessage;
 import de.joschal.mdp.core.entities.messages.data.Datagram;
 import de.joschal.mdp.core.entities.network.AbstractRouter;
 import de.joschal.mdp.core.entities.network.NetworkInterface;
@@ -17,21 +16,21 @@ import java.util.Optional;
  * There is no
  */
 @Slf4j
-public class StaticRouter extends AbstractRouter {
+public class NonFloodingRouter extends AbstractRouter {
 
-    public StaticRouter() {
+    public NonFloodingRouter() {
         this.routingTable = new HashSet<>();
     }
 
     @Override
-    protected Optional<AbstractMessage> forwardDatagram(AbstractDataMessage datagram) {
-        log.info("[{}] Will try to forward datagram: {}", this.node.getAddress(), datagram);
-        NetworkInterface networkInterface = getRoute(datagram.getDestinationAddress());
+    protected Optional<AbstractMessage> forwardMessage(AbstractMessage message) {
+        log.info("[{}] Will try to forward message: {}", this.node.getAddress(), message);
+        NetworkInterface networkInterface = getRoute(message.getDestinationAddress());
 
         if (networkInterface != null) {
-            return networkInterface.sendMessage(datagram);
+            return networkInterface.sendMessage(message);
         }
-        log.error("No route found for message {}", datagram);
+        log.error("No route found for message {}", message);
         return Optional.empty();
     }
 

@@ -2,7 +2,7 @@ package de.joschal.mdp.simulaiton;
 
 import de.joschal.mdp.core.entities.Address;
 import de.joschal.mdp.core.entities.AddressPool;
-import de.joschal.mdp.core.logic.simple.SimpleNode;
+import de.joschal.mdp.core.logic.nodes.SimpleNode;
 import de.joschal.mdp.sim.core.entities.Graph;
 import de.joschal.mdp.sim.outbound.GraphReader;
 import lombok.extern.slf4j.Slf4j;

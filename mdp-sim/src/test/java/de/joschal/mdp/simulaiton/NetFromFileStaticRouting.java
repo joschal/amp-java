@@ -2,7 +2,7 @@ package de.joschal.mdp.simulaiton;
 
 import de.joschal.mdp.core.entities.Address;
 import de.joschal.mdp.core.entities.network.Route;
-import de.joschal.mdp.core.logic.simple.SimpleNode;
+import de.joschal.mdp.core.logic.nodes.SimpleNode;
 import de.joschal.mdp.sim.core.entities.Graph;
 import de.joschal.mdp.sim.outbound.GraphReader;
 import org.junit.Test;
@@ -22,14 +22,14 @@ public class NetFromFileStaticRouting {
         node2.setAddress(new Address(2));
         node3.setAddress(new Address(3));
 
-        node1.addRoute(new Route(node1.getInterfaces().get(0), node2.getAddress()));
-        node1.addRoute(new Route(node1.getInterfaces().get(0), node3.getAddress()));
+        node1.addRoute(new Route(node1.getInterfaces().get(0), node2.getAddress(), 1));
+        node1.addRoute(new Route(node1.getInterfaces().get(0), node3.getAddress(), 1));
 
-        node2.addRoute(new Route(node2.getInterfaces().get(1), node3.getAddress()));
-        node2.addRoute(new Route(node2.getInterfaces().get(0), node1.getAddress()));
+        node2.addRoute(new Route(node2.getInterfaces().get(1), node3.getAddress(), 1));
+        node2.addRoute(new Route(node2.getInterfaces().get(0), node1.getAddress(), 1));
 
-        node3.addRoute(new Route(node2.getInterfaces().get(1), node1.getAddress()));
-        node3.addRoute(new Route(node2.getInterfaces().get(1), node1.getAddress()));
+        node3.addRoute(new Route(node2.getInterfaces().get(1), node1.getAddress(), 1));
+        node3.addRoute(new Route(node2.getInterfaces().get(1), node1.getAddress(), 1));
 
         node1.action("1->3", node3.getAddress());
         System.out.println("-------");

@@ -42,7 +42,7 @@ public class ControlMessageHandler implements INetworkReceiver {
                 return Optional.empty();
             }
         } else {
-            node.addRoute(new Route(networkInterface, helloMessage.getSourceAddress()));
+            node.addRoute(new Route(networkInterface, helloMessage.getSourceAddress(), 1));
         }
         return Optional.empty();
     }
