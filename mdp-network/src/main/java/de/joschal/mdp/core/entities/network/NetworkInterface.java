@@ -7,6 +7,7 @@ import de.joschal.mdp.core.entities.messages.data.AbstractDataMessage;
 import de.joschal.mdp.core.entities.messages.routing.AbstractRoutingMessage;
 import de.joschal.mdp.core.inbound.IDataLinkReceiver;
 import de.joschal.mdp.core.outbound.IDataLinkSender;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import java.util.Optional;
 @Slf4j
 @Getter
 @Setter
+@EqualsAndHashCode
 public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
 
     public NetworkInterface(String name) {
@@ -36,8 +38,9 @@ public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
     @Override
     public List<AbstractMessage> receiveMessage(AbstractMessage message) {
 
+        message.hop(this.node);
+
         this.node.router.updateRoutingTable(this, message);
-        message.hop();
 
         List<AbstractMessage> returnMessages = new LinkedList<>();
 

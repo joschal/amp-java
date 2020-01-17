@@ -1,6 +1,10 @@
 package de.joschal.mdp.core.entities;
 
+import de.joschal.mdp.core.entities.network.AbstractNode;
 import lombok.Getter;
+
+import java.util.LinkedList;
+import java.util.List;
 
 @Getter
 public abstract class AbstractMessage {
@@ -19,8 +23,10 @@ public abstract class AbstractMessage {
 
     private int hopCounter;
 
+    private List<String> tracerouteList = new LinkedList<>();
 
-    public boolean hop() {
+    public boolean hop(AbstractNode node) {
+        tracerouteList.add(node.getId());
         hopCounter++;
         hopLimit--;
         return hopLimit == 0;

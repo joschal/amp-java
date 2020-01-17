@@ -13,6 +13,7 @@ import de.joschal.mdp.core.logic.handler.ControlMessageHandler;
 import de.joschal.mdp.core.logic.handler.DataMessageHandler;
 import de.joschal.mdp.core.logic.handler.RoutingMessageHandler;
 import de.joschal.mdp.core.logic.sender.AddressingMessageSender;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Slf4j
+@Getter
 public abstract class AbstractNode {
 
     public AbstractNode(String id, AbstractRouter router, AddressPool... addressPools) {
@@ -36,7 +38,7 @@ public abstract class AbstractNode {
         this.addressingMessageHandler = new AddressingMessageHandler(this);
         this.controlMessageHandler = new ControlMessageHandler(this);
         this.dataMessageHandler = new DataMessageHandler();
-        this.routingMessageHandler = new RoutingMessageHandler();
+        this.routingMessageHandler = new RoutingMessageHandler(this);
 
         // Message Sender
         this.addressingMessageSender = new AddressingMessageSender(this);

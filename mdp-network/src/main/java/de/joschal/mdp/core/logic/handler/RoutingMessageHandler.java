@@ -1,18 +1,35 @@
 package de.joschal.mdp.core.logic.handler;
 
 import de.joschal.mdp.core.entities.AbstractMessage;
+import de.joschal.mdp.core.entities.messages.routing.RouteDiscovery;
+import de.joschal.mdp.core.entities.messages.routing.RouteReply;
+import de.joschal.mdp.core.entities.network.AbstractNode;
 import de.joschal.mdp.core.entities.network.NetworkInterface;
 import de.joschal.mdp.core.inbound.INetworkReceiver;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Optional;
 
 @Slf4j
+@AllArgsConstructor
 public class RoutingMessageHandler implements INetworkReceiver {
+
+    private AbstractNode node;
 
     @Override
     public Optional<AbstractMessage> handleMessage(AbstractMessage message, NetworkInterface source) {
-        log.error("Not Implemented");
-        return Optional.empty();
+
+        if (message instanceof RouteDiscovery) {
+            return handleRouteDiscovery(message);
+        }
+        throw new RuntimeException("Something went wrong while resolving a control message");
+
+    }
+
+    private Optional<AbstractMessage> handleRouteDiscovery(AbstractMessage message) {
+        RouteDiscovery routeDiscovery = (RouteDiscovery) message;
+        log.info("[{}] received a route discovery message from {}", this.node.getId(), message.getSourceAddress());
+        return Optional.of(new RouteReply(routeDiscovery));
     }
 }

@@ -3,11 +3,13 @@ package de.joschal.mdp.core.entities.network;
 import de.joschal.mdp.core.entities.AbstractMessage;
 import de.joschal.mdp.core.outbound.IDatagramSender;
 import de.joschal.mdp.core.outbound.IMessageSender;
+import lombok.Getter;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+@Getter
 public abstract class AbstractRouter implements IDatagramSender, IMessageSender {
 
     protected AbstractNode node;
@@ -19,6 +21,13 @@ public abstract class AbstractRouter implements IDatagramSender, IMessageSender 
     }
 
     public void addRoute(Route route) {
+
+        // Filter out invalid adresses and the nodes own address
+        if (route.getAddress().getValue() == 0 ||
+                route.getAddress().getValue() == this.node.getAddress().getValue()) {
+            return;
+        }
+
         routingTable.add(route);
     }
 
@@ -27,7 +36,8 @@ public abstract class AbstractRouter implements IDatagramSender, IMessageSender 
     public void updateRoutingTable(NetworkInterface networkInterface, AbstractMessage message) {
 
         // 0 is not a routable address and is therefore not stored
-        if (message.getSourceAddress().getValue() == 0) {
+        if (message.getSourceAddress().getValue() == 0 ||
+                message.getSourceAddress().getValue() == this.node.getAddress().getValue()) {
             return;
         }
 
@@ -43,12 +53,14 @@ public abstract class AbstractRouter implements IDatagramSender, IMessageSender 
             // update the hop distance
             if (message.getHopCounter() < route.getHops()) {
                 route.setHops(message.getHopCounter());
+
+                // if a faster route is found via a different network interface, update it
+                if (!networkInterface.equals(route.getNetworkInterface())) {
+                    route.setNetworkInterface(networkInterface);
+                }
+
             }
 
-            // if a faster route is found via a different network interface, update it
-            if (networkInterface.equals(route.getNetworkInterface())) {
-                route.setNetworkInterface(networkInterface);
-            }
 
             // no route to source node known
             // create one

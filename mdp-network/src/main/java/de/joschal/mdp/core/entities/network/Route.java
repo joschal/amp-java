@@ -2,9 +2,11 @@ package de.joschal.mdp.core.entities.network;
 
 import de.joschal.mdp.core.entities.Address;
 import lombok.Getter;
+import lombok.ToString;
 import org.joda.time.DateTime;
 
 @Getter
+@ToString
 public class Route {
 
     public static final long DEFAULT_TIMEOUT_MS = 60_000; // 60s
@@ -14,6 +16,7 @@ public class Route {
         this.timeoutinMs = timeoutinMs;
         this.networkInterface = networkInterface;
         this.address = address;
+        this.hops = hops;
     }
 
     public Route(NetworkInterface networkInterface, Address address, int hops) {
