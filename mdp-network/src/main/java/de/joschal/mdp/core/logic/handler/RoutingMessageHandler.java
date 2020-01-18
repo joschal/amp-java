@@ -22,14 +22,22 @@ public class RoutingMessageHandler implements INetworkReceiver {
 
         if (message instanceof RouteDiscovery) {
             return handleRouteDiscovery(message);
+        } else if (message instanceof RouteReply) {
+            return handleRouteReply(message);
         }
         throw new RuntimeException("Something went wrong while resolving a control message");
 
     }
 
+    private Optional<AbstractMessage> handleRouteReply(AbstractMessage message) {
+        log.info("Received route reply message: {}", (message));
+        return Optional.empty();
+    }
+
     private Optional<AbstractMessage> handleRouteDiscovery(AbstractMessage message) {
-        RouteDiscovery routeDiscovery = (RouteDiscovery) message;
+
         log.info("[{}] received a route discovery message from {}", this.node.getId(), message.getSourceAddress());
-        return Optional.of(new RouteReply(routeDiscovery));
+        this.node.getRouter().sendMessage(new RouteReply((RouteDiscovery) message));
+        return Optional.empty();
     }
 }

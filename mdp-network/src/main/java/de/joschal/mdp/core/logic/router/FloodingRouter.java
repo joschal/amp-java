@@ -98,31 +98,13 @@ public class FloodingRouter extends AbstractRouter {
      */
     private Optional<Route> routeDiscovery(Address destination) {
 
-        RouteDiscovery routeDiscovery = new RouteDiscovery(this.node.getAddress(), destination, DEFAULT_ROUTE_DISCOVERY_HOP_LIMIT);
+        // sends a RouteDiscovery message via all available network interfaces
+        this.node.getNetworkInterfaces().forEach(networkInterface ->
+                networkInterface.sendMessage(
+                        new RouteDiscovery(this.node.getAddress(), destination, DEFAULT_ROUTE_DISCOVERY_HOP_LIMIT)));
 
-        NetworkInterface bestInterface = null;
-        int bestHops = Integer.MAX_VALUE;
-
-        for (NetworkInterface networkInterface : this.node.getInterfaces()) {
-            List<AbstractMessage> messageList = networkInterface.sendMessage(routeDiscovery);
-
-            for (AbstractMessage message : messageList) {
-                if (message.getHopLimit() < bestHops) {
-                    bestHops = message.getHopLimit();
-                    bestInterface = networkInterface;
-                }
-            }
-
-        }
-
-        if (bestInterface != null) {
-            Route route = new Route(bestInterface, destination, bestHops);
-            this.addRoute(route);
-            return Optional.of(route);
-        }
-
-        return Optional.empty();
-
+        // This checks, if a route to the desired destination could be found
+        return getRoute(destination);
     }
 
     private List<AbstractMessage> floodMessage(AbstractMessage message, NetworkInterface source) {
