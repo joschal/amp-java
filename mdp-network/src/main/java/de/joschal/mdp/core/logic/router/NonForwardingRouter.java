@@ -25,7 +25,7 @@ public class NonForwardingRouter extends AbstractRouter {
     public List<AbstractMessage> sendDatagram(String message, Address destination) {
         AbstractMessage datagram = new Datagram(this.node.getAddress(), destination, 5, message);
         log.info("[{}] Will send datagram to Network: {}", this.node.getId(), datagram);
-        return node.getInterfaces().iterator().next().sendMessage(datagram);
+        return node.getNetworkInterfaces().iterator().next().sendMessage(datagram);
     }
 
     @Override

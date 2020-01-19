@@ -69,54 +69,29 @@ public abstract class AbstractNode {
         this.router.routingTable.add(route);
     }
 
-
-    public List<NetworkInterface> getInterfaces() {
-        return networkInterfaces;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    @Deprecated // Should not be used, since address should be acquired automatically
     public void setAddress(Address address) {
         this.address = address;
     }
 
-    // Must be overridden by runtime class
-    public boolean acquireAddress() {
-        log.error("Address acquisition not Implemented");
-        return false;
-    }
-
-    public AddressManager getAddressManager() {
-        return addressManager;
-    }
-
     public void bootSequence() {
 
-        // Get address from
-        Address selfAssigned = this.addressManager.assignAddressToSelf();
+        // if there is an addressPool available, use an address from this pool
+        if (addressManager.isAPoolAvailable()) {
+            this.addressManager.assignAddressToSelf();
 
-        if (selfAssigned == null) {
+            // if there is no pool available, request some from adjacent nodes
+        } else {
 
             List<PoolAdvertisement> advertisements = requestPoolAdvertisements();
+            List<AddressPool> assignedPools = getBestAddressPools(advertisements);
 
-            AddressPool assignedPool = getBestAddressPool(advertisements);
-
-            if (assignedPool != null) {
-                this.addressManager.addAddressPool(assignedPool);
-                this.setAddress(this.addressManager.assignAddressToSelf());
+            if (assignedPools != null) {
+                this.addressManager.addAddressPools(assignedPools);
+                this.addressManager.assignAddressToSelf();
                 return;
             }
-            log.error("Could not assign address");
-            return;
+            throw new RuntimeException("Could not assign address pools");
         }
-        this.setAddress(selfAssigned);
     }
 
     /**
@@ -135,7 +110,7 @@ public abstract class AbstractNode {
                 advertisements.add((PoolAdvertisement) message);
                 Route route = new Route(networkInterface, message.getSourceAddress(), 1);
                 this.router.addRoute(route);
-                log.info("Received address pool advertisement: {}");
+                log.info("Received address pool advertisement: {}", responses);
             }
 
         }
@@ -148,7 +123,7 @@ public abstract class AbstractNode {
      * @param advertisements List of all received PoolAdvertisement messages
      * @return Largest available AddressPool
      */
-    private AddressPool getBestAddressPool(List<PoolAdvertisement> advertisements) {
+    private List<AddressPool> getBestAddressPools(List<PoolAdvertisement> advertisements) {
         for (PoolAdvertisement advertisement : advertisements) {
             PoolAccepted accepted = new PoolAccepted(advertisement);
             List<AbstractMessage> responses = this.router.sendMessage(accepted);
@@ -156,7 +131,7 @@ public abstract class AbstractNode {
             for (AbstractMessage response : responses) {
                 PoolAssigned assigned = (PoolAssigned) response;
                 if (assigned.isAssigned()) {
-                    return assigned.getAddressPool();
+                    return assigned.getAddressPools();
                 }
             }
         }

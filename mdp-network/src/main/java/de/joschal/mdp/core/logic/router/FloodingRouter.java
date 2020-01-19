@@ -110,7 +110,7 @@ public class FloodingRouter extends AbstractRouter {
     private List<AbstractMessage> floodMessage(AbstractMessage message, NetworkInterface source) {
         List<AbstractMessage> messages = new LinkedList<>();
 
-        this.node.getInterfaces()
+        this.node.getNetworkInterfaces()
                 .stream()
                 // Do not send the message to it's source
                 .filter(networkInterface -> !networkInterface.equals(source))

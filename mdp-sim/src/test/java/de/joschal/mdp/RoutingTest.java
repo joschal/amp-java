@@ -9,6 +9,9 @@ import de.joschal.mdp.sim.outbound.GraphReader;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 
 public class RoutingTest {
@@ -31,9 +34,9 @@ public class RoutingTest {
         SimpleNode node4 = (SimpleNode) graph.getNodebyId("4");
         SimpleNode node5 = (SimpleNode) graph.getNodebyId("5");
 
-        node1.getAddressManager().addAddressPool(new AddressPool(
-                new Address(1),
-                new Address(32)));
+        List<AddressPool> pools = new LinkedList<>();
+        pools.add(new AddressPool(new Address(1), new Address(32)));
+        node1.getAddressManager().addAddressPools(pools);
 
         node1.bootSequence();
         node3.bootSequence();
@@ -54,9 +57,9 @@ public class RoutingTest {
         SimpleNode node4 = (SimpleNode) graph.getNodebyId("4");
         SimpleNode node5 = (SimpleNode) graph.getNodebyId("5");
 
-        node1.getAddressManager().addAddressPool(new AddressPool(
-                new Address(1),
-                new Address(32)));
+        List<AddressPool> pools = new LinkedList<>();
+        pools.add(new AddressPool(new Address(1), new Address(32)));
+        node1.getAddressManager().addAddressPools(pools);
 
         node1.bootSequence();
         node2.bootSequence();

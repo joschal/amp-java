@@ -9,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 
 @Slf4j
@@ -29,9 +32,9 @@ public class BootTest {
         SimpleNode node3 = (SimpleNode) graph.getNodebyId("3");
         SimpleNode node4 = (SimpleNode) graph.getNodebyId("4");
 
-        node1.getAddressManager().addAddressPool(new AddressPool(
-                new Address(1),
-                new Address(16)));
+        List<AddressPool> pools = new LinkedList<>();
+        pools.add(new AddressPool(new Address(1), new Address(16)));
+        node1.getAddressManager().addAddressPools(pools);
 
         node1.bootSequence();
         node2.bootSequence();

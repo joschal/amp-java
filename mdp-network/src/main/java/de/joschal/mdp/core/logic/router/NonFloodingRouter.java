@@ -38,7 +38,7 @@ public class NonFloodingRouter extends AbstractRouter {
 
     @Override
     public List<AbstractMessage> sendDatagram(String message, Address destination) {
-        return sendDatagram(message, destination, this.node.getInterfaces().get(0));
+        return sendDatagram(message, destination, this.node.getNetworkInterfaces().get(0));
     }
 
     @Override

@@ -26,6 +26,9 @@ public class AddressManager {
     // Range of assigned addresses
     Map<NetworkInterface, AddressPool> assignedRanges = new HashMap<>();
 
+    /**
+     * @return Address, which was selected and is now assigned to
+     */
     public Address assignAddressToSelf() {
 
         // Node has an assigned address already
@@ -44,7 +47,8 @@ public class AddressManager {
             unassignedRanges.add(newPool);
             unassignedRanges.sort(Comparator.reverseOrder());
 
-            return pool.getLowest();
+            this.node.setAddress(pool.getLowest());
+            return this.node.getAddress();
         } else {
             throw new RuntimeException("Node already has an assigned address");
         }
@@ -85,7 +89,10 @@ public class AddressManager {
         defragment();
     }
 
-    // defragment ranges. This could probably be optimized
+    /**
+     * Checks if adjacent address pools can be merged and does so if possible.
+     * This could probably be optimized to reduce runtime complexity.
+     */
     private void defragment() {
 
         unassignedRanges.sort(Comparator.reverseOrder());
@@ -109,16 +116,33 @@ public class AddressManager {
         }
     }
 
-    public void addAddressPool(AddressPool... addressPools) {
-        unassignedRanges.addAll(Arrays.asList(addressPools));
+    /**
+     * Add Pools to
+     *
+     * @param addressPools Available pools for future assignment
+     */
+    public void addAddressPools(List<AddressPool> addressPools) {
+        unassignedRanges.addAll(addressPools);
         unassignedRanges.sort(Comparator.reverseOrder());
     }
 
-    public boolean isPoolAvailable() {
+    /**
+     * Checks if there is any pool available for assignment
+     */
+    public boolean isAPoolAvailable() {
         return !unassignedRanges.isEmpty();
     }
 
-    public boolean isPoolAvailable(AddressPool pool) {
-        return !unassignedRanges.contains(pool);
+    /**
+     * Checks if all pools are available for assignment
+     */
+    public boolean arePoolsAvailable(List<AddressPool> pools) {
+
+        for (AddressPool pool : pools) {
+            if (!unassignedRanges.contains(pool)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
