@@ -5,7 +5,7 @@ import de.joschal.mdp.core.entities.network.Route;
 import de.joschal.mdp.core.logic.nodes.SimpleNode;
 import de.joschal.mdp.sim.core.entities.Graph;
 import de.joschal.mdp.sim.outbound.GraphReader;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class NetFromFileStaticRouting {
 

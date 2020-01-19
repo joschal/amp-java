@@ -29,16 +29,7 @@ public class AddressingMessageHandler implements INetworkReceiver {
     }
 
     private Optional<AbstractMessage> handlePoolAccepted(AbstractMessage message) {
-
         PoolAccepted accepted = (PoolAccepted) message;
-        PoolAssigned response;
-        if (this.node.getAddressManager().arePoolsAvailable(accepted.getAddressPools())) {
-            response = new PoolAssigned(accepted, true);
-        } else {
-            log.error("Pool is not available anymore and could therefore not be assigned to requesting node");
-            response = new PoolAssigned(accepted, false);
-        }
-
-        return Optional.of(response);
+        return Optional.of(new PoolAssigned(accepted, true));
     }
 }

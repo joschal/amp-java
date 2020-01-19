@@ -2,7 +2,6 @@ package de.joschal.mdp.sim.outbound;
 
 import de.joschal.mdp.sim.core.entities.Graph;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -18,12 +17,11 @@ public class GraphWriterTest {
     }
 
     @Test
-    @Ignore
     public void graphToGraphic() throws IOException {
 
         Graph graph = new GraphReader().readGraph(getClass().getResource("/testGraph.dot").getFile());
 
-        new GraphWriter().graphToGraphic(graph, tempDir + "/graph.png");
+       // new GraphWriter().graphToGraphic(graph, tempDir + "/graph.png");
 
     }
 

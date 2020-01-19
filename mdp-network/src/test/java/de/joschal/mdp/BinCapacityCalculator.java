@@ -1,4 +1,6 @@
-import org.junit.Test;
+package de.joschal.mdp;
+
+import org.junit.jupiter.api.Test;
 
 public class BinCapacityCalculator {
 

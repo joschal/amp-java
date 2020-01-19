@@ -6,8 +6,8 @@ import de.joschal.mdp.core.entities.network.AbstractNode;
 import de.joschal.mdp.core.logic.nodes.SimpleNode;
 import de.joschal.mdp.sim.core.entities.Graph;
 import de.joschal.mdp.sim.outbound.GraphReader;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -19,8 +19,8 @@ public class RoutingTest {
 
     Graph graph;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         graph = null;
         graph = new GraphReader().readGraph(getClass().getResource("/testGraph.dot").getFile());
     }
@@ -35,7 +35,7 @@ public class RoutingTest {
         SimpleNode node5 = (SimpleNode) graph.getNodebyId("5");
 
         List<AddressPool> pools = new LinkedList<>();
-        pools.add(new AddressPool(new Address(1), new Address(32)));
+        pools.add(new AddressPool(new Address(1), new Address(64)));
         node1.getAddressManager().addAddressPools(pools);
 
         node1.bootSequence();
@@ -58,7 +58,7 @@ public class RoutingTest {
         SimpleNode node5 = (SimpleNode) graph.getNodebyId("5");
 
         List<AddressPool> pools = new LinkedList<>();
-        pools.add(new AddressPool(new Address(1), new Address(32)));
+        pools.add(new AddressPool(new Address(1), new Address(64)));
         node1.getAddressManager().addAddressPools(pools);
 
         node1.bootSequence();

@@ -3,7 +3,7 @@ package de.joschal.mdp.core.logic;
 import de.joschal.mdp.core.entities.Address;
 import de.joschal.mdp.core.entities.AddressPool;
 import de.joschal.mdp.core.entities.network.NetworkInterface;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 

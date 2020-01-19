@@ -86,12 +86,12 @@ public class AddressManager {
         List<AddressPool> pools = new ArrayList<>(2);
 
         AddressPool poolWithDesiredSize = new AddressPool(
-                new Address(pool.getLowest().getValue()),
-                new Address(pool.getLowest().getValue() + (desiredSize - 1)));
+                new Address(pool.getHighest().getValue() - (desiredSize - 1)),
+                new Address(pool.getHighest().getValue()));
 
         AddressPool poolWithRemainingSize = new AddressPool(
-                new Address(poolWithDesiredSize.getHighest().getValue() + 1),
-                new Address(pool.getHighest().getValue()));
+                new Address(pool.getLowest().getValue()), // 3
+                new Address(poolWithDesiredSize.getLowest().getValue() - 1)); // 4
 
         pools.add(0, poolWithDesiredSize);
         pools.add(1, poolWithRemainingSize);
@@ -178,18 +178,5 @@ public class AddressManager {
      */
     public boolean isAPoolAvailable() {
         return !unassignedRanges.isEmpty();
-    }
-
-    /**
-     * Checks if all pools are available for assignment
-     */
-    public boolean arePoolsAvailable(List<AddressPool> pools) {
-
-        for (AddressPool pool : pools) {
-            if (!unassignedRanges.contains(pool)) {
-                return false;
-            }
-        }
-        return true;
     }
 }

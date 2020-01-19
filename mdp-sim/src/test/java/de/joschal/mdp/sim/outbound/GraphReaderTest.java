@@ -1,7 +1,7 @@
 package de.joschal.mdp.sim.outbound;
 
 import de.joschal.mdp.sim.core.entities.Graph;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -18,11 +18,13 @@ public class GraphReaderTest {
 
         Graph graph = graphReader.readGraph(getClass().getResource("/testGraph.dot").getFile());
 
-        assertEquals(3, graph.getEdges().size());
-        assertEquals(3, graph.getNodes().size());
+        assertEquals(5, graph.getEdges().size());
+        assertEquals(5, graph.getNodes().size());
 
         assertNotNull(graph.getNodebyId("1"));
         assertNotNull(graph.getNodebyId("2"));
         assertNotNull(graph.getNodebyId("3"));
+        assertNotNull(graph.getNodebyId("4"));
+        assertNotNull(graph.getNodebyId("5"));
     }
 }

@@ -1,6 +1,6 @@
 package de.joschal.mdp.simulaiton;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class StaticNetStaticRouting {
 

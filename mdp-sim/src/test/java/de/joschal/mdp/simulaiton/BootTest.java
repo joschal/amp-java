@@ -33,7 +33,7 @@ public class BootTest {
         SimpleNode node4 = (SimpleNode) graph.getNodebyId("4");
 
         List<AddressPool> pools = new LinkedList<>();
-        pools.add(new AddressPool(new Address(1), new Address(16)));
+        pools.add(new AddressPool(new Address(1), new Address(32)));
         node1.getAddressManager().addAddressPools(pools);
 
         node1.bootSequence();
@@ -42,8 +42,8 @@ public class BootTest {
         node4.bootSequence();
 
         assertEquals(1, node1.getAddress().getValue());
-        assertEquals(9, node2.getAddress().getValue());
-        assertEquals(13, node3.getAddress().getValue());
+        assertEquals(18, node2.getAddress().getValue());
+        assertEquals(10, node3.getAddress().getValue());
         assertEquals(15, node4.getAddress().getValue());
 
     }

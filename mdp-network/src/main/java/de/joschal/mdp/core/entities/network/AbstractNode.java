@@ -139,4 +139,26 @@ public abstract class AbstractNode {
         return null;
     }
 
+    public List<AbstractNode> getNeighbours() {
+
+        List<AbstractNode> neighbors = new ArrayList<>();
+
+        for (NetworkInterface networkInterface : this.networkInterfaces) {
+
+            AbstractNode A = networkInterface.getDataLink().getA().getNode();
+            AbstractNode B = networkInterface.getDataLink().getB().getNode();
+
+            if (A.equals(this)) {
+                neighbors.add(B);
+            } else if (B.equals(this)) {
+                neighbors.add(A);
+            } else {
+                throw new RuntimeException("Something went horribly wrong");
+            }
+        }
+
+        return neighbors;
+
+    }
+
 }
