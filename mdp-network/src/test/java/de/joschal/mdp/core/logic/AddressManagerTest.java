@@ -5,6 +5,8 @@ import de.joschal.mdp.core.entities.AddressPool;
 import de.joschal.mdp.core.entities.network.NetworkInterface;
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 
 public class AddressManagerTest {
@@ -18,20 +20,20 @@ public class AddressManagerTest {
 
         AddressManager addressManager = new AddressManager(null, range);
 
-        assertEquals(4, addressManager.unassignedRanges.get(0).getSize());
+        assertEquals(4, addressManager.getUnassignedRanges().get(0).getSize());
 
         // Act
-        AddressPool assigned = addressManager.assignAddressPool(networkInterface);
+        List<AddressPool> assigned = addressManager.getAssignableAddressPools(networkInterface);
 
-        assertEquals(range.getSize() / 2, assigned.getSize());
+        assertEquals(range.getSize() / 2, assigned.stream().mapToInt(AddressPool::getSize).sum());
 
         addressManager.revokeAddressPool(networkInterface);
 
         // Assert
-        assertEquals(0, addressManager.assignedRanges.size());
-        assertEquals(1, addressManager.unassignedRanges.size());
+        assertEquals(0, addressManager.getAssignedRanges().size());
+        assertEquals(1, addressManager.getUnassignedRanges().size());
 
-        assertEquals(4, addressManager.unassignedRanges.get(0).getSize());
+        assertEquals(4, addressManager.getUnassignedRanges().get(0).getSize());
 
     }
 
@@ -44,20 +46,20 @@ public class AddressManagerTest {
 
         AddressManager addressManager = new AddressManager(null, range);
 
-        assertEquals(5, addressManager.unassignedRanges.get(0).getSize());
+        assertEquals(5, addressManager.getUnassignedRanges().get(0).getSize());
 
         // Act
-        AddressPool assigned = addressManager.assignAddressPool(networkInterface);
+        List<AddressPool> assigned = addressManager.getAssignableAddressPools(networkInterface);
 
-        assertEquals((range.getSize() / 2) +1, assigned.getSize());
+        assertEquals(range.getSize() / 2, assigned.stream().mapToInt(AddressPool::getSize).sum());
 
         addressManager.revokeAddressPool(networkInterface);
 
         // Assert
-        assertEquals(0, addressManager.assignedRanges.size());
-        assertEquals(1, addressManager.unassignedRanges.size());
+        assertEquals(0, addressManager.getAssignedRanges().size());
+        assertEquals(1, addressManager.getUnassignedRanges().size());
 
-        assertEquals(5, addressManager.unassignedRanges.get(0).getSize());
+        assertEquals(5, addressManager.getUnassignedRanges().get(0).getSize());
 
     }
 
@@ -71,19 +73,55 @@ public class AddressManagerTest {
 
         AddressManager addressManager = new AddressManager(null, originAddressPool);
 
-        AddressPool addressPool1 = addressManager.assignAddressPool(networkInterface1);
-        AddressPool addressPool2 = addressManager.assignAddressPool(networkInterface2);
+        List<AddressPool> addressPool1 = addressManager.getAssignableAddressPools(networkInterface1);
+        List<AddressPool> addressPool2 = addressManager.getAssignableAddressPools(networkInterface2);
 
-        assertEquals(2, addressPool1.getSize());
-        assertEquals(1, addressPool2.getSize());
+        assertEquals(2, addressPool1.stream().mapToInt(AddressPool::getSize).sum());
+        assertEquals(1, addressPool2.stream().mapToInt(AddressPool::getSize).sum());
 
         addressManager.revokeAddressPool(networkInterface1);
-        assertEquals(2, addressManager.unassignedRanges.size());
-        assertEquals(2, addressManager.unassignedRanges.get(0).getSize());
-        assertEquals(1, addressManager.unassignedRanges.get(1).getSize());
+        assertEquals(2, addressManager.getUnassignedRanges().size());
+        assertEquals(1, addressManager.getUnassignedRanges().get(0).getSize());
+        assertEquals(2, addressManager.getUnassignedRanges().get(1).getSize());
 
         addressManager.revokeAddressPool(networkInterface2);
-        assertEquals(1, addressManager.unassignedRanges.size());
-        assertEquals(4, addressManager.unassignedRanges.get(0).getSize());
+        assertEquals(1, addressManager.getUnassignedRanges().size());
+        assertEquals(4, addressManager.getUnassignedRanges().get(0).getSize());
+    }
+
+    @Test
+    public void poolSplitTestOdd() {
+
+        AddressPool addressPool = new AddressPool(
+                new Address(4),
+                new Address(10));
+
+        List<AddressPool> addressPoolsEven = AddressManager.splitAddressPool(addressPool, 4);
+
+        assertEquals(4, addressPoolsEven.get(0).getSize());
+        assertEquals(3, addressPoolsEven.get(1).getSize());
+
+        List<AddressPool> addressPoolsOdd = AddressManager.splitAddressPool(addressPool, 3);
+
+        assertEquals(3, addressPoolsOdd.get(0).getSize());
+        assertEquals(4, addressPoolsOdd.get(1).getSize());
+    }
+
+    @Test
+    public void poolSplitTestEven() {
+
+        AddressPool addressPool = new AddressPool(
+                new Address(3),
+                new Address(10));
+
+        List<AddressPool> addressPoolsEven = AddressManager.splitAddressPool(addressPool, 4);
+
+        assertEquals(4, addressPoolsEven.get(0).getSize());
+        assertEquals(4, addressPoolsEven.get(1).getSize());
+
+        List<AddressPool> addressPoolsOdd = AddressManager.splitAddressPool(addressPool, 3);
+
+        assertEquals(3, addressPoolsOdd.get(0).getSize());
+        assertEquals(5, addressPoolsOdd.get(1).getSize());
     }
 }

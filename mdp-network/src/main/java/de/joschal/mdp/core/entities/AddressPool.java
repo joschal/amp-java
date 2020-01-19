@@ -10,7 +10,7 @@ public class AddressPool implements Comparable<AddressPool> {
     public AddressPool(Address lowest, Address highest) {
 
         // Check if range is valid
-        if (lowest.getValue() == 0){
+        if (lowest.getValue() == 0) {
             throw new RuntimeException("Invalid Address range " + lowest + " -> " + highest + ". 0 is a reserved address");
         }
         if (highest.getValue() >= lowest.getValue()) {
@@ -27,20 +27,18 @@ public class AddressPool implements Comparable<AddressPool> {
     private Address lowest;
     private int size;
 
+    /**
+     * Checks, which pool has the highest address
+     *
+     * @param addressPool Pool to compare to
+     */
     @Override
     public int compareTo(AddressPool addressPool) {
 
-        if (this.size > addressPool.size) {
+        if (this.highest.getValue() > addressPool.highest.getValue()) {
             return 1;
-        } else if (this.size < addressPool.size) {
+        } else if (this.highest.getValue() < addressPool.highest.getValue()) {
             return -1;
-        } else if (this.size == addressPool.size) {
-
-            if (this.getHighest().getValue() > addressPool.getHighest().getValue()){
-                return 1;
-            } else {
-                return -1;
-            }
         }
 
         throw new RuntimeException("Something went wrong");

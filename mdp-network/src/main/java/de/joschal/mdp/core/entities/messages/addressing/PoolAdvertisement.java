@@ -5,7 +5,6 @@ import de.joschal.mdp.core.entities.AddressPool;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,9 +17,9 @@ public class PoolAdvertisement extends AbstractAddressingMessage implements Comp
 
     private int totalSize = 0;
 
-    public PoolAdvertisement(Address sourceAddress, AddressPool... addressPools) {
+    public PoolAdvertisement(Address sourceAddress, List<AddressPool> pools) {
         super(sourceAddress, new Address(0), 1);
-        this.addressPools.addAll(Arrays.asList(addressPools));
+        this.addressPools.addAll(pools);
         this.addressPools.sort(Comparator.reverseOrder());
 
         for (AddressPool addressPool : addressPools) {

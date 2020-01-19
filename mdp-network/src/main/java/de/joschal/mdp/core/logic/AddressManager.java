@@ -4,27 +4,100 @@ import de.joschal.mdp.core.entities.Address;
 import de.joschal.mdp.core.entities.AddressPool;
 import de.joschal.mdp.core.entities.network.AbstractNode;
 import de.joschal.mdp.core.entities.network.NetworkInterface;
+import lombok.Getter;
 
 import java.util.*;
 
+@Getter
 public class AddressManager {
 
     // Supports multiple disjointed address ranges
     public AddressManager(AbstractNode node, AddressPool... ranges) {
         this.node = node;
 
-        unassignedRanges.addAll(Arrays.asList(ranges));
-        unassignedRanges.sort(Comparator.reverseOrder());
+        this.unassignedRanges.addAll(Arrays.asList(ranges));
+        this.unassignedRanges.sort(Comparator.reverseOrder());
     }
 
     // Referece to node, used to assign address
-    AbstractNode node;
+    private AbstractNode node;
 
     // Range of available addresses
-    List<AddressPool> unassignedRanges = new ArrayList<>();
+    private List<AddressPool> unassignedRanges = new ArrayList<>();
 
     // Range of assigned addresses
-    Map<NetworkInterface, AddressPool> assignedRanges = new HashMap<>();
+    private Map<NetworkInterface, AddressPool> assignedRanges = new HashMap<>();
+
+    public List<AddressPool> getAssignableAddressPools(NetworkInterface networkInterface) {
+
+        // Sort ranges, to make sure the pool with the highest address comes first
+        this.unassignedRanges.sort(Comparator.reverseOrder());
+
+        // Calculate how much address space is available for assignment
+        int totalRemainingAddressSpace = unassignedRanges.stream().mapToInt(AddressPool::getSize).sum();
+        // This much space should be assigned (value is rounded down to the nearest integer)
+        final int desiredAssignableAddressSpace = totalRemainingAddressSpace / 2; // this is the value proposed by ZAL
+        int addressSpaceStillNeeded = desiredAssignableAddressSpace;
+
+        // List of pools to be assigned -> return value
+        List<AddressPool> assignablePools = new LinkedList<>();
+
+
+        for (AddressPool pool : unassignedRanges) {
+
+            // Pool is no longer assignable
+            unassignedRanges.remove(pool);
+
+            // Pool size is not enough to fill the desired space
+            if (pool.getSize() < addressSpaceStillNeeded) {
+
+                assignablePools.add(pool);
+                addressSpaceStillNeeded -= pool.getSize();
+
+                assignedRanges.put(networkInterface, pool);
+
+
+            } else if (pool.getSize() > addressSpaceStillNeeded) {
+
+                List<AddressPool> splitPools = splitAddressPool(pool, addressSpaceStillNeeded);
+
+                assignablePools.add(splitPools.get(0));
+                assignedRanges.put(networkInterface, splitPools.get(0));
+
+                unassignedRanges.add(splitPools.get(1));
+
+                return assignablePools;
+
+            } else if (pool.getSize() == addressSpaceStillNeeded) {
+                assignablePools.add(pool);
+                assignedRanges.put(networkInterface, pool);
+                return assignablePools;
+            }
+
+        }
+
+
+        return assignablePools;
+
+    }
+
+    public static List<AddressPool> splitAddressPool(AddressPool pool, int desiredSize) {
+
+        List<AddressPool> pools = new ArrayList<>(2);
+
+        AddressPool poolWithDesiredSize = new AddressPool(
+                new Address(pool.getLowest().getValue()),
+                new Address(pool.getLowest().getValue() + (desiredSize - 1)));
+
+        AddressPool poolWithRemainingSize = new AddressPool(
+                new Address(poolWithDesiredSize.getHighest().getValue() + 1),
+                new Address(pool.getHighest().getValue()));
+
+        pools.add(0, poolWithDesiredSize);
+        pools.add(1, poolWithRemainingSize);
+
+        return pools;
+    }
 
     /**
      * @return Address, which was selected and is now assigned to
@@ -53,32 +126,6 @@ public class AddressManager {
             throw new RuntimeException("Node already has an assigned address");
         }
 
-    }
-
-    // Select the largest available address range, and set it's state to "assigned"
-    // Future work: combine address ranges to counter fragmentation
-    // TODO handle edge cases for small ranges
-    public AddressPool assignAddressPool(NetworkInterface networkInterface) {
-
-        AddressPool largestRange = unassignedRanges.remove(0);
-
-        // Halfway point needs to be offset by the start addresses value
-        int halfwayPoint = (largestRange.getSize() / 2) + (largestRange.getLowest().getValue() - 1);
-
-
-        AddressPool unAssigned = new AddressPool(
-                new Address(largestRange.getLowest().getValue()),
-                new Address(halfwayPoint));
-
-        AddressPool assigned = new AddressPool(
-                new Address(halfwayPoint + 1),
-                new Address(largestRange.getHighest().getValue()));
-
-        unassignedRanges.add(unAssigned);
-        unassignedRanges.sort(Comparator.reverseOrder());
-
-        assignedRanges.put(networkInterface, assigned);
-        return assigned;
     }
 
     public void revokeAddressPool(NetworkInterface networkInterface) {
@@ -117,7 +164,7 @@ public class AddressManager {
     }
 
     /**
-     * Add Pools to
+     * Add Pools to list of available pools
      *
      * @param addressPools Available pools for future assignment
      */
