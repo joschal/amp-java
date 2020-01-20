@@ -2,6 +2,7 @@ package de.joschal.mdp.core.logic.router;
 
 import de.joschal.mdp.core.entities.AbstractMessage;
 import de.joschal.mdp.core.entities.Address;
+import de.joschal.mdp.core.entities.messages.Forwardable;
 import de.joschal.mdp.core.entities.messages.data.Datagram;
 import de.joschal.mdp.core.entities.network.AbstractRouter;
 import de.joschal.mdp.core.entities.network.NetworkInterface;
@@ -25,7 +26,10 @@ public class NonFloodingRouter extends AbstractRouter {
     }
 
     @Override
-    protected List<AbstractMessage> forwardMessage(AbstractMessage message, NetworkInterface source) {
+    protected List<AbstractMessage> forwardMessage(Forwardable forwardable, NetworkInterface source) {
+
+        AbstractMessage message = (AbstractMessage) forwardable;
+
         log.info("[{}] Will try to forward message: {}", this.node.getAddress(), message);
         NetworkInterface networkInterface = getRoute(message.getDestinationAddress());
 

@@ -1,6 +1,7 @@
 package de.joschal.mdp.core.entities.network;
 
 import de.joschal.mdp.core.entities.AbstractMessage;
+import de.joschal.mdp.core.entities.messages.Forwardable;
 import de.joschal.mdp.core.entities.messages.addressing.AbstractAddressingMessage;
 import de.joschal.mdp.core.entities.messages.control.AbstractControlMessage;
 import de.joschal.mdp.core.entities.messages.data.AbstractDataMessage;
@@ -38,23 +39,26 @@ public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
     @Override
     public List<AbstractMessage> receiveMessage(AbstractMessage message) {
 
-        message.hop(this.node);
-
-        this.node.router.updateRoutingTable(this, message);
-
         List<AbstractMessage> returnMessages = new LinkedList<>();
+
+        // if the message looped, immediately drop it
+        if (message.getSourceAddress().equals(this.node.getAddress())) {
+            return returnMessages;
+        }
+
+        message.hop(this.node);
+        this.node.router.updateRoutingTable(this, message);
 
         if (message.getDestinationAddress().equals(this.node.getAddress()) ||
                 message.getDestinationAddress().getValue() == 0) {
 
-            log.debug("[{}] Received a message to handle locally {}", this.node.getId(), message);
+            log.trace("[{}] Received a message to handle locally {}", this.node.getId(), message);
             handleMessageLocally(message).ifPresent(returnMessages::add);
 
-        } else if (message instanceof AbstractDataMessage ||
-                message instanceof AbstractRoutingMessage) {
+        } else if (message instanceof Forwardable) {
 
-            log.debug("[{}] Received a message to forward {}", this.node.getId(), message);
-            returnMessages.addAll(this.node.router.forwardMessage(message, this));
+            log.trace("[{}] Received a message to forward {}", this.node.getId(), message);
+            returnMessages.addAll(this.node.router.forwardMessage((Forwardable) message, this));
 
         } else {
             log.error("[{}] Received an unknown message {}", this.node.getId(), message);

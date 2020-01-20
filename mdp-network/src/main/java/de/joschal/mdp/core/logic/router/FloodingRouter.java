@@ -2,6 +2,7 @@ package de.joschal.mdp.core.logic.router;
 
 import de.joschal.mdp.core.entities.AbstractMessage;
 import de.joschal.mdp.core.entities.Address;
+import de.joschal.mdp.core.entities.messages.Forwardable;
 import de.joschal.mdp.core.entities.messages.data.Datagram;
 import de.joschal.mdp.core.entities.messages.routing.RouteDiscovery;
 import de.joschal.mdp.core.entities.network.AbstractRouter;
@@ -22,29 +23,29 @@ public class FloodingRouter extends AbstractRouter {
     }
 
     @Override
-    protected List<AbstractMessage> forwardMessage(AbstractMessage message, NetworkInterface source) {
+    protected List<AbstractMessage> forwardMessage(Forwardable message, NetworkInterface source) {
 
         List<AbstractMessage> messages = new LinkedList<>();
 
         // Drop message if hop limit is reached
-        if (message.getHopCounter() >= message.getHopLimit()) {
+        if (((AbstractMessage) message).getHopCounter() >= ((AbstractMessage) message).getHopLimit()) {
             return messages;
         }
 
         // Drop message, if it came around in a loop
-        if (message.getSourceAddress().getValue() == this.node.getAddress().getValue()) {
+        if (((AbstractMessage) message).getSourceAddress().getValue() == this.node.getAddress().getValue()) {
             return messages;
         }
 
-        getRoute(message).ifPresentOrElse(
+        getRoute((AbstractMessage) message).ifPresentOrElse(
                 // Route is found
                 route -> messages.addAll(
                         route.getNetworkInterface()
-                                .sendMessage(message)),
+                                .sendMessage(message.cloneMessage())),
 
                 // No route found -> Flooding
                 () -> messages.addAll(
-                        floodMessage(message, source))
+                        floodMessage(message.cloneMessage(), source))
         );
 
         return messages;
@@ -96,7 +97,7 @@ public class FloodingRouter extends AbstractRouter {
      * @param destination Address of the node, which is to be discovered
      * @return Optional of a route. The contained route, is the best route, regarding to the hop count
      */
-    private Optional<Route> routeDiscovery(Address destination) {
+    public Optional<Route> routeDiscovery(Address destination) {
 
         // sends a RouteDiscovery message via all available network interfaces
         this.node.getNetworkInterfaces().forEach(networkInterface ->

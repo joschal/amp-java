@@ -1,6 +1,7 @@
 package de.joschal.mdp.core.entities.network;
 
 import de.joschal.mdp.core.entities.AbstractMessage;
+import de.joschal.mdp.core.entities.messages.Forwardable;
 import de.joschal.mdp.core.outbound.IDatagramSender;
 import de.joschal.mdp.core.outbound.IMessageSender;
 import lombok.Getter;
@@ -31,7 +32,7 @@ public abstract class AbstractRouter implements IDatagramSender, IMessageSender 
         routingTable.add(route);
     }
 
-    protected abstract List<AbstractMessage> forwardMessage(AbstractMessage message, NetworkInterface source);
+    protected abstract List<AbstractMessage> forwardMessage(Forwardable message, NetworkInterface source);
 
     public void updateRoutingTable(NetworkInterface networkInterface, AbstractMessage message) {
 
@@ -48,10 +49,10 @@ public abstract class AbstractRouter implements IDatagramSender, IMessageSender 
         // a route to the source node is already known
         if (optional.isPresent()) {
             Route route = optional.get();
-            route.refresh(); // update creation date to now
 
             // update the hop distance
             if (message.getHopCounter() < route.getHops()) {
+                route.refresh(); // update creation date to now
                 route.setHops(message.getHopCounter());
 
                 // if a faster route is found via a different network interface, update it

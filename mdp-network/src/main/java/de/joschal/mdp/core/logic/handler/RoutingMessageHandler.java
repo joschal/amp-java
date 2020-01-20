@@ -36,7 +36,7 @@ public class RoutingMessageHandler implements INetworkReceiver {
 
     private Optional<AbstractMessage> handleRouteDiscovery(AbstractMessage message) {
 
-        log.info("[{}] received a route discovery message from {}", this.node.getId(), message.getSourceAddress());
+        log.info("[{}] received a route discovery message {}", this.node.getId(), message);
         this.node.getRouter().sendMessage(new RouteReply((RouteDiscovery) message));
         return Optional.empty();
     }

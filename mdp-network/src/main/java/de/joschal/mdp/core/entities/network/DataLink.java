@@ -27,10 +27,10 @@ public class DataLink {
     List<AbstractMessage> exchange(AbstractMessage message, NetworkInterface sender) {
 
         if (sender == A) {
-            log.debug("{} --> {}", A.getName(), B.getName());
+            log.trace("{} --> {}", A.getName(), B.getName());
             return B.receiveMessage(message);
         } else if (sender == B) {
-            log.debug("{} --> {}", B.getName(), A.getName());
+            log.trace("{} --> {}", B.getName(), A.getName());
             return A.receiveMessage(message);
         } else {
             log.error("Something went horribly wrong in the data link layer! Sender: {} Message: {}", sender, message);

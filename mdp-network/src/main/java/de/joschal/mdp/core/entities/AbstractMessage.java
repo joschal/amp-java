@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Getter
-public abstract class AbstractMessage {
+public abstract class AbstractMessage implements Cloneable {
 
     public AbstractMessage(Address sourceAddress, Address destinationAddress, int hopLimit) {
         this.sourceAddress = sourceAddress;
@@ -19,11 +19,11 @@ public abstract class AbstractMessage {
 
     private Address destinationAddress;
 
-    private int hopLimit;
+    protected int hopLimit;
 
-    private int hopCounter;
+    protected int hopCounter;
 
-    private List<String> tracerouteList = new LinkedList<>();
+    protected List<String> tracerouteList = new LinkedList<>();
 
     public boolean hop(AbstractNode node) {
         tracerouteList.add(node.getId());

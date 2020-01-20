@@ -173,6 +173,12 @@ public class AddressManager {
         unassignedRanges.sort(Comparator.reverseOrder());
     }
 
+    public void addAddressPool(AddressPool addressPool) {
+        unassignedRanges.add(addressPool);
+        unassignedRanges.sort(Comparator.reverseOrder());
+    }
+
+
     /**
      * Checks if there is any pool available for assignment
      */

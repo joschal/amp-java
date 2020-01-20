@@ -2,6 +2,7 @@ package de.joschal.mdp.core.logic.router;
 
 import de.joschal.mdp.core.entities.AbstractMessage;
 import de.joschal.mdp.core.entities.Address;
+import de.joschal.mdp.core.entities.messages.Forwardable;
 import de.joschal.mdp.core.entities.messages.data.Datagram;
 import de.joschal.mdp.core.entities.network.AbstractRouter;
 import de.joschal.mdp.core.entities.network.NetworkInterface;
@@ -15,8 +16,9 @@ import java.util.List;
 public class NonForwardingRouter extends AbstractRouter {
 
     @Override
-    public List<AbstractMessage> forwardMessage(AbstractMessage message, NetworkInterface source) {
-        log.info("[{}] Received a message, which needs to be forwarded: {}", this.node.getId(), message);
+    public List<AbstractMessage> forwardMessage(Forwardable forwardable, NetworkInterface source) {
+
+        log.info("[{}] Received a message, which needs to be forwarded: {}", this.node.getId(), forwardable);
         // TODO routing algorithm goes here
         return Collections.emptyList();
     }

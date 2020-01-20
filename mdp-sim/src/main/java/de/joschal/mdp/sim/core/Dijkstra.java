@@ -1,13 +1,10 @@
-package de.joschal.mdp;
+package de.joschal.mdp.sim.core;
 
 import de.joschal.mdp.core.entities.network.AbstractNode;
-import de.joschal.mdp.sim.core.entities.Graph;
-import de.joschal.mdp.sim.outbound.GraphReader;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -16,11 +13,8 @@ import java.util.List;
 @Slf4j
 public class Dijkstra {
 
-    @Test
-    void dijkstra() {
-        Graph graph = new GraphReader().readGraph(getClass().getResource("/testGraph.dot").getFile());
+    public static HashMap<String, DistanceVector> dijkstra(List<AbstractNode> graph, AbstractNode source) {
 
-        AbstractNode source = graph.getNodebyId("1");
         HashMap<String, DistanceVector> distances = init(graph, source);
 
         List<AbstractNode> notVisited = new LinkedList<>();
@@ -31,7 +25,6 @@ public class Dijkstra {
 
             AbstractNode currentNode = notVisited.get(0);
 
-            log.info("Now looking at node {}", currentNode.getId());
             // Normally, the neighbour with the shortest distance would be choosen next.
             // But since all edges have the same weight, we need to keep track, which nodes we already visited
             for (AbstractNode neighbour : currentNode.getNeighbours()) {
@@ -55,20 +48,15 @@ public class Dijkstra {
                 }
             }
         }
-
-        distances.forEach((s, distanceVector) ->
-                log.info("Distance to {} via {} is {}",
-                        distanceVector.getNode().getId(),
-                        distanceVector.getPrevious().getId(),
-                        distanceVector.getDistance()));
-
+        return distances;
     }
 
-    private HashMap<String, DistanceVector> init(Graph graph, AbstractNode source) {
+
+    private static HashMap<String, DistanceVector> init(List<AbstractNode> graph, AbstractNode source) {
 
         HashMap<String, DistanceVector> distances = new HashMap<>();
 
-        graph.getNodes().forEach((s, node) -> distances.put(s, new DistanceVector(node)));
+        graph.forEach((node) -> distances.put(node.getId(), new DistanceVector(node)));
 
         distances.get(source.getId()).setDistance(0);
         distances.get(source.getId()).setPrevious(source);
@@ -77,11 +65,10 @@ public class Dijkstra {
 
     }
 
-
     @Getter
     @Setter
     @ToString
-    private class DistanceVector {
+    public static class DistanceVector {
 
         public DistanceVector(AbstractNode node) {
             this.node = node;

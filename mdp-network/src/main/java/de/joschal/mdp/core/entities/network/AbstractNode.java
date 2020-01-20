@@ -90,6 +90,11 @@ public abstract class AbstractNode {
                 this.addressManager.assignAddressToSelf();
                 return;
             }
+
+            if (advertisements.size() == 0) {
+                log.info("No advertisements received");
+                return;
+            }
             throw new RuntimeException("Could not assign address pools");
         }
     }

@@ -7,6 +7,10 @@ import lombok.ToString;
 @ToString
 public class AddressPool implements Comparable<AddressPool> {
 
+    public AddressPool(int lowest, int highest) {
+        this(new Address(lowest), new Address(highest));
+    }
+
     public AddressPool(Address lowest, Address highest) {
 
         // Check if range is valid
