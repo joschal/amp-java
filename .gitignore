@@ -1,4 +1,4 @@
 /target/
-/mdp-network/target/
-/mdp-sim/target/
+/amp-network/target/
+/amp-sim/target/
 /spring-shell.log

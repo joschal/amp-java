@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.joschal</groupId>
-    <artifactId>mdp</artifactId>
+    <artifactId>amp</artifactId>
     <packaging>pom</packaging>
     <version>0.1-SNAPSHOT</version>
     <modules>
-        <module>mdp-network</module>
-        <module>mdp-sim</module>
+        <module>amp-network</module>
+        <module>amp-sim</module>
     </modules>
 
     <properties>
