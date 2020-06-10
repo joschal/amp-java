@@ -5,7 +5,7 @@ import lombok.ToString;
 
 @ToString
 public class Goodbye extends AbstractControlMessage {
-    public Goodbye(Address sourceAddress, Address destinationAddress, int hopLimit) {
-        super(sourceAddress, destinationAddress, hopLimit);
+    public Goodbye(Address sourceAddress, Address destinationAddress) {
+        super(sourceAddress, destinationAddress);
     }
 }

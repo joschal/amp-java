@@ -1,27 +1,23 @@
 package de.joschal.amp.core.entities.messages.data;
 
-import de.joschal.amp.core.entities.AbstractMessage;
 import de.joschal.amp.core.entities.Address;
+import lombok.Getter;
 import lombok.ToString;
 
 import java.util.LinkedList;
+import java.util.UUID;
 
+@Getter
 @ToString
 public class AcknowledgedDatagram extends AbstractDataMessage {
 
-    public AcknowledgedDatagram(Address sourceAddress, Address destinationAddress, int hopLimit) {
+    private UUID uuid;
+    private String payload;
+
+    public AcknowledgedDatagram(Address sourceAddress, Address destinationAddress, int hopLimit, UUID uuid, String payload) {
         super(sourceAddress, destinationAddress, hopLimit);
+        this.uuid = uuid;
+        this.payload = payload;
     }
 
-    // Only used for cloning the object
-    protected AcknowledgedDatagram(AcknowledgedDatagram original) {
-        this(new Address(original.getSourceAddress().getValue()), new Address(original.getDestinationAddress().getValue()), original.getHopLimit());
-        this.hopCounter = original.getHopCounter();
-        this.tracerouteList = new LinkedList<>(original.tracerouteList);
-    }
-
-    @Override
-    public AbstractMessage cloneMessage() {
-        return new AcknowledgedDatagram(this);
-    }
 }

@@ -15,10 +15,10 @@ public class PoolAdvertisement extends AbstractAddressingMessage implements Comp
 
     private List<AddressPool> addressPools = new LinkedList<>();
 
-    private int totalSize = 0;
 
-    public PoolAdvertisement(Address sourceAddress, List<AddressPool> pools) {
-        super(sourceAddress, new Address(0), 1);
+    public PoolAdvertisement(Address sourceAddress, Address destinationAddress, List<AddressPool> pools) {
+        super(sourceAddress, destinationAddress);
+
         this.addressPools.addAll(pools);
         this.addressPools.sort(Comparator.reverseOrder());
 
@@ -28,6 +28,13 @@ public class PoolAdvertisement extends AbstractAddressingMessage implements Comp
 
     }
 
+    // total numer of advertised addresses
+    // used for in compareTo method
+    private int totalSize = 0;
+
+    /**
+     * Utility for ZAL/AQ algorithm
+     */
     @Override
     public int compareTo(PoolAdvertisement poolAdvertisement) {
 

@@ -5,7 +5,7 @@ import de.joschal.amp.core.entities.Address;
 
 public abstract class AbstractAddressingMessage extends AbstractMessage {
 
-    public AbstractAddressingMessage(Address sourceAddress, Address destinationAddress, int hopLimit) {
-        super(sourceAddress, destinationAddress, hopLimit);
+    public AbstractAddressingMessage(Address sourceAddress, Address destinationAddress) {
+        super(sourceAddress, destinationAddress);
     }
 }

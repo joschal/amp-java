@@ -5,7 +5,7 @@ import lombok.ToString;
 
 @ToString
 public class BinCapacityRequest extends AbstractAddressingMessage {
-    public BinCapacityRequest(Address sourceAddress, Address destinationAddress, int hopLimit) {
-        super(sourceAddress, destinationAddress, hopLimit);
+    public BinCapacityRequest(Address sourceAddress, Address destinationAddress) {
+        super(sourceAddress, destinationAddress);
     }
 }

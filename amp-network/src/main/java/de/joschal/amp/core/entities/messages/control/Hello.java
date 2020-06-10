@@ -12,8 +12,6 @@ import lombok.ToString;
  *      implicitly requests an address pool from the destination node
  * 2.   sourceAddress is populated. This means the node does have an assigned address (pool) and establishes an
  *      additional mesh connection
- *
- * HopLimit is always 1, since the message MUST NOT be forwarded
  */
 @ToString
 public class Hello extends AbstractControlMessage {
@@ -23,7 +21,7 @@ public class Hello extends AbstractControlMessage {
      * @param sourceAddress Currently assigned address
      */
     public Hello(Address sourceAddress) {
-        super(sourceAddress, new Address(0), 1);
+        super(sourceAddress, new Address(0));
     }
 
     /**
@@ -31,7 +29,7 @@ public class Hello extends AbstractControlMessage {
      * This will trigger the ZAL/AQ Algorithm
      */
     public Hello() {
-        super(new Address(0), new Address(0), 1);
+        super(new Address(0), new Address(0));
     }
 
 

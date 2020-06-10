@@ -1,6 +1,5 @@
 package de.joschal.amp.core.entities.messages.routing;
 
-import de.joschal.amp.core.entities.AbstractMessage;
 import de.joschal.amp.core.entities.Address;
 
 import java.util.LinkedList;
@@ -30,8 +29,4 @@ public class RouteReply extends AbstractRoutingMessage {
         return "RouteReply [" + getSourceAddress() + "] -> [" + getDestinationAddress() + "] with [" + getHopCounter() + "] hops";
     }
 
-    @Override
-    public AbstractMessage cloneMessage() {
-        return new RouteReply(this);
-    }
 }

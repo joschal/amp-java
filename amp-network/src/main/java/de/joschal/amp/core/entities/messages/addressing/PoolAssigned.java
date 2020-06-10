@@ -13,11 +13,9 @@ import java.util.List;
 public class PoolAssigned extends AbstractAddressingMessage {
 
     private List<AddressPool> addressPools = new LinkedList<>();
-    private boolean assigned;
 
-    public PoolAssigned(PoolAccepted accepted, boolean assigned) {
-        super(accepted.getDestinationAddress(), new Address(0), 1);
-        this.addressPools.addAll(accepted.getAddressPools());
-        this.assigned = assigned;
+    public PoolAssigned(PoolAccepted accepted, List<AddressPool> addressPools) {
+        super(accepted.getDestinationAddress(), new Address(0));
+        this.addressPools.addAll(addressPools);
     }
 }
