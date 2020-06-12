@@ -5,8 +5,8 @@ import de.joschal.amp.core.entities.network.NetworkInterface;
 
 import java.util.Optional;
 
-public interface INetworkReceiver {
+public interface ILinkLocalMessageReceiver {
 
-    Optional<AbstractMessage> handleMessage(AbstractMessage message, NetworkInterface source);
+    void handleMessage(AbstractMessage message, NetworkInterface source);
 
 }

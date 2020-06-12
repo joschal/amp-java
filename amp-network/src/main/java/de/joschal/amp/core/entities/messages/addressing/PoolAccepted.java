@@ -11,6 +11,6 @@ import java.util.List;
 @ToString
 public class PoolAccepted extends AbstractAddressingMessage {
     public PoolAccepted(PoolAdvertisement poolAdvertisement) {
-        super(new Address(0), poolAdvertisement.getSourceAddress());
+        super(Address.undefined(), poolAdvertisement.getSourceAddress());
     }
 }

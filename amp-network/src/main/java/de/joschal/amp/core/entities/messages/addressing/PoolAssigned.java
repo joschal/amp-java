@@ -14,8 +14,13 @@ public class PoolAssigned extends AbstractAddressingMessage {
 
     private List<AddressPool> addressPools = new LinkedList<>();
 
+    public PoolAssigned(Address sourceAddress, Address destinationAddress, List<AddressPool> addressPools) {
+        super(sourceAddress, destinationAddress);
+        this.addressPools = addressPools;
+    }
+
     public PoolAssigned(PoolAccepted accepted, List<AddressPool> addressPools) {
-        super(accepted.getDestinationAddress(), new Address(0));
+        super(accepted.getDestinationAddress(), Address.undefined());
         this.addressPools.addAll(addressPools);
     }
 }

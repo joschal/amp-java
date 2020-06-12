@@ -1,21 +1,20 @@
 package de.joschal.amp.core.entities.network;
 
+import de.joschal.amp.core.entities.AbstractForwardableMessage;
 import de.joschal.amp.core.entities.AbstractMessage;
-import de.joschal.amp.core.entities.messages.Forwardable;
+import de.joschal.amp.core.entities.Address;
 import de.joschal.amp.core.entities.messages.addressing.AbstractAddressingMessage;
 import de.joschal.amp.core.entities.messages.control.AbstractControlMessage;
 import de.joschal.amp.core.entities.messages.data.AbstractDataMessage;
 import de.joschal.amp.core.entities.messages.routing.AbstractRoutingMessage;
 import de.joschal.amp.core.inbound.IDataLinkReceiver;
-import de.joschal.amp.core.outbound.IDataLinkSender;
+import de.joschal.amp.core.logic.sender.MessageForwarder;
+import de.joschal.amp.core.outbound.layer2.IDataLinkSender;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @Getter
@@ -23,69 +22,81 @@ import java.util.Optional;
 @EqualsAndHashCode
 public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
 
-    public NetworkInterface(String name) {
+    public NetworkInterface(String name, AbstractNode node) {
         this.name = name;
+        this.node = node;
+        this.localAddress = node.getAddress();
+        this.nodeId = node.getId();
     }
 
+    private AbstractNode node;
+    private String nodeId;
     private String name;
     private DataLink dataLink;
-    private AbstractNode node;
+    private Address localAddress;
 
     @Override
-    public List<AbstractMessage> sendMessage(AbstractMessage message) {
-        return dataLink.exchange(message, this);
+    public void sendMessage(AbstractMessage message) {
+        dataLink.addToSendQueue(message, this);
     }
 
     @Override
-    public List<AbstractMessage> receiveMessage(AbstractMessage message) {
-
-        List<AbstractMessage> returnMessages = new LinkedList<>();
+    public void receiveMessage(AbstractMessage message) {
 
         // if the message looped, immediately drop it
-        if (message.getSourceAddress().equals(this.node.getAddress())) {
-            return returnMessages;
+        if (message.getSourceAddress().equals(this.localAddress)) {
+            log.info("[{} - {}] message dropped : [{}]", this.nodeId, this.localAddress, message);
+            return;
         }
 
-        message.hop(this.node);
-        this.node.router.updateRoutingTable(this, message);
+        // Handle forwardable message
+        if (message instanceof AbstractForwardableMessage) {
 
-        if (message.getDestinationAddress().equals(this.node.getAddress()) ||
-                message.getDestinationAddress().getValue() == 0) {
+            // Forwardable messages must always have fully populated headers
+            if (message.getSourceAddress().getValue() == 0 || message.getDestinationAddress().getValue() == 0) {
+                // Drop message
+                log.info("[{} - {}] message dropped : [{}]", this.nodeId, this.localAddress, message);
+                return;
+            }
 
-            log.trace("[{}] Received a message to handle locally {}", this.node.getId(), message);
-            handleMessageLocally(message).ifPresent(returnMessages::add);
-
-        } else if (message instanceof Forwardable) {
-
-            log.trace("[{}] Received a message to forward {}", this.node.getId(), message);
-            returnMessages.addAll(this.node.router.forwardMessage((Forwardable) message, this));
-
+            //  process valid message
+            handleForwardableMessage((AbstractForwardableMessage) message);
         } else {
-            log.error("[{}] Received an unknown message {}", this.node.getId(), message);
+            // Handle message locally
+            handleLinkLocalMessage(message);
         }
-        return returnMessages;
     }
 
-    /**
-     * Filters for message type and invokes the appropriate handler
-     *
-     * @param message Message to resolve
-     * @return Optional response message
-     */
-    private Optional<AbstractMessage> handleMessageLocally(AbstractMessage message) {
 
+    private void handleLinkLocalMessage(AbstractMessage message) {
+        // handle message by type -> hand up to control plane
         if (message instanceof AbstractAddressingMessage) {
-            return node.addressingMessageHandler.handleMessage(message, this);
+            node.addressingMessageHandler.handleMessage(message, this);
         } else if (message instanceof AbstractControlMessage) {
-            return node.controlMessageHandler.handleMessage(message, this);
-        } else if (message instanceof AbstractRoutingMessage) {
-            return node.routingMessageHandler.handleMessage(message, this);
-        } else if (message instanceof AbstractDataMessage) {
-            return node.dataMessageHandler.handleMessage(message, this);
+            node.controlMessageHandler.handleMessage(message, this);
         } else {
             log.error("Received a message of unknown type");
-            return Optional.empty();
         }
+    }
 
+    private void handleForwardableMessage(AbstractForwardableMessage message) {
+
+        // This needs to be done for every forwardable message
+        message.hop(this.nodeId);
+        this.node.router.updateRoutingTable(this, message);
+
+        if (message.getDestinationAddress().getValue() == this.localAddress.getValue()) {
+            // Message is addressed to this node
+            // handle message by type -> hand up to control plane
+            if (message instanceof AbstractRoutingMessage) {
+                node.routingMessageHandler.handleMessage(message, this);
+            } else if (message instanceof AbstractDataMessage) {
+                node.dataMessageHandler.handleMessage(message, this);
+            }
+        } else {
+            // message is not indented for this node
+            // it needs to be forwarded -> keep in data plane
+            this.node.getMessageForwarder().forwardMessage(message, this);
+        }
     }
 }

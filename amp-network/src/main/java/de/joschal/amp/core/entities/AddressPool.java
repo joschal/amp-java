@@ -3,33 +3,27 @@ package de.joschal.amp.core.entities;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 @Getter
 @ToString
-public class AddressPool implements Comparable<AddressPool> {
+public class AddressPool implements Comparable<AddressPool>, Serializable {
 
-    public AddressPool(int lowest, int highest) {
-        this(new Address(lowest), new Address(highest));
-    }
+    public AddressPool(Address lowest, long size) {
 
-    public AddressPool(Address lowest, Address highest) {
-
-        // Check if range is valid
-        if (lowest.getValue() == 0) {
-            throw new RuntimeException("Invalid Address range " + lowest + " -> " + highest + ". 0 is a reserved address");
+        if (lowest.getValue() <= 0 || size <= 0) {
+            throw new RuntimeException("invalid address range");
         }
-        if (highest.getValue() >= lowest.getValue()) {
-            this.highest = highest;
-            this.lowest = lowest;
-            this.size = highest.getValue() - lowest.getValue() + 1;
 
-        } else {
-            throw new RuntimeException("Invalid Address range " + lowest + " -> " + highest);
-        }
+        this.lowest = lowest;
+        this.size = size;
+        this.highest = new Address(lowest.getValue() + size - 1);
+
     }
 
     private Address highest;
     private Address lowest;
-    private int size;
+    private long size;
 
     /**
      * Checks, which pool has the highest address

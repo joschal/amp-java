@@ -28,16 +28,23 @@ public class AddressManager {
     // Range of assigned addresses
     private Map<NetworkInterface, AddressPool> assignedRanges = new HashMap<>();
 
-    public List<AddressPool> getAssignableAddressPools(NetworkInterface networkInterface) {
+    /**
+     * Reserve address pools
+     * TODO this is not fully ZAL/AL compliant. May be optimized to prevent severe address leakage
+     *
+     * @param networkInterface interface, the pools are associated with
+     * @return the list of reserved address pools
+     */
+    public List<AddressPool> reserveAddressPools(NetworkInterface networkInterface) {
 
         // Sort ranges, to make sure the pool with the highest address comes first
         this.unassignedRanges.sort(Comparator.reverseOrder());
 
         // Calculate how much address space is available for assignment
-        int totalRemainingAddressSpace = unassignedRanges.stream().mapToInt(AddressPool::getSize).sum();
+        long totalRemainingAddressSpace = unassignedRanges.stream().mapToLong(AddressPool::getSize).sum();
         // This much space should be assigned (value is rounded down to the nearest integer)
-        final int desiredAssignableAddressSpace = totalRemainingAddressSpace / 2; // this is the value proposed by ZAL
-        int addressSpaceStillNeeded = desiredAssignableAddressSpace;
+        final long desiredAssignableAddressSpace = totalRemainingAddressSpace / 2; // this is the value proposed by ZAL
+        long addressSpaceStillNeeded = desiredAssignableAddressSpace;
 
         // List of pools to be assigned -> return value
         List<AddressPool> assignablePools = new LinkedList<>();
@@ -73,25 +80,19 @@ public class AddressManager {
                 assignedRanges.put(networkInterface, pool);
                 return assignablePools;
             }
-
         }
-
-
         return assignablePools;
-
     }
 
-    public static List<AddressPool> splitAddressPool(AddressPool pool, int desiredSize) {
+    public static List<AddressPool> splitAddressPool(AddressPool pool, long desiredSize) {
 
         List<AddressPool> pools = new ArrayList<>(2);
 
-        AddressPool poolWithDesiredSize = new AddressPool(
-                new Address(pool.getHighest().getValue() - (desiredSize - 1)),
-                new Address(pool.getHighest().getValue()));
+        AddressPool poolWithDesiredSize = new AddressPool(pool.getLowest(), desiredSize);
 
         AddressPool poolWithRemainingSize = new AddressPool(
-                new Address(pool.getLowest().getValue()), // 3
-                new Address(poolWithDesiredSize.getLowest().getValue() - 1)); // 4
+                new Address(poolWithDesiredSize.getHighest().getValue() + 1),
+                pool.getSize() - desiredSize);
 
         pools.add(0, poolWithDesiredSize);
         pools.add(1, poolWithRemainingSize);
@@ -113,10 +114,10 @@ public class AddressManager {
                 return null;
             }
 
-            AddressPool pool = unassignedRanges.remove(0);
+            AddressPool pool = unassignedRanges.remove(unassignedRanges.size() - 1);
             AddressPool newPool = new AddressPool(
                     new Address(pool.getLowest().getValue() + 1),
-                    pool.getHighest());
+                    pool.getSize()-1);
             unassignedRanges.add(newPool);
             unassignedRanges.sort(Comparator.reverseOrder());
 
@@ -128,6 +129,11 @@ public class AddressManager {
 
     }
 
+    /**
+     * Mark address pool as available
+     *
+     * @param networkInterface Interface associated with the pools which are to be revoked
+     */
     public void revokeAddressPool(NetworkInterface networkInterface) {
 
         AddressPool removed = assignedRanges.remove(networkInterface);
@@ -152,7 +158,7 @@ public class AddressManager {
             if (current.getLowest().getValue() - 1 == next.getHighest().getValue()) {
                 AddressPool combinedRange = new AddressPool(
                         new Address(next.getLowest().getValue()),
-                        new Address(current.getHighest().getValue()));
+                        next.getSize() + current.getSize());
 
                 unassignedRanges.remove(current);
                 unassignedRanges.remove(next);
@@ -185,4 +191,5 @@ public class AddressManager {
     public boolean isAPoolAvailable() {
         return !unassignedRanges.isEmpty();
     }
+
 }

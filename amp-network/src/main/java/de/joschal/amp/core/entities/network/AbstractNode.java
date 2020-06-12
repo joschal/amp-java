@@ -1,47 +1,48 @@
 package de.joschal.amp.core.entities.network;
 
-import de.joschal.amp.core.entities.AbstractMessage;
 import de.joschal.amp.core.entities.Address;
 import de.joschal.amp.core.entities.AddressPool;
-import de.joschal.amp.core.entities.messages.addressing.PoolAccepted;
-import de.joschal.amp.core.entities.messages.addressing.PoolAdvertisement;
-import de.joschal.amp.core.entities.messages.addressing.PoolAssigned;
 import de.joschal.amp.core.entities.messages.control.Hello;
 import de.joschal.amp.core.logic.AddressManager;
 import de.joschal.amp.core.logic.handler.AddressingMessageHandler;
-import de.joschal.amp.core.logic.handler.RoutingMessageHandler;
-import de.joschal.amp.core.logic.sender.AddressingMessageSender;
 import de.joschal.amp.core.logic.handler.ControlMessageHandler;
 import de.joschal.amp.core.logic.handler.DataMessageHandler;
+import de.joschal.amp.core.logic.handler.RoutingMessageHandler;
+import de.joschal.amp.core.logic.jobs.AddressAcquisitionJob;
+import de.joschal.amp.core.logic.jobs.JobManager;
+import de.joschal.amp.core.logic.router.Router;
+import de.joschal.amp.core.logic.sender.MessageForwarder;
+import de.joschal.amp.core.logic.sender.MessageSender;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 
 @Slf4j
 @Getter
+@Setter
 public abstract class AbstractNode {
 
-    public AbstractNode(String id, AbstractRouter router, AddressPool... addressPools) {
+    public AbstractNode(String id, AddressPool... addressPools) {
 
         // Basics
         this.id = id;
-        this.address = new Address(0);
-        this.router = router;
-        this.router.setNode(this); // Set reference to self
+        this.address = Address.undefined();
+        this.router = new Router(this.address, this.networkInterfaces);
         this.addressManager = new AddressManager(this, addressPools);
+        this.messageForwarder = new MessageForwarder(this.router, this.messageSender);
+        this.jobManager = new JobManager();
 
         // Message Handler
-        this.addressingMessageHandler = new AddressingMessageHandler(this);
-        this.controlMessageHandler = new ControlMessageHandler(this);
+        this.addressingMessageHandler = new AddressingMessageHandler();
+        this.controlMessageHandler = new ControlMessageHandler(this.address, this.addressManager, this.messageSender, this.router);
         this.dataMessageHandler = new DataMessageHandler();
-        this.routingMessageHandler = new RoutingMessageHandler(this);
+        this.routingMessageHandler = new RoutingMessageHandler(this.address, this.messageSender);
 
         // Message Sender
-        this.addressingMessageSender = new AddressingMessageSender(this);
+        this.messageSender = new MessageSender(this.address, this.router, this.networkInterfaces);
     }
 
     // Basics
@@ -50,100 +51,74 @@ public abstract class AbstractNode {
     protected List<NetworkInterface> networkInterfaces = new ArrayList<>();
     protected AbstractRouter router;
     protected AddressManager addressManager;
+    protected MessageForwarder messageForwarder;
 
     // Message Handler
-    public AddressingMessageHandler addressingMessageHandler;
-    public ControlMessageHandler controlMessageHandler;
-    public DataMessageHandler dataMessageHandler;
-    public RoutingMessageHandler routingMessageHandler;
+    protected AddressingMessageHandler addressingMessageHandler;
+    protected ControlMessageHandler controlMessageHandler;
+    protected DataMessageHandler dataMessageHandler;
+    protected RoutingMessageHandler routingMessageHandler;
 
     // MessageSender
-    public AddressingMessageSender addressingMessageSender;
+    protected MessageSender messageSender;
+
+    // Aynchonous Job Handling
+    protected JobManager jobManager;
 
     public void addNetworkInterface(NetworkInterface networkInterface) {
         networkInterface.setNode(this);
         this.networkInterfaces.add(networkInterface);
     }
 
-    public void addRoute(Route route) {
-        this.router.routingTable.add(route);
-    }
-
     public void setAddress(Address address) {
         this.address = address;
     }
 
+    /**
+     * Either assigns an address to itself or requests addresses from neigbors
+     */
     public void bootSequence() {
 
         // if there is an addressPool available, use an address from this pool
         if (addressManager.isAPoolAvailable()) {
             this.addressManager.assignAddressToSelf();
 
-            // if there is no pool available, request some from adjacent nodes
         } else {
 
-            List<PoolAdvertisement> advertisements = requestPoolAdvertisements();
-            List<AddressPool> assignedPools = getBestAddressPools(advertisements);
+            // if there is no pool available, request some from adjacent nodes
+            // by flooding an empty hello message to all neigbors
+            // processing is done asyncronous by the AddressAcquisitionJob
+            Hello hello = new Hello();
+            messageSender.floodMessage(hello, null);
 
-            if (assignedPools != null) {
-                this.addressManager.addAddressPools(assignedPools);
-                this.addressManager.assignAddressToSelf();
-                return;
-            }
+            AddressAcquisitionJob addressAcquisitionJob = new AddressAcquisitionJob(this.networkInterfaces, 10);
+            this.jobManager.setAddressAcquisitionJob(addressAcquisitionJob);
 
-            if (advertisements.size() == 0) {
-                log.info("No advertisements received");
-                return;
-            }
-            throw new RuntimeException("Could not assign address pools");
         }
     }
 
     /**
-     * Requests Address Pool Advertisements from adjacent nodes
+     * This method provides a common interface for the business logic to receive datagrams
      *
-     * @return List of all received PoolAdvertisement messages
+     * @param payload The payload of the receoved message
+     * @param source  The source address of the received message
      */
-    private List<PoolAdvertisement> requestPoolAdvertisements() {
-
-        List<PoolAdvertisement> advertisements = new LinkedList<>();
-
-        for (NetworkInterface networkInterface : this.networkInterfaces) {
-            List<AbstractMessage> responses = networkInterface.sendMessage(new Hello());
-
-            for (AbstractMessage message : responses) {
-                advertisements.add((PoolAdvertisement) message);
-                Route route = new Route(networkInterface, message.getSourceAddress(), 1);
-                this.router.addRoute(route);
-                log.info("Received address pool advertisement: {}", responses);
-            }
-
-        }
-
-        advertisements.sort(Comparator.reverseOrder());
-        return advertisements;
-    }
+    public abstract void receiveDatagram(String payload, Address source);
 
     /**
-     * @param advertisements List of all received PoolAdvertisement messages
-     * @return Largest available AddressPool
+     * This method provides a common interface for the business logic to receive acknowledged datagrams
+     *
+     * @param payload The payload of the receoved message
+     * @param source  The source address of the received message
+     * @return true if message should be acknowledged, false if not
      */
-    private List<AddressPool> getBestAddressPools(List<PoolAdvertisement> advertisements) {
-        for (PoolAdvertisement advertisement : advertisements) {
-            PoolAccepted accepted = new PoolAccepted(advertisement);
-            List<AbstractMessage> responses = this.router.sendMessage(accepted);
+    public abstract boolean receiveAcknowledgedDatagram(String payload, Address source);
 
-            for (AbstractMessage response : responses) {
-                PoolAssigned assigned = (PoolAssigned) response;
-                if (assigned.isAssigned()) {
-                    return assigned.getAddressPools();
-                }
-            }
-        }
-        log.error("None of the desired address pools could be assigned");
-        return null;
-    }
-
+    /**
+     * Utility Method
+     *
+     * @return Returns a list of references to all its immediate neigbors
+     */
     public List<AbstractNode> getNeighbours() {
 
         List<AbstractNode> neighbors = new ArrayList<>();

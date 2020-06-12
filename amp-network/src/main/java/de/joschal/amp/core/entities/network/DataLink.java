@@ -4,37 +4,81 @@ import de.joschal.amp.core.entities.AbstractMessage;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
 
 @Slf4j
 @Getter
 public class DataLink {
 
     private String name;
-    private NetworkInterface A;
-    private NetworkInterface B;
+    private NetworkInterface a;
+    private NetworkInterface b;
+
+    private Queue<AbstractMessage> aSendQueue;
+    private Queue<AbstractMessage> bSendQueue;
+
+    private int messageCounter = 0;
 
     public DataLink(String name, NetworkInterface a, NetworkInterface b) {
         this.name = name;
-        this.A = a;
-        this.B = b;
+        this.a = a;
+        this.b = b;
 
-        A.setDataLink(this);
-        B.setDataLink(this);
+        this.a.setDataLink(this);
+        this.b.setDataLink(this);
 
+        aSendQueue = new LinkedList<>();
+        bSendQueue = new LinkedList<>();
     }
 
-    List<AbstractMessage> exchange(AbstractMessage message, NetworkInterface sender) {
+    /**
+     * Adds a message to the respectiv sendQueue of the interface
+     *
+     * @param message         message to send via the DataLink
+     * @param senderInferface identificaiton of the sender interface
+     * @return soccess of adding the message to the send queue
+     */
+    public boolean addToSendQueue(AbstractMessage message, NetworkInterface senderInferface) {
 
-        if (sender == A) {
-            log.trace("{} --> {}", A.getName(), B.getName());
-            return B.receiveMessage(message);
-        } else if (sender == B) {
-            log.trace("{} --> {}", B.getName(), A.getName());
-            return A.receiveMessage(message);
-        } else {
-            log.error("Something went horribly wrong in the data link layer! Sender: {} Message: {}", sender, message);
-            throw new RuntimeException("Something went horribly wrong in the data link layer!");
+        if (senderInferface == a) {
+            return aSendQueue.add(message);
+        } else if (senderInferface == b) {
+            return bSendQueue.add(message);
+        }
+
+        return false;
+    }
+
+    /**
+     * Pop message from send queue and tansfer it to the other node
+     * Uses round-robin logic to select the queue
+     */
+    public void transferMessage() {
+
+        // both queues have pending messages
+        if (aSendQueue.size() > 0 && bSendQueue.size() > 0) {
+
+            // Alternate between send queues for fair distribution
+            if (messageCounter % 2 == 0) {
+                a.receiveMessage(bSendQueue.poll());
+            } else {
+                b.receiveMessage(aSendQueue.poll());
+            }
+
+            messageCounter++;
+            return;
+        }
+
+        // only aSendQueue has pending messages
+        if (aSendQueue.size() > 0) {
+            b.receiveMessage(aSendQueue.poll());
+            return;
+        }
+
+        // only bSendQueue has pending messages
+        if (bSendQueue.size() > 0) {
+            a.receiveMessage(bSendQueue.poll());
         }
     }
 
@@ -42,6 +86,6 @@ public class DataLink {
     public String toString() {
         return "DataLink{" +
                 "name='" + name + '\'' +
-                A.getName() + " <-> " + B.getName() + '}';
+                a.getName() + " <-> " + b.getName() + '}';
     }
 }

@@ -21,7 +21,7 @@ public class Hello extends AbstractControlMessage {
      * @param sourceAddress Currently assigned address
      */
     public Hello(Address sourceAddress) {
-        super(sourceAddress, new Address(0));
+        super(sourceAddress, Address.undefined());
     }
 
     /**
@@ -29,7 +29,7 @@ public class Hello extends AbstractControlMessage {
      * This will trigger the ZAL/AQ Algorithm
      */
     public Hello() {
-        super(new Address(0), new Address(0));
+        super(Address.undefined(), Address.undefined());
     }
 
 

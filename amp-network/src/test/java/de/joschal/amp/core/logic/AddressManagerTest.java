@@ -2,30 +2,37 @@ package de.joschal.amp.core.logic;
 
 import de.joschal.amp.core.entities.Address;
 import de.joschal.amp.core.entities.AddressPool;
+import de.joschal.amp.core.entities.network.AbstractNode;
 import de.joschal.amp.core.entities.network.NetworkInterface;
+import de.joschal.amp.core.logic.nodes.Node;
+import de.joschal.amp.core.logic.nodes.SimpleNode;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * This class tests the ZAL/AL algorithm
+ */
 public class AddressManagerTest {
 
     @Test
     public void addAndRemoveEven() {
 
         // Arrange
-        AddressPool range = new AddressPool(new Address(1), new Address(4));
-        NetworkInterface networkInterface = new NetworkInterface("interface");
+        AbstractNode node = new Node("node");
+        AddressPool range = new AddressPool(new Address(1), 4);
+        NetworkInterface networkInterface = new NetworkInterface("interface", node);
 
         AddressManager addressManager = new AddressManager(null, range);
 
         assertEquals(4, addressManager.getUnassignedRanges().get(0).getSize());
 
         // Act
-        List<AddressPool> assigned = addressManager.getAssignableAddressPools(networkInterface);
+        List<AddressPool> assigned = addressManager.reserveAddressPools(networkInterface);
 
-        assertEquals(range.getSize() / 2, assigned.stream().mapToInt(AddressPool::getSize).sum());
+        assertEquals(range.getSize() / 2, assigned.stream().mapToLong(AddressPool::getSize).sum());
 
         addressManager.revokeAddressPool(networkInterface);
 
@@ -41,17 +48,18 @@ public class AddressManagerTest {
     public void addAndRemoveOdd() {
 
         // Arrange
-        AddressPool range = new AddressPool(new Address(1), new Address(5));
-        NetworkInterface networkInterface = new NetworkInterface("interface");
+        AbstractNode node = new Node("node");
+        AddressPool range = new AddressPool(new Address(1), 5);
+        NetworkInterface networkInterface = new NetworkInterface("interface", node);
 
         AddressManager addressManager = new AddressManager(null, range);
 
         assertEquals(5, addressManager.getUnassignedRanges().get(0).getSize());
 
         // Act
-        List<AddressPool> assigned = addressManager.getAssignableAddressPools(networkInterface);
+        List<AddressPool> assigned = addressManager.reserveAddressPools(networkInterface);
 
-        assertEquals(range.getSize() / 2, assigned.stream().mapToInt(AddressPool::getSize).sum());
+        assertEquals(range.getSize() / 2, assigned.stream().mapToLong(AddressPool::getSize).sum());
 
         addressManager.revokeAddressPool(networkInterface);
 
@@ -67,17 +75,18 @@ public class AddressManagerTest {
     @Test
     public void multiAssignementUnassignement() {
 
-        AddressPool originAddressPool = new AddressPool(new Address(1), new Address(4));
-        NetworkInterface networkInterface1 = new NetworkInterface("1");
-        NetworkInterface networkInterface2 = new NetworkInterface("2");
+        AbstractNode node = new Node("node");
+        AddressPool originAddressPool = new AddressPool(new Address(1), 4);
+        NetworkInterface networkInterface1 = new NetworkInterface("1", node);
+        NetworkInterface networkInterface2 = new NetworkInterface("2", node);
 
         AddressManager addressManager = new AddressManager(null, originAddressPool);
 
-        List<AddressPool> addressPool1 = addressManager.getAssignableAddressPools(networkInterface1);
-        List<AddressPool> addressPool2 = addressManager.getAssignableAddressPools(networkInterface2);
+        List<AddressPool> addressPool1 = addressManager.reserveAddressPools(networkInterface1);
+        List<AddressPool> addressPool2 = addressManager.reserveAddressPools(networkInterface2);
 
-        assertEquals(2, addressPool1.stream().mapToInt(AddressPool::getSize).sum());
-        assertEquals(1, addressPool2.stream().mapToInt(AddressPool::getSize).sum());
+        assertEquals(2, addressPool1.stream().mapToLong(AddressPool::getSize).sum());
+        assertEquals(1, addressPool2.stream().mapToLong(AddressPool::getSize).sum());
 
         addressManager.revokeAddressPool(networkInterface1);
         assertEquals(2, addressManager.getUnassignedRanges().size());
@@ -92,9 +101,7 @@ public class AddressManagerTest {
     @Test
     public void poolSplitTestOdd() {
 
-        AddressPool addressPool = new AddressPool(
-                new Address(4),
-                new Address(10));
+        AddressPool addressPool = new AddressPool(new Address(4), 7);
 
         List<AddressPool> addressPoolsEven = AddressManager.splitAddressPool(addressPool, 4);
 
@@ -110,9 +117,7 @@ public class AddressManagerTest {
     @Test
     public void poolSplitTestEven() {
 
-        AddressPool addressPool = new AddressPool(
-                new Address(3),
-                new Address(10));
+        AddressPool addressPool = new AddressPool(new Address(3), 8);
 
         List<AddressPool> addressPoolsEven = AddressManager.splitAddressPool(addressPool, 4);
 

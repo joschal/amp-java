@@ -18,4 +18,9 @@ public class DatagramAcknowledgement extends AbstractDataMessage {
         this.uuid = uuid;
     }
 
+    public DatagramAcknowledgement(AcknowledgedDatagram acknowledgedDatagram) {
+        super(acknowledgedDatagram.getDestinationAddress(), acknowledgedDatagram.getSourceAddress(), acknowledgedDatagram.getHopLimit());
+        this.uuid = acknowledgedDatagram.getUuid();
+    }
+
 }
