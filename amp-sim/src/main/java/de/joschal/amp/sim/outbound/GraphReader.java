@@ -2,7 +2,7 @@ package de.joschal.amp.sim.outbound;
 
 import de.joschal.amp.core.entities.network.DataLink;
 import de.joschal.amp.core.logic.nodes.SimpleNode;
-import de.joschal.amp.core.logic.router.FloodingRouter;
+import de.joschal.amp.core.logic.router.Router;
 import de.joschal.amp.sim.core.entities.Graph;
 import de.joschal.amp.sim.core.outbound.IGraphReader;
 import guru.nidi.graphviz.model.Link;
@@ -31,7 +31,7 @@ public class GraphReader implements IGraphReader {
 
             // Create all Network Nodes on first pass
             for (MutableNode dotNode : dotGraph.nodes()) {
-                SimpleNode loggingNode = new SimpleNode(dotNode.name().toString(), new FloodingRouter());
+                SimpleNode loggingNode = new SimpleNode(dotNode.name().toString());
                 graph.addNode(loggingNode);
             }
 

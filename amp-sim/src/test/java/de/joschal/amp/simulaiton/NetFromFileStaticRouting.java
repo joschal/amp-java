@@ -22,14 +22,14 @@ public class NetFromFileStaticRouting {
         node2.setAddress(new Address(2));
         node3.setAddress(new Address(3));
 
-        node1.addRoute(new Route(node1.getNetworkInterfaces().get(0), node2.getAddress(), 1));
-        node1.addRoute(new Route(node1.getNetworkInterfaces().get(0), node3.getAddress(), 1));
+        node1.getRouter().addRoute(new Route(node1.getNetworkInterfaces().get(0), node2.getAddress(), 1));
+        node1.getRouter().addRoute(new Route(node1.getNetworkInterfaces().get(0), node3.getAddress(), 1));
 
-        node2.addRoute(new Route(node2.getNetworkInterfaces().get(1), node3.getAddress(), 1));
-        node2.addRoute(new Route(node2.getNetworkInterfaces().get(0), node1.getAddress(), 1));
+        node2.getRouter().addRoute(new Route(node2.getNetworkInterfaces().get(1), node3.getAddress(), 1));
+        node2.getRouter().addRoute(new Route(node2.getNetworkInterfaces().get(0), node1.getAddress(), 1));
 
-        node3.addRoute(new Route(node2.getNetworkInterfaces().get(1), node1.getAddress(), 1));
-        node3.addRoute(new Route(node2.getNetworkInterfaces().get(1), node1.getAddress(), 1));
+        node3.getRouter().addRoute(new Route(node2.getNetworkInterfaces().get(1), node1.getAddress(), 1));
+        node3.getRouter().addRoute(new Route(node2.getNetworkInterfaces().get(1), node1.getAddress(), 1));
 
         node1.action("1->3", node3.getAddress());
         System.out.println("-------");

@@ -20,8 +20,8 @@ public class DijkstraTest {
 
     @Test
     void dijkstraTest() throws IOException {
-        Graph graph = new GraphReader().readGraph(getClass().getResource("/testGraphLarge.dot").getFile());
-        new GraphWriter().graphToGraphic(graph, Files.createTempFile("", "").getParent().toString() + "/graph.png");
+        Graph graph = new GraphReader().readGraph(getClass().getResource("/testGraph.dot").getFile());
+        //new GraphWriter().graphToGraphic(graph, Files.createTempFile("", "").getParent().toString() + "/graph.png");
 
         AbstractNode source = graph.getNodebyId("1");
 

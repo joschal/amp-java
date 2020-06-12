@@ -1,11 +1,9 @@
 package de.joschal.amp.sim;
 
 import de.joschal.amp.sim.core.entities.Graph;
-import de.joschal.amp.sim.core.inbound.IDatagramController;
 import de.joschal.amp.sim.core.inbound.IMessageController;
 import de.joschal.amp.sim.core.inbound.INetController;
 import de.joschal.amp.sim.core.inbound.INodeController;
-import de.joschal.amp.sim.core.logic.DatagramController;
 import de.joschal.amp.sim.core.logic.MessageController;
 import de.joschal.amp.sim.core.logic.NetController;
 import de.joschal.amp.sim.core.logic.NodeController;
@@ -53,12 +51,7 @@ public class App {
     }
 
     @Bean
-    IDatagramController datagramController(Graph graph) {
-        return new DatagramController(graph);
-    }
-
-    @Bean
-    IMessageController messageController(Graph graph, IDatagramController datagramController) {
+    IMessageController messageController(Graph graph) {
         return new MessageController(datagramController, graph);
     }
 

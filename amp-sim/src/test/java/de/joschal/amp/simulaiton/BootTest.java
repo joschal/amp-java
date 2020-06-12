@@ -33,7 +33,7 @@ public class BootTest {
         SimpleNode node4 = (SimpleNode) graph.getNodebyId("4");
 
         List<AddressPool> pools = new LinkedList<>();
-        pools.add(new AddressPool(new Address(1), new Address(32)));
+        pools.add(new AddressPool(new Address(1), 32));
         node1.getAddressManager().addAddressPools(pools);
 
         node1.bootSequence();

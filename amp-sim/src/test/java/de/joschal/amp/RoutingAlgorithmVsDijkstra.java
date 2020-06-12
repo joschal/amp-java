@@ -1,5 +1,6 @@
 package de.joschal.amp;
 
+import de.joschal.amp.core.entities.Address;
 import de.joschal.amp.core.entities.AddressPool;
 import de.joschal.amp.core.entities.network.AbstractNode;
 import de.joschal.amp.core.entities.network.Route;
@@ -23,12 +24,12 @@ public class RoutingAlgorithmVsDijkstra {
     @Test
     void routingAlgorithmVsDijkstra() {
 
-        Graph graph = new GraphReader().readGraph(getClass().getResource("/testGraphLarge.dot").getFile());
+        Graph graph = new GraphReader().readGraph(getClass().getResource("/testGraph.dot").getFile());
         SimpleNode source = (SimpleNode) graph.getNodebyId("1");
         List<AbstractNode> nodes = new LinkedList<>(graph.getNodes().values());
         HashMap<String, Dijkstra.DistanceVector> distances = dijkstra(nodes, source);
 
-        AddressPool addressPool = new AddressPool(1, 256);
+        AddressPool addressPool = new AddressPool(new Address(1), 256);
         source.getAddressManager().addAddressPool(addressPool);
 
         int bootCounter = 0;

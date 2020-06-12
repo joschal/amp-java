@@ -10,10 +10,10 @@ public class Linker {
 
     public static DataLink linkNodes(AbstractNode node1, AbstractNode node2) {
 
-        NetworkInterface networkInterface1 = new NetworkInterface("to " + node2.getId());
+        NetworkInterface networkInterface1 = new NetworkInterface("to " + node2.getId(), node1);
         node1.addNetworkInterface(networkInterface1);
 
-        NetworkInterface networkInterface2 = new NetworkInterface("to " + node1.getId());
+        NetworkInterface networkInterface2 = new NetworkInterface("to " + node1.getId(), node2);
         node2.addNetworkInterface(networkInterface2);
 
         return linkInterfaces(networkInterface1, networkInterface2);

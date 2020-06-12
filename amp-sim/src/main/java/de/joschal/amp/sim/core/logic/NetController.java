@@ -1,9 +1,9 @@
 package de.joschal.amp.sim.core.logic;
 
-import de.joschal.amp.sim.core.outbound.IGraphReader;
-import de.joschal.amp.sim.core.outbound.IGraphWriter;
 import de.joschal.amp.sim.core.entities.Graph;
 import de.joschal.amp.sim.core.inbound.INetController;
+import de.joschal.amp.sim.core.outbound.IGraphReader;
+import de.joschal.amp.sim.core.outbound.IGraphWriter;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

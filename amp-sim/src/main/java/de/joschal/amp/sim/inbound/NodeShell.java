@@ -1,7 +1,7 @@
 package de.joschal.amp.sim.inbound;
 
 import de.joschal.amp.core.logic.nodes.SimpleNode;
-import de.joschal.amp.core.logic.router.FloodingRouter;
+import de.joschal.amp.core.logic.router.Router;
 import de.joschal.amp.sim.core.inbound.INodeController;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ public class NodeShell {
 
     @ShellMethod(value = "Add node to network", key = "node add")
     public boolean addNode(@ShellOption String id) {
-        SimpleNode node = new SimpleNode(id, new FloodingRouter());
+        SimpleNode node = new SimpleNode(id);
         return nodeController.addNode(node);
     }
 

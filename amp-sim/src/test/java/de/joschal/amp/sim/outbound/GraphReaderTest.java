@@ -18,13 +18,17 @@ public class GraphReaderTest {
 
         Graph graph = graphReader.readGraph(getClass().getResource("/testGraph.dot").getFile());
 
-        assertEquals(5, graph.getEdges().size());
-        assertEquals(5, graph.getNodes().size());
+        assertEquals(11, graph.getEdges().size());
+        assertEquals(9, graph.getNodes().size());
 
         assertNotNull(graph.getNodebyId("1"));
         assertNotNull(graph.getNodebyId("2"));
         assertNotNull(graph.getNodebyId("3"));
         assertNotNull(graph.getNodebyId("4"));
         assertNotNull(graph.getNodebyId("5"));
+        assertNotNull(graph.getNodebyId("6"));
+        assertNotNull(graph.getNodebyId("7"));
+        assertNotNull(graph.getNodebyId("8"));
+        assertNotNull(graph.getNodebyId("9"));
     }
 }

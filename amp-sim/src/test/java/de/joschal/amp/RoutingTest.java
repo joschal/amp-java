@@ -35,7 +35,7 @@ public class RoutingTest {
         SimpleNode node5 = (SimpleNode) graph.getNodebyId("5");
 
         List<AddressPool> pools = new LinkedList<>();
-        pools.add(new AddressPool(new Address(1), new Address(64)));
+        pools.add(new AddressPool(new Address(1), 64));
         node1.getAddressManager().addAddressPools(pools);
 
         node1.bootSequence();
@@ -58,7 +58,7 @@ public class RoutingTest {
         SimpleNode node5 = (SimpleNode) graph.getNodebyId("5");
 
         List<AddressPool> pools = new LinkedList<>();
-        pools.add(new AddressPool(new Address(1), new Address(64)));
+        pools.add(new AddressPool(new Address(1), 64));
         node1.getAddressManager().addAddressPools(pools);
 
         node1.bootSequence();
