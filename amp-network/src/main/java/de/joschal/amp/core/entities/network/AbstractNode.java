@@ -32,17 +32,15 @@ public abstract class AbstractNode {
         this.address = Address.undefined();
         this.router = new Router(this.address, this.networkInterfaces);
         this.addressManager = new AddressManager(this, addressPools);
+        this.messageSender = new MessageSender(this.address, this.router, this.networkInterfaces, this.getId());
         this.messageForwarder = new MessageForwarder(this.router, this.messageSender);
         this.jobManager = new JobManager();
 
         // Message Handler
-        this.addressingMessageHandler = new AddressingMessageHandler();
+        this.addressingMessageHandler = new AddressingMessageHandler(this.jobManager, this.addressManager, this.messageSender);
         this.controlMessageHandler = new ControlMessageHandler(this.address, this.addressManager, this.messageSender, this.router);
-        this.dataMessageHandler = new DataMessageHandler();
-        this.routingMessageHandler = new RoutingMessageHandler(this.address, this.messageSender);
-
-        // Message Sender
-        this.messageSender = new MessageSender(this.address, this.router, this.networkInterfaces);
+        this.dataMessageHandler = new DataMessageHandler(this, this.messageSender);
+        this.routingMessageHandler = new RoutingMessageHandler(this.address, this.messageSender, this.jobManager);
     }
 
     // Basics
@@ -91,7 +89,7 @@ public abstract class AbstractNode {
             Hello hello = new Hello();
             messageSender.floodMessage(hello, null);
 
-            AddressAcquisitionJob addressAcquisitionJob = new AddressAcquisitionJob(this.networkInterfaces, 10);
+            AddressAcquisitionJob addressAcquisitionJob = new AddressAcquisitionJob(this.jobManager, this.networkInterfaces, 5, this.messageSender, this.addressManager);
             this.jobManager.setAddressAcquisitionJob(addressAcquisitionJob);
 
         }

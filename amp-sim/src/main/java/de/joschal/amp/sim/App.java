@@ -2,11 +2,12 @@ package de.joschal.amp.sim;
 
 import de.joschal.amp.sim.core.entities.Graph;
 import de.joschal.amp.sim.core.inbound.IMessageController;
-import de.joschal.amp.sim.core.inbound.INetController;
+import de.joschal.amp.sim.core.inbound.INetworkController;
 import de.joschal.amp.sim.core.inbound.INodeController;
 import de.joschal.amp.sim.core.logic.MessageController;
 import de.joschal.amp.sim.core.logic.NetController;
 import de.joschal.amp.sim.core.logic.NodeController;
+import de.joschal.amp.sim.core.logic.utils.Scheduler;
 import de.joschal.amp.sim.core.outbound.IGraphReader;
 import de.joschal.amp.sim.core.outbound.IGraphWriter;
 import de.joschal.amp.sim.outbound.GraphReader;
@@ -39,10 +40,14 @@ public class App {
         return new GraphWriter();
     }
 
+    @Bean
+    Scheduler scheduler() {
+        return new Scheduler();
+    }
 
     @Bean
-    INetController netController(Graph graph, IGraphReader graphReader, IGraphWriter graphWriter) {
-        return new NetController(graph, graphReader, graphWriter);
+    INetworkController netController(Graph graph, IGraphReader graphReader, IGraphWriter graphWriter, Scheduler scheduler) {
+        return new NetController(graph, scheduler, graphReader, graphWriter);
     }
 
     @Bean
@@ -52,7 +57,7 @@ public class App {
 
     @Bean
     IMessageController messageController(Graph graph) {
-        return new MessageController(datagramController, graph);
+        return new MessageController(graph);
     }
 
 }

@@ -17,13 +17,6 @@ public class RouteReply extends AbstractRoutingMessage {
         super(routeDiscovery.getDestinationAddress(), routeDiscovery.getSourceAddress(), routeDiscovery.getHopCounter());
     }
 
-    // Only used for cloning the object
-    protected RouteReply(RouteReply original) {
-        super(new Address(original.getSourceAddress().getValue()), new Address(original.getDestinationAddress().getValue()), original.getHopLimit());
-        this.hopCounter = original.getHopCounter();
-        this.tracerouteList = new LinkedList<>(original.tracerouteList);
-    }
-
     @Override
     public String toString() {
         return "RouteReply [" + getSourceAddress() + "] -> [" + getDestinationAddress() + "] with [" + getHopCounter() + "] hops";

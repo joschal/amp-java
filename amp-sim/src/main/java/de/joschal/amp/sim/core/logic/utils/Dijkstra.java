@@ -1,4 +1,4 @@
-package de.joschal.amp.sim.core;
+package de.joschal.amp.sim.core.logic.utils;
 
 import de.joschal.amp.core.entities.network.AbstractNode;
 import lombok.Getter;

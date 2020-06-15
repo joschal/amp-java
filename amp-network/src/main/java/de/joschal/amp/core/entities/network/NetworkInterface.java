@@ -25,7 +25,6 @@ public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
     public NetworkInterface(String name, AbstractNode node) {
         this.name = name;
         this.node = node;
-        this.localAddress = node.getAddress();
         this.nodeId = node.getId();
     }
 
@@ -33,7 +32,6 @@ public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
     private String nodeId;
     private String name;
     private DataLink dataLink;
-    private Address localAddress;
 
     @Override
     public void sendMessage(AbstractMessage message) {
@@ -44,8 +42,9 @@ public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
     public void receiveMessage(AbstractMessage message) {
 
         // if the message looped, immediately drop it
-        if (message.getSourceAddress().equals(this.localAddress)) {
-            log.info("[{} - {}] message dropped : [{}]", this.nodeId, this.localAddress, message);
+        if (message.getSourceAddress().equals(this.node.getAddress()) &&
+                !message.getSourceAddress().equals(Address.undefined())) {
+            log.info("[{} - {}] message dropped : [{}]", this.nodeId, this.node.getAddress(), message);
             return;
         }
 
@@ -55,7 +54,7 @@ public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
             // Forwardable messages must always have fully populated headers
             if (message.getSourceAddress().getValue() == 0 || message.getDestinationAddress().getValue() == 0) {
                 // Drop message
-                log.info("[{} - {}] message dropped : [{}]", this.nodeId, this.localAddress, message);
+                log.info("[{} - {}] message dropped : [{}]", this.nodeId, this.node.getAddress(), message);
                 return;
             }
 
@@ -85,7 +84,7 @@ public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
         message.hop(this.nodeId);
         this.node.router.updateRoutingTable(this, message);
 
-        if (message.getDestinationAddress().getValue() == this.localAddress.getValue()) {
+        if (message.getDestinationAddress().getValue() == this.node.getAddress().getValue()) {
             // Message is addressed to this node
             // handle message by type -> hand up to control plane
             if (message instanceof AbstractRoutingMessage) {

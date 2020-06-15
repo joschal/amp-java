@@ -1,5 +1,6 @@
 package de.joschal.amp.core.logic.sender;
 
+import de.joschal.amp.core.entities.AbstractForwardableMessage;
 import de.joschal.amp.core.entities.AbstractMessage;
 import de.joschal.amp.core.entities.Address;
 import de.joschal.amp.core.entities.network.AbstractNode;
@@ -11,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +23,7 @@ public class MessageSender implements IMessageSender {
     Address localAddress;
     AbstractRouter router;
     List<NetworkInterface> networkInterfaces;
+    String nodeId;
 
     /**
      * Sends message via best known route
@@ -88,6 +91,34 @@ public class MessageSender implements IMessageSender {
         networkInterfaces.stream()
                 // Do not send the message to it's source
                 .filter(networkInterface -> !networkInterface.equals(source))
+                .filter(networkInterface -> {
+                    if (message instanceof AbstractForwardableMessage) {
+                        /*AbstractForwardableMessage abstractForwardableMessage = (AbstractForwardableMessage) message;
+                        if (Collections.frequency(abstractForwardableMessage.getTracerouteList(), this.nodeId) > 1) {
+                            return false;
+                        }*/
+                        Optional<Route> optionalRoute = router.getRoute(message.getSourceAddress());
+
+                        if (optionalRoute.isPresent()) {
+                            //route is known
+                            Route route = optionalRoute.get();
+                            AbstractForwardableMessage forwardableMessage = (AbstractForwardableMessage) message;
+
+                            if (forwardableMessage.getHopCounter() <= route.hops) {
+                                // taken path is better than known route. Flood message
+                                return true;
+                            } else {
+                                // MEssage should not be forwarded. Taken path is inefficient;
+                                return false;
+                            }
+                        } else {
+                            // no route is known
+                            return true;
+                        }
+                    }
+                    // message is not forwardable -> can be flooded
+                    return true;
+                })
                 .forEach(networkInterface -> networkInterface.sendMessage(SerializationUtils.clone(message)));
     }
 }

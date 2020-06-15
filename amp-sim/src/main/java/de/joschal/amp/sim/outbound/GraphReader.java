@@ -2,7 +2,6 @@ package de.joschal.amp.sim.outbound;
 
 import de.joschal.amp.core.entities.network.DataLink;
 import de.joschal.amp.core.logic.nodes.SimpleNode;
-import de.joschal.amp.core.logic.router.Router;
 import de.joschal.amp.sim.core.entities.Graph;
 import de.joschal.amp.sim.core.outbound.IGraphReader;
 import guru.nidi.graphviz.model.Link;
@@ -16,7 +15,7 @@ import org.apache.commons.io.FileUtils;
 import java.io.File;
 import java.io.InputStream;
 
-import static de.joschal.amp.sim.core.logic.Linker.linkNodes;
+import static de.joschal.amp.sim.core.logic.utils.Linker.linkNodes;
 
 @Slf4j
 public class GraphReader implements IGraphReader {

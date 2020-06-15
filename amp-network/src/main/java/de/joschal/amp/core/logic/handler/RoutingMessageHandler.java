@@ -7,6 +7,8 @@ import de.joschal.amp.core.entities.messages.routing.RouteDiscovery;
 import de.joschal.amp.core.entities.messages.routing.RouteReply;
 import de.joschal.amp.core.entities.network.NetworkInterface;
 import de.joschal.amp.core.inbound.IForwardableMessageReceiver;
+import de.joschal.amp.core.logic.jobs.JobManager;
+import de.joschal.amp.core.logic.jobs.RouteDiscoveryJob;
 import de.joschal.amp.core.logic.sender.MessageSender;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,14 +21,15 @@ public class RoutingMessageHandler implements IForwardableMessageReceiver {
 
     private Address localAddress;
     private MessageSender messageSender;
+    private JobManager jobManager;
 
     @Override
     public void handleMessage(AbstractForwardableMessage message, NetworkInterface source) {
 
         if (message instanceof RouteDiscovery) {
-            respondToRouteDiscovery(message);
+            handleRouteDiscovery((RouteDiscovery) message);
         } else if (message instanceof RouteReply) {
-            respondToRouteReply(message);
+            handleRouteReply((RouteReply) message);
         } else {
             log.error("not implemented");
         }
@@ -34,15 +37,20 @@ public class RoutingMessageHandler implements IForwardableMessageReceiver {
 
     }
 
-    private Optional<AbstractMessage> respondToRouteReply(AbstractMessage message) {
+    private void handleRouteReply(RouteReply message) {
         log.info("Received route reply message: {}", (message));
-        return Optional.empty();
+        RouteDiscoveryJob routeDiscoveryJob = jobManager.getRouteDiscoveryJobs().get(message.getSourceAddress());
+
+        if (routeDiscoveryJob != null){
+            routeDiscoveryJob.tearDown();
+            jobManager.getRouteDiscoveryJobs().remove(message.getSourceAddress());
+        }
+
     }
 
-    private Optional<AbstractMessage> respondToRouteDiscovery(AbstractMessage message) {
-
+    private void handleRouteDiscovery(RouteDiscovery message) {
         log.info("received a route discovery message {}", message);
-        messageSender.sendMessageViaKnownRoute(new RouteReply((RouteDiscovery) message));
-        return Optional.empty();
+        RouteReply routeReply = new RouteReply(message);
+        messageSender.sendMessageViaKnownRoute(routeReply);
     }
 }

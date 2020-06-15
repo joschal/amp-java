@@ -76,24 +76,24 @@ class AddressAcquisitionJobTest {
 
         addressAcquisitionJob.tick();
 
-        addressAcquisitionJob.receiveMessage(advertisement1);
-        addressAcquisitionJob.receiveMessage(advertisement2);
+        addressAcquisitionJob.receiveMessage(advertisement1, networkInterfaces.get(0));
+        addressAcquisitionJob.receiveMessage(advertisement2, networkInterfaces.get(1));
 
         addressAcquisitionJob.tick();
 
-        addressAcquisitionJob.receiveMessage(advertisement3);
+        addressAcquisitionJob.receiveMessage(advertisement3, networkInterfaces.get(2));
 
         addressAcquisitionJob.tick();
 
         /* --------------- ASSERT ------------------ */
         ArgumentCaptor<PoolAccepted> argument = ArgumentCaptor.forClass(PoolAccepted.class);
-        verify(messageSenderMock, times(1)).sendMessageViaKnownRoute(argument.capture());
+        verify(messageSenderMock, times(1)).sendMessageToNeighbor(argument.capture(), any(NetworkInterface.class));
         assertEquals(argument.getValue().getSourceAddress(), Address.undefined());
         assertEquals(argument.getValue().getDestinationAddress(), poolAssigned.getSourceAddress());
 
         /* --------------- ACT ------------------ */
 
-        addressAcquisitionJob.receiveMessage(poolAssigned);
+        addressAcquisitionJob.receiveMessage(poolAssigned, null);
         addressAcquisitionJob.tick();
 
         /* --------------- ASSERT ------------------ */
@@ -155,8 +155,8 @@ class AddressAcquisitionJobTest {
 
         addressAcquisitionJob.tick();
 
-        addressAcquisitionJob.receiveMessage(advertisement1);
-        addressAcquisitionJob.receiveMessage(advertisement3);
+        addressAcquisitionJob.receiveMessage(advertisement1, networkInterfaces.get(0));
+        addressAcquisitionJob.receiveMessage(advertisement3, networkInterfaces.get(2));
 
         addressAcquisitionJob.tick();
         addressAcquisitionJob.tick();
@@ -164,13 +164,13 @@ class AddressAcquisitionJobTest {
 
         /* --------------- ASSERT ------------------ */
         ArgumentCaptor<PoolAccepted> argument = ArgumentCaptor.forClass(PoolAccepted.class);
-        verify(messageSenderMock, times(1)).sendMessageViaKnownRoute(argument.capture());
+        verify(messageSenderMock, times(1)).sendMessageToNeighbor(argument.capture(), any(NetworkInterface.class));
         assertEquals(argument.getValue().getSourceAddress(), Address.undefined());
         assertEquals(argument.getValue().getDestinationAddress(), poolAssigned.getSourceAddress());
 
         /* --------------- ACT ------------------ */
 
-        addressAcquisitionJob.receiveMessage(poolAssigned);
+        addressAcquisitionJob.receiveMessage(poolAssigned, null);
         addressAcquisitionJob.tick();
 
         /* --------------- ASSERT ------------------ */

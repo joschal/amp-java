@@ -1,9 +1,11 @@
 package de.joschal.amp.core.logic.jobs;
 
+import de.joschal.amp.core.entities.Address;
 import de.joschal.amp.core.entities.messages.addressing.AbstractAddressingMessage;
 import de.joschal.amp.core.entities.messages.addressing.PoolAccepted;
 import de.joschal.amp.core.entities.messages.addressing.PoolAdvertisement;
 import de.joschal.amp.core.entities.messages.addressing.PoolAssigned;
+import de.joschal.amp.core.entities.messages.control.Hello;
 import de.joschal.amp.core.entities.network.NetworkInterface;
 import de.joschal.amp.core.logic.AddressManager;
 import de.joschal.amp.core.logic.sender.MessageSender;
@@ -33,28 +35,19 @@ public class AddressAcquisitionJob implements IJob {
     private AddressManager addressManager;
 
     // used internally by algorithm
-    private List<AbstractAddressingMessage> receivedMessages;
-    private List<PoolAdvertisement> advertisements;
-    private PoolAdvertisement acceptedPoolAdvertisement;
+    private HashMap<PoolAdvertisement, NetworkInterface> advertisements = new HashMap<>();
+    private PoolAdvertisement acceptedPoolAdvertisement = null;
     private PoolAssigned poolAssigned = null;
 
     // Used to keep track of the number of invocations
     private int waitForAdvertisementsTickCounter = 0;
     private int waitForAssignmentTickCounter = 0;
 
-    public AddressAcquisitionJob(List<NetworkInterface> networkInterfaces, int maxTicks) {
-        this.networkInterfaces = networkInterfaces;
-        this.maxTicks = maxTicks;
-        receivedMessages = new LinkedList<>();
-        advertisements = new LinkedList<>();
-    }
-
     @Override
     public void init() {
         this.waitForAdvertisementsTickCounter = 0;
         this.waitForAssignmentTickCounter = 0;
-        this.receivedMessages = new LinkedList<>();
-        this.advertisements = new LinkedList<>();
+        this.advertisements = new HashMap<>();
         this.acceptedPoolAdvertisement = null;
         this.poolAssigned = null;
     }
@@ -70,11 +63,6 @@ public class AddressAcquisitionJob implements IJob {
             return;
         }
 
-        // Wait for assignment of requested pools
-        if (acceptedPoolAdvertisement != null) {
-            waitForAssignmentTickCounter++;
-            return;
-        }
 
         // Waiting for assignment timed out
         if (waitForAssignmentTickCounter >= maxTicks) {
@@ -83,10 +71,23 @@ public class AddressAcquisitionJob implements IJob {
             this.acceptedPoolAdvertisement = null;
             waitForAssignmentTickCounter = 0;
 
-            // select another pool
+            // if no advertisements received, reset job
+            if (advertisements.isEmpty()) {
+                init();
+                messageSender.floodMessage(new Hello(Address.undefined()), null);
+                return;
+            }
+
+            // if other advertisements available, select another pool
             selectPoolAndAccept();
             return;
 
+        }
+
+        // Wait for assignment of requested pools
+        if (acceptedPoolAdvertisement != null) {
+            waitForAssignmentTickCounter++;
+            return;
         }
 
         processPoolAdvertisements();
@@ -102,6 +103,7 @@ public class AddressAcquisitionJob implements IJob {
             if (advertisements.size() == 0) {
                 log.error("Received no address advertisements. Will reset and restart.");
                 init();
+                messageSender.floodMessage(new Hello(Address.undefined()), null);
                 return;
             }
 
@@ -116,12 +118,14 @@ public class AddressAcquisitionJob implements IJob {
 
     private void selectPoolAndAccept() {
         // select best
-        this.advertisements.sort(Comparator.reverseOrder());
-        this.acceptedPoolAdvertisement = advertisements.get(0);
+        List<PoolAdvertisement> advList = new LinkedList<>(this.advertisements.keySet());
+        advList.sort(Comparator.reverseOrder());
+
+        this.acceptedPoolAdvertisement = advList.get(0);
 
         // Send pool accepted message
         PoolAccepted poolAccepted = new PoolAccepted(this.acceptedPoolAdvertisement);
-        messageSender.sendMessageViaKnownRoute(poolAccepted);
+        messageSender.sendMessageToNeighbor(poolAccepted, this.advertisements.get(this.acceptedPoolAdvertisement));
     }
 
     private void processPoolAssigned() {
@@ -131,11 +135,10 @@ public class AddressAcquisitionJob implements IJob {
         this.addressManager.assignAddressToSelf();
     }
 
-    public void receiveMessage(AbstractAddressingMessage message) {
-        receivedMessages.add(message);
+    public void receiveMessage(AbstractAddressingMessage message, NetworkInterface source) {
         if (message instanceof PoolAdvertisement) {
             // add advertisement to local cache
-            advertisements.add((PoolAdvertisement) message);
+            advertisements.put((PoolAdvertisement) message, source);
         } else if (message instanceof PoolAssigned) {
             this.poolAssigned = (PoolAssigned) message;
         }

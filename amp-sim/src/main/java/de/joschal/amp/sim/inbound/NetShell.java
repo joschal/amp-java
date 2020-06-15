@@ -1,6 +1,6 @@
 package de.joschal.amp.sim.inbound;
 
-import de.joschal.amp.sim.core.inbound.INetController;
+import de.joschal.amp.sim.core.inbound.INetworkController;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.shell.standard.ShellCommandGroup;
@@ -14,7 +14,7 @@ import org.springframework.shell.standard.ShellOption;
 @ShellCommandGroup("Network")
 public class NetShell {
 
-    private INetController netController;
+    private INetworkController netController;
 
     private static final String DEFAULT_PATH = "/Users/joschal/Desktop/";
 
@@ -22,7 +22,7 @@ public class NetShell {
     public String readNetwork(
             @ShellOption String filename
     ) {
-        netController.readNet(DEFAULT_PATH + filename);
+        netController.readNetworkFromFile(DEFAULT_PATH + filename);
         return "ok";
     }
 
@@ -30,7 +30,7 @@ public class NetShell {
     public String persistNetwork(
             @ShellOption String filename
     ) {
-        netController.persistNet(DEFAULT_PATH + filename);
+        netController.persistNetworkToFile(DEFAULT_PATH + filename);
         return "ok";
     }
 
@@ -38,7 +38,8 @@ public class NetShell {
     public String showNetwork(
             @ShellOption String filename
     ) {
-        netController.showNet(DEFAULT_PATH + filename);
+        // TODO make filename optional. User shuld be abke to export to a specific destination
+        netController.showNet();
         return "ok";
     }
 

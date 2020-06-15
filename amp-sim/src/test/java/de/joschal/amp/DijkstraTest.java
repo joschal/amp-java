@@ -1,25 +1,23 @@
 package de.joschal.amp;
 
 import de.joschal.amp.core.entities.network.AbstractNode;
-import de.joschal.amp.sim.core.Dijkstra;
+import de.joschal.amp.sim.core.logic.utils.Dijkstra;
 import de.joschal.amp.sim.core.entities.Graph;
 import de.joschal.amp.sim.outbound.GraphReader;
-import de.joschal.amp.sim.outbound.GraphWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import static de.joschal.amp.sim.core.Dijkstra.dijkstra;
+import static de.joschal.amp.sim.core.logic.utils.Dijkstra.dijkstra;
 
 @Slf4j
 public class DijkstraTest {
 
     @Test
-    void dijkstraTest() throws IOException {
+    void dijkstraTest() {
         Graph graph = new GraphReader().readGraph(getClass().getResource("/testGraph.dot").getFile());
         //new GraphWriter().graphToGraphic(graph, Files.createTempFile("", "").getParent().toString() + "/graph.png");
 

@@ -9,9 +9,11 @@ import de.joschal.amp.core.entities.network.AbstractNode;
 import de.joschal.amp.core.entities.network.NetworkInterface;
 import de.joschal.amp.core.inbound.IForwardableMessageReceiver;
 import de.joschal.amp.core.logic.sender.MessageSender;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@AllArgsConstructor
 public class DataMessageHandler implements IForwardableMessageReceiver {
 
     private AbstractNode node;

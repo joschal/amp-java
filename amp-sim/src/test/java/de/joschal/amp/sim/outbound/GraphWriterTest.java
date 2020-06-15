@@ -21,12 +21,12 @@ public class GraphWriterTest {
 
         Graph graph = new GraphReader().readGraph(getClass().getResource("/testGraph.dot").getFile());
 
-       // new GraphWriter().graphToGraphic(graph, tempDir + "/graph.png");
+        new GraphWriter().graphToGraphic(graph, tempDir + "/graph.png");
 
     }
 
     @Test
-void graphToDot() throws IOException {
+    void graphToDot() throws IOException {
 
         Graph graph = new GraphReader().readGraph(getClass().getResource("/testGraph.dot").getFile());
 

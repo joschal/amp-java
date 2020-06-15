@@ -61,8 +61,10 @@ public class DataLink {
 
             // Alternate between send queues for fair distribution
             if (messageCounter % 2 == 0) {
+                log.debug("Transferred message from {} to {} : [{}]", b.getNodeId(), a.getNodeId(), bSendQueue.peek());
                 a.receiveMessage(bSendQueue.poll());
             } else {
+                log.debug("Transferred message from {} to {} : [{}]", a.getNodeId(), b.getNodeId(), aSendQueue.peek());
                 b.receiveMessage(aSendQueue.poll());
             }
 
@@ -72,12 +74,14 @@ public class DataLink {
 
         // only aSendQueue has pending messages
         if (aSendQueue.size() > 0) {
+            log.debug("Transferred message from {} to {} : [{}]", a.getNodeId(), b.getNodeId(), aSendQueue.peek());
             b.receiveMessage(aSendQueue.poll());
             return;
         }
 
         // only bSendQueue has pending messages
         if (bSendQueue.size() > 0) {
+            log.debug("Transferred message from {} to {} : [{}]", b.getNodeId(), a.getNodeId(), bSendQueue.peek());
             a.receiveMessage(bSendQueue.poll());
         }
     }
@@ -86,6 +90,6 @@ public class DataLink {
     public String toString() {
         return "DataLink{" +
                 "name='" + name + '\'' +
-                a.getName() + " <-> " + b.getName() + '}';
+                a.getNodeId() + " <-> " + b.getNodeId() + '}';
     }
 }
