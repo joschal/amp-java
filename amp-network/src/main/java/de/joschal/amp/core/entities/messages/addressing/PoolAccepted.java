@@ -8,9 +8,13 @@ import lombok.ToString;
 import java.util.LinkedList;
 import java.util.List;
 
-@ToString
 public class PoolAccepted extends AbstractAddressingMessage {
     public PoolAccepted(PoolAdvertisement poolAdvertisement) {
         super(Address.undefined(), poolAdvertisement.getSourceAddress());
+    }
+
+    @Override
+    public String toString() {
+        return "[PoolAccepted " + this.getSourceAddress() + " -> " + this.getDestinationAddress() + "]";
     }
 }

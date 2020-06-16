@@ -32,15 +32,15 @@ public abstract class AbstractNode {
         this.address = Address.undefined();
         this.router = new Router(this.address, this.networkInterfaces);
         this.addressManager = new AddressManager(this, addressPools);
-        this.messageSender = new MessageSender(this.address, this.router, this.networkInterfaces, this.getId());
+        this.messageSender = new MessageSender(this, this.router, this.networkInterfaces);
         this.messageForwarder = new MessageForwarder(this.router, this.messageSender);
         this.jobManager = new JobManager();
 
         // Message Handler
         this.addressingMessageHandler = new AddressingMessageHandler(this.jobManager, this.addressManager, this.messageSender);
-        this.controlMessageHandler = new ControlMessageHandler(this.address, this.addressManager, this.messageSender, this.router);
+        this.controlMessageHandler = new ControlMessageHandler(this, this.addressManager, this.messageSender, this.router);
         this.dataMessageHandler = new DataMessageHandler(this, this.messageSender);
-        this.routingMessageHandler = new RoutingMessageHandler(this.address, this.messageSender, this.jobManager);
+        this.routingMessageHandler = new RoutingMessageHandler(this.messageSender, this.jobManager);
     }
 
     // Basics
@@ -86,11 +86,12 @@ public abstract class AbstractNode {
             // if there is no pool available, request some from adjacent nodes
             // by flooding an empty hello message to all neigbors
             // processing is done asyncronous by the AddressAcquisitionJob
-            Hello hello = new Hello();
-            messageSender.floodMessage(hello, null);
 
-            AddressAcquisitionJob addressAcquisitionJob = new AddressAcquisitionJob(this.jobManager, this.networkInterfaces, 5, this.messageSender, this.addressManager);
+            AddressAcquisitionJob addressAcquisitionJob = new AddressAcquisitionJob(this.getId(), this.jobManager, this.networkInterfaces, 10, this.messageSender, this.addressManager);
             this.jobManager.setAddressAcquisitionJob(addressAcquisitionJob);
+
+            // Init sends out hello messages
+            addressAcquisitionJob.init();
 
         }
     }
@@ -133,6 +134,10 @@ public abstract class AbstractNode {
             } else {
                 throw new RuntimeException("Something went horribly wrong");
             }
+        }
+
+        if (neighbors.contains(this)){
+            throw new RuntimeException("Node was listed as its own neighbor. Something went very wrong");
         }
 
         return neighbors;

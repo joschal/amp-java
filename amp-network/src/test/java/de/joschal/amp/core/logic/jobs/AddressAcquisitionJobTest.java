@@ -69,7 +69,7 @@ class AddressAcquisitionJobTest {
 
         //create Job
         int maxTicks = 5;
-        AddressAcquisitionJob addressAcquisitionJob = new AddressAcquisitionJob(node.getJobManager(), networkInterfaces, maxTicks, node.getMessageSender(), node.getAddressManager());
+        AddressAcquisitionJob addressAcquisitionJob = new AddressAcquisitionJob(node.getId(), node.getJobManager(), networkInterfaces, maxTicks, node.getMessageSender(), node.getAddressManager());
 
         /* --------------- ACT ------------------ */
         addressAcquisitionJob.init();
@@ -148,7 +148,7 @@ class AddressAcquisitionJobTest {
 
         //create Job
         int maxTicks = 3;
-        AddressAcquisitionJob addressAcquisitionJob = new AddressAcquisitionJob(node.getJobManager(), networkInterfaces, maxTicks, node.getMessageSender(), node.getAddressManager());
+        AddressAcquisitionJob addressAcquisitionJob = new AddressAcquisitionJob(node.getId(), node.getJobManager(), networkInterfaces, maxTicks, node.getMessageSender(), node.getAddressManager());
 
         /* --------------- ACT ------------------ */
         addressAcquisitionJob.init();

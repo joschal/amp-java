@@ -24,7 +24,7 @@ public class ForwardingTest {
 
         AbstractNode node = new SimpleNode("1");
         AbstractRouter router = new Router(node.getAddress(), node.getNetworkInterfaces());
-        MessageForwarder forwarder = new MessageForwarder(router, new MessageSender(new Address(42), router, node.getNetworkInterfaces(), node.getId()));
+        MessageForwarder forwarder = new MessageForwarder(router, new MessageSender(node, router, node.getNetworkInterfaces()));
 
         NetworkInterface networkInterface1 = new NetworkInterface("interface1", node);
         NetworkInterface networkInterface2 = new NetworkInterface("interface2", node);
@@ -66,7 +66,7 @@ public class ForwardingTest {
 
         AbstractNode node = new SimpleNode("1");
         AbstractRouter router = new Router(node.getAddress(), node.getNetworkInterfaces());
-        MessageForwarder forwarder = new MessageForwarder(router, new MessageSender(new Address(42), router, node.getNetworkInterfaces(), node.getId()));
+        MessageForwarder forwarder = new MessageForwarder(router, new MessageSender(node, router, node.getNetworkInterfaces()));
         node.setMessageForwarder(forwarder);
 
         NetworkInterface networkInterface1 = new NetworkInterface("interface1", node);

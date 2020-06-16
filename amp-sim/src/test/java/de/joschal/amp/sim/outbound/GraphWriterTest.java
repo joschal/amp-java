@@ -2,11 +2,13 @@ package de.joschal.amp.sim.outbound;
 
 import de.joschal.amp.sim.core.entities.Graph;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
 
+@Ignore // only to be invoked manually
 public class GraphWriterTest {
 
     private String tempDir;
@@ -30,7 +32,7 @@ public class GraphWriterTest {
 
         Graph graph = new GraphReader().readGraph(getClass().getResource("/testGraph.dot").getFile());
 
-        // new GraphWriter().graphToDot(graph, tempDir + "/testGraph.dot");
+        new GraphWriter().graphToDot(graph, tempDir + "/testGraph.dot");
 
         //TODO read graph back in and compare to original
     }

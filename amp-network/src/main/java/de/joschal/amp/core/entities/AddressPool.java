@@ -12,7 +12,7 @@ public class AddressPool implements Comparable<AddressPool>, Serializable {
     public AddressPool(Address lowest, long size) {
 
         if (lowest.getValue() <= 0 || size <= 0) {
-            throw new RuntimeException("invalid address range");
+            throw new RuntimeException("invalid address range start:" + lowest.getValue() + " size:" + size);
         }
 
         this.lowest = lowest;

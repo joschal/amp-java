@@ -40,7 +40,7 @@ public class Scheduler {
             // if ZAL/AQ job is active, this it the only one to be executed
             if (node.getJobManager().getAddressAcquisitionJob() != null) {
                 node.getJobManager().getAddressAcquisitionJob().tick();
-                return;
+                continue;
             }
 
             // Tick on all other jobs

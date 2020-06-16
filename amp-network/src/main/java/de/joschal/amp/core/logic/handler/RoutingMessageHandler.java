@@ -1,8 +1,6 @@
 package de.joschal.amp.core.logic.handler;
 
 import de.joschal.amp.core.entities.AbstractForwardableMessage;
-import de.joschal.amp.core.entities.AbstractMessage;
-import de.joschal.amp.core.entities.Address;
 import de.joschal.amp.core.entities.messages.routing.RouteDiscovery;
 import de.joschal.amp.core.entities.messages.routing.RouteReply;
 import de.joschal.amp.core.entities.network.NetworkInterface;
@@ -13,13 +11,10 @@ import de.joschal.amp.core.logic.sender.MessageSender;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Optional;
-
 @Slf4j
 @AllArgsConstructor
 public class RoutingMessageHandler implements IForwardableMessageReceiver {
 
-    private Address localAddress;
     private MessageSender messageSender;
     private JobManager jobManager;
 
@@ -41,7 +36,7 @@ public class RoutingMessageHandler implements IForwardableMessageReceiver {
         log.info("Received route reply message: {}", (message));
         RouteDiscoveryJob routeDiscoveryJob = jobManager.getRouteDiscoveryJobs().get(message.getSourceAddress());
 
-        if (routeDiscoveryJob != null){
+        if (routeDiscoveryJob != null) {
             routeDiscoveryJob.tearDown();
             jobManager.getRouteDiscoveryJobs().remove(message.getSourceAddress());
         }

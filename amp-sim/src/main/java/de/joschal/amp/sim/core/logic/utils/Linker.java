@@ -13,6 +13,10 @@ public class Linker {
 
     public static DataLink linkNodes(AbstractNode node1, AbstractNode node2) {
 
+        if (node1.getId() == node2.getId()){
+            throw new RuntimeException("Invalid Data Link. A node should not be linked to itself");
+        }
+
         NetworkInterface networkInterface1 = new NetworkInterface("to " + node2.getId(), node1);
         node1.addNetworkInterface(networkInterface1);
 

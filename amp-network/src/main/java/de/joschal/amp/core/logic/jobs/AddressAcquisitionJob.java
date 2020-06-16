@@ -19,7 +19,8 @@ import java.util.*;
 @Slf4j
 public class AddressAcquisitionJob implements IJob {
 
-    public AddressAcquisitionJob(JobManager jobManager, List<NetworkInterface> networkInterfaces, int maxTicks, MessageSender messageSender, AddressManager addressManager) {
+    public AddressAcquisitionJob(String nodeId, JobManager jobManager, List<NetworkInterface> networkInterfaces, int maxTicks, MessageSender messageSender, AddressManager addressManager) {
+        this.nodeId = nodeId;
         this.jobManager = jobManager;
         this.networkInterfaces = networkInterfaces;
         this.maxTicks = maxTicks;
@@ -28,6 +29,7 @@ public class AddressAcquisitionJob implements IJob {
     }
 
     // Populated by constructor
+    private String nodeId;
     private JobManager jobManager;
     private List<NetworkInterface> networkInterfaces;
     private int maxTicks;
@@ -42,18 +44,26 @@ public class AddressAcquisitionJob implements IJob {
     // Used to keep track of the number of invocations
     private int waitForAdvertisementsTickCounter = 0;
     private int waitForAssignmentTickCounter = 0;
+    private int backoffTimer;
 
     @Override
     public void init() {
+        log.info("[{}] Will init/reset AddressAcquisitionJob", this.nodeId);
         this.waitForAdvertisementsTickCounter = 0;
         this.waitForAssignmentTickCounter = 0;
         this.advertisements = new HashMap<>();
         this.acceptedPoolAdvertisement = null;
         this.poolAssigned = null;
+        messageSender.floodMessage(new Hello(Address.undefined()), null);
     }
 
     @Override
     public void tick() {
+
+        if (backoffTimer > 0){
+           backoffTimer--;
+           return;
+        }
 
         // pools were assigned. Process them locally
         // algorithm is finished. Job is torn down
@@ -74,7 +84,6 @@ public class AddressAcquisitionJob implements IJob {
             // if no advertisements received, reset job
             if (advertisements.isEmpty()) {
                 init();
-                messageSender.floodMessage(new Hello(Address.undefined()), null);
                 return;
             }
 
@@ -103,7 +112,6 @@ public class AddressAcquisitionJob implements IJob {
             if (advertisements.size() == 0) {
                 log.error("Received no address advertisements. Will reset and restart.");
                 init();
-                messageSender.floodMessage(new Hello(Address.undefined()), null);
                 return;
             }
 
@@ -121,11 +129,22 @@ public class AddressAcquisitionJob implements IJob {
         List<PoolAdvertisement> advList = new LinkedList<>(this.advertisements.keySet());
         advList.sort(Comparator.reverseOrder());
 
-        this.acceptedPoolAdvertisement = advList.get(0);
+        for (PoolAdvertisement poolAdvertisement : advList) {
 
-        // Send pool accepted message
-        PoolAccepted poolAccepted = new PoolAccepted(this.acceptedPoolAdvertisement);
-        messageSender.sendMessageToNeighbor(poolAccepted, this.advertisements.get(this.acceptedPoolAdvertisement));
+            if (poolAdvertisement.getTotalSize() > 0) {
+                // Send pool accepted message
+                this.acceptedPoolAdvertisement = poolAdvertisement;
+                PoolAccepted poolAccepted = new PoolAccepted(this.acceptedPoolAdvertisement);
+                messageSender.sendMessageToNeighbor(poolAccepted, this.advertisements.get(this.acceptedPoolAdvertisement));
+                log.info("[{}] Pool accepted: {}", this.nodeId, this.acceptedPoolAdvertisement);
+                return;
+            }
+        }
+
+        // All Advertisements were empty. Reset Job.
+        log.info("[{}] All Advertisements were empty will reset job, and apply backoff timer", this.nodeId);
+        backoffTimer = maxTicks;
+        init();
     }
 
     private void processPoolAssigned() {

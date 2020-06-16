@@ -26,7 +26,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class ControlMessageHandler implements ILinkLocalMessageReceiver {
 
-    private Address localAddress;
+    private AbstractNode node;
     private AddressManager addressManager;
     private MessageSender messageSender;
     private AbstractRouter router;
@@ -45,7 +45,7 @@ public class ControlMessageHandler implements ILinkLocalMessageReceiver {
     }
 
     private void handleHelloMessage(Hello helloMessage, NetworkInterface source) {
-        log.info("Received Hello");
+        log.info("[{}] Received Hello", this.node.getId());
 
         // Triggers ZAL/AQ
         // Send address Advertisement if source address is 0
@@ -54,11 +54,11 @@ public class ControlMessageHandler implements ILinkLocalMessageReceiver {
             PoolAdvertisement poolAdvertisement;
             if (addressManager.isAPoolAvailable()) {
                 List<AddressPool> reservedAddressPools = addressManager.reserveAddressPools(source);
-                poolAdvertisement = new PoolAdvertisement(localAddress, Address.undefined(), reservedAddressPools);
+                poolAdvertisement = new PoolAdvertisement(node.getAddress(), Address.undefined(), reservedAddressPools);
 
             } else {
                 // If no addresses are available, send empty advertisement
-                poolAdvertisement = new PoolAdvertisement(localAddress, Address.undefined(), Collections.emptyList());
+                poolAdvertisement = new PoolAdvertisement(node.getAddress(), Address.undefined(), Collections.emptyList());
             }
             messageSender.sendMessageToNeighbor(poolAdvertisement, source);
         } else {
@@ -71,7 +71,7 @@ public class ControlMessageHandler implements ILinkLocalMessageReceiver {
 
     private void handleGoodbyeMessage(Goodbye goodbye, NetworkInterface source) {
         log.info("Received Goodbye");
-        GoodbyeAck goodbyeAck = new GoodbyeAck(localAddress, goodbye.getSourceAddress());
+        GoodbyeAck goodbyeAck = new GoodbyeAck(node.getAddress(), goodbye.getSourceAddress());
         messageSender.sendMessageToNeighbor(goodbyeAck, source);
 
         addressManager.revokeAddressPool(source);

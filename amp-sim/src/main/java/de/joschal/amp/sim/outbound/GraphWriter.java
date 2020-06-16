@@ -38,7 +38,7 @@ public class GraphWriter implements IGraphWriter {
         }
 
         try {
-            Graphviz.fromGraph(dotGraph).width(1024).render(Format.PNG).toFile(new File(filename));
+            Graphviz.fromGraph(dotGraph).width(2048).render(Format.PNG).toFile(new File(filename));
 
             Runtime.getRuntime().exec(String.format("open %s", filename));
         } catch (IOException e) {

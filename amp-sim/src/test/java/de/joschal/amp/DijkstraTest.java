@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import static de.joschal.amp.sim.core.logic.utils.Dijkstra.dijkstra;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
 public class DijkstraTest {
@@ -23,16 +24,26 @@ public class DijkstraTest {
 
         AbstractNode source = graph.getNodebyId("1");
 
+        // invoke algorithm
         HashMap<String, Dijkstra.DistanceVector> distances =
                 dijkstra(new LinkedList<>(graph.getNodes().values()), source);
 
+        // Print
         distances.forEach((s, distanceVector) ->
                 log.info("Distance to {} via {} is {}",
                         distanceVector.getNode().getId(),
                         distanceVector.getPrevious().getId(),
                         distanceVector.getDistance()));
 
-
+        // assert
+        assertEquals(1, distances.get("2").getDistance());
+        assertEquals(1, distances.get("3").getDistance());
+        assertEquals(2, distances.get("4").getDistance());
+        assertEquals(2, distances.get("5").getDistance());
+        assertEquals(1, distances.get("6").getDistance());
+        assertEquals(2, distances.get("7").getDistance());
+        assertEquals(3, distances.get("8").getDistance());
+        assertEquals(3, distances.get("9").getDistance());
     }
 
 

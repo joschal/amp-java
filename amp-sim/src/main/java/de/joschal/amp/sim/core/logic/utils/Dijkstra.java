@@ -25,12 +25,11 @@ public class Dijkstra {
 
             AbstractNode currentNode = notVisited.get(0);
 
-            // Normally, the neighbour with the shortest distance would be choosen next.
+            // Normally, the neighbour with the shortest distance would be chosen next.
             // But since all edges have the same weight, we need to keep track, which nodes we already visited
             for (AbstractNode neighbour : currentNode.getNeighbours()) {
                 if (!visited.contains(neighbour)) {
                     notVisited.add(neighbour);
-                    break;
                 }
             }
 
@@ -39,10 +38,10 @@ public class Dijkstra {
 
             for (AbstractNode neighbour : currentNode.getNeighbours()) {
 
-                int currentdistance = distances.get(neighbour.getId()).getDistance();
+                int currentDistance = distances.get(neighbour.getId()).getDistance();
                 int newDistance = distances.get(currentNode.getId()).getDistance() + 1;
 
-                if (newDistance < currentdistance) {
+                if (newDistance < currentDistance) {
                     distances.get(neighbour.getId()).setDistance(newDistance);
                     distances.get(neighbour.getId()).setPrevious(currentNode);
                 }
@@ -75,7 +74,7 @@ public class Dijkstra {
         }
 
         private AbstractNode node;
-        private AbstractNode previous;
+        private AbstractNode previous = null;
         private int distance = Integer.MAX_VALUE;
 
     }

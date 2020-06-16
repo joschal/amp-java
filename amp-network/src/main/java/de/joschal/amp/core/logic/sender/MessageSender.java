@@ -2,7 +2,6 @@ package de.joschal.amp.core.logic.sender;
 
 import de.joschal.amp.core.entities.AbstractForwardableMessage;
 import de.joschal.amp.core.entities.AbstractMessage;
-import de.joschal.amp.core.entities.Address;
 import de.joschal.amp.core.entities.network.AbstractNode;
 import de.joschal.amp.core.entities.network.AbstractRouter;
 import de.joschal.amp.core.entities.network.NetworkInterface;
@@ -12,7 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,10 +18,9 @@ import java.util.Optional;
 @AllArgsConstructor
 public class MessageSender implements IMessageSender {
 
-    Address localAddress;
-    AbstractRouter router;
-    List<NetworkInterface> networkInterfaces;
-    String nodeId;
+    private AbstractNode node;
+    private AbstractRouter router;
+    private List<NetworkInterface> networkInterfaces;
 
     /**
      * Sends message via best known route
@@ -64,7 +61,7 @@ public class MessageSender implements IMessageSender {
         }
 
         // link local messages are only allowed if the source is the node itself
-        if (message.getSourceAddress().getValue() == localAddress.getValue()) {
+        if (message.getSourceAddress().getValue() == this.node.getAddress().getValue()) {
 
             Optional<Route> route = router.getRoute(message);
 

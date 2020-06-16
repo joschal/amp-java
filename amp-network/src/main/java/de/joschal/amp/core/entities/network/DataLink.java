@@ -55,7 +55,6 @@ public class DataLink {
      * Uses round-robin logic to select the queue
      */
     public void transferMessage() {
-
         // both queues have pending messages
         if (aSendQueue.size() > 0 && bSendQueue.size() > 0) {
 
@@ -84,6 +83,19 @@ public class DataLink {
             log.debug("Transferred message from {} to {} : [{}]", b.getNodeId(), a.getNodeId(), bSendQueue.peek());
             a.receiveMessage(bSendQueue.poll());
         }
+
+        /*
+        while (!aSendQueue.isEmpty()){
+            log.debug("Transferred message from {} to {} : [{}]", a.getNodeId(), b.getNodeId(), aSendQueue.peek());
+            b.receiveMessage(aSendQueue.poll());
+        }
+
+        while (!bSendQueue.isEmpty()){
+            log.debug("Transferred message from {} to {} : [{}]", b.getNodeId(), a.getNodeId(), bSendQueue.peek());
+            a.receiveMessage(bSendQueue.poll());
+        }
+
+        */
     }
 
     @Override

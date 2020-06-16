@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
-class SchedulerTest {
+class ZALAQ {
 
     @Test
     void bootTest() {
