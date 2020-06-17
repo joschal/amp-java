@@ -33,9 +33,8 @@ public class MessageRoutingTest {
             node.bootSequence();
         }
 
-        Scheduler scheduler = new Scheduler();
         for (int i = 0; i < 1000; i++) {
-            scheduler.tick(graph);
+            Scheduler.tick(graph);
 
             boolean allNodesHaveAddresses = true;
             for (AbstractNode node : graph.getNodes().values()) {
@@ -66,11 +65,10 @@ public class MessageRoutingTest {
 
         SimpleNode startNode = (SimpleNode) graph.getNodebyId("1");
 
-        startNode.action("Hello World", graph.getNodebyId("9").getAddress());
+        startNode.sendDatagram("Hello World", graph.getNodebyId("9").getAddress());
 
-        Scheduler scheduler = new Scheduler();
         for (int i = 0; i < 500; i++) {
-            scheduler.tick(graph);
+            Scheduler.tick(graph);
         }
 
         assertEquals(3, graph.getNodebyId("9").getRouter().getRoute(graph.getNodebyId("1").getAddress()).get().hops);

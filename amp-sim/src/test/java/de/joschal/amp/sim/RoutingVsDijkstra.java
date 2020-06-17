@@ -39,9 +39,8 @@ public class RoutingVsDijkstra {
             node.bootSequence();
         }
 
-        Scheduler scheduler = new Scheduler();
         for (int i = 0; i < 1000; i++) {
-            scheduler.tick(graph);
+            Scheduler.tick(graph);
 
             boolean allNodesHaveAddresses = true;
             for (AbstractNode node : graph.getNodes().values()) {
@@ -99,11 +98,10 @@ public class RoutingVsDijkstra {
     private void sendDatagramToNodeById(String id) {
         SimpleNode startNode = (SimpleNode) graph.getNodebyId("1");
 
-        startNode.action("Hello World", graph.getNodebyId(id).getAddress());
+        startNode.sendDatagram("Hello World", graph.getNodebyId(id).getAddress());
 
-        Scheduler scheduler = new Scheduler();
         for (int i = 0; i < 20; i++) {
-            scheduler.tick(graph);
+            Scheduler.tick(graph);
         }
     }
 }

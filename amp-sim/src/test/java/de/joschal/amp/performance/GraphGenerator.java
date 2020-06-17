@@ -1,13 +1,11 @@
-package de.joschal.amp;
+package de.joschal.amp.performance;
 
 import de.joschal.amp.core.entities.network.AbstractNode;
 import de.joschal.amp.core.entities.network.DataLink;
-import de.joschal.amp.core.entities.network.NetworkInterface;
 import de.joschal.amp.core.logic.nodes.SimpleNode;
 import de.joschal.amp.sim.core.entities.Graph;
 import de.joschal.amp.sim.core.logic.utils.Dijkstra;
 import de.joschal.amp.sim.core.logic.utils.Linker;
-import de.joschal.amp.sim.outbound.GraphWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 

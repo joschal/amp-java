@@ -28,9 +28,8 @@ class ZALAQ {
             node.bootSequence();
         }
 
-        Scheduler scheduler = new Scheduler();
         for (int i = 0; i < 1000; i++){
-            scheduler.tick(graph);
+            Scheduler.tick(graph);
 
             boolean allNodesHaveAddresses = true;
             for (AbstractNode node : graph.getNodes().values()){

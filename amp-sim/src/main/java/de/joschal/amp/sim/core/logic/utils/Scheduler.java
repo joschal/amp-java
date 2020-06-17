@@ -14,7 +14,7 @@ import java.util.Collection;
  */
 public class Scheduler {
 
-    public void tick(Graph graph) {
+    public static void tick(Graph graph) {
 
         // transfer one message on each link
         // On busy nodes, this might lead to long job queues
@@ -24,7 +24,7 @@ public class Scheduler {
         jobTick(graph.getNodes().values());
     }
 
-    private void networkTick(Collection<DataLink> dataLinks) {
+    private static void networkTick(Collection<DataLink> dataLinks) {
 
         // transfers one message on the link, round robin style
         for (DataLink dataLink : dataLinks) {
@@ -33,7 +33,7 @@ public class Scheduler {
 
     }
 
-    private void jobTick(Collection<AbstractNode> nodes) {
+    private static void jobTick(Collection<AbstractNode> nodes) {
 
         for (AbstractNode node : nodes) {
 

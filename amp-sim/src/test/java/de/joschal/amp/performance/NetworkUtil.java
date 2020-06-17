@@ -1,42 +1,32 @@
-package de.joschal.amp.sim;
+package de.joschal.amp.performance;
 
-import de.joschal.amp.performance.GraphGenerator;
 import de.joschal.amp.core.entities.Address;
 import de.joschal.amp.core.entities.AddressPool;
 import de.joschal.amp.core.entities.network.AbstractNode;
 import de.joschal.amp.sim.core.entities.Graph;
 import de.joschal.amp.sim.core.logic.utils.Scheduler;
-import de.joschal.amp.sim.outbound.GraphReader;
 import de.joschal.amp.sim.outbound.GraphWriter;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-@Slf4j
-public class BootSequenceRandomGraph {
+public class NetworkUtil {
 
-    @Test
-    void bootSequenceRandomGraph() {
+    public static Graph getRandomBootedGraph(int nodeCount) {
 
-        // read graph from file
-        Graph graph = GraphGenerator.getRandomGraph(32);
-        performAddressAsignment(graph);
+        Graph graph = GraphGenerator.getRandomGraph(nodeCount);
 
+        bootGraph(graph);
+
+        return graph;
     }
 
-    @Test
-    void bootSequenceGraphFromFile() {
+    public static Graph getBootedGraphFromFile(String filename) {
 
-        // read graph from file
-        Graph graph = new GraphReader().readGraph(getClass().getResource("/randomTestFail.dot").getFile());
-        performAddressAsignment(graph);
-
+        return null;
     }
 
-
-    private void performAddressAsignment(Graph graph) {
+    private static void bootGraph(Graph graph) {
         // assign initial address pool to forst node in the network
         AddressPool addressPool = new AddressPool(new Address(1024), (long) Math.pow(2.0, 32.0));
         graph.getNodes().get("1").getAddressManager().addAddressPool(addressPool);
@@ -46,9 +36,7 @@ public class BootSequenceRandomGraph {
             node.bootSequence();
         }
 
-
         for (int i = 0; i < 1000; i++) {
-            log.info("---------------- TICK -----------------");
             Scheduler.tick(graph);
 
             boolean allNodesHaveAddresses = true;
@@ -59,13 +47,11 @@ public class BootSequenceRandomGraph {
             }
 
             if (allNodesHaveAddresses) {
-                log.info("assignment finished after {} ticks", i);
                 break;
             }
         }
 
         for (AbstractNode node : graph.getNodes().values()) {
-            log.info("Node {} has address {}", node.getId(), node.getAddress());
 
             assertEquals(node.getNeighbours().size(), node.getNetworkInterfaces().size());
 
@@ -73,12 +59,19 @@ public class BootSequenceRandomGraph {
                 new GraphWriter().graphToDot(graph, "randomTestFail.dot");
                 new GraphWriter().graphToGraphic(graph, "test.png");
             }
-
         }
 
         for (AbstractNode node : graph.getNodes().values()) {
-            log.info("checking node {}", node.getId());
             assertNotEquals(Address.undefined(), node.getAddress());
         }
+    }
+
+    public static String getRandomNodeId(int nodeCount) {
+
+        int random = 0;
+        while (random == 0) {
+            random = (int) (Math.random() * nodeCount);
+        }
+        return String.valueOf(random);
     }
 }

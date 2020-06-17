@@ -44,7 +44,7 @@ public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
         // if the message looped, immediately drop it
         if (message.getSourceAddress().equals(this.node.getAddress()) &&
                 !message.getSourceAddress().equals(Address.undefined())) {
-            log.info("[{} - {}] message dropped : [{}]", this.nodeId, this.node.getAddress(), message);
+            log.info("[{} - {}] Message looped. Will drop message. : [{}]", this.nodeId, this.node.getAddress(), message);
             return;
         }
 

@@ -1,6 +1,7 @@
 package de.joschal.amp.sim.core.logic.utils;
 
 import de.joschal.amp.core.entities.network.AbstractNode;
+import de.joschal.amp.sim.core.entities.Graph;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -12,6 +13,14 @@ import java.util.List;
 
 @Slf4j
 public class Dijkstra {
+
+    public static HashMap<String, DistanceVector> dijkstra(Graph graph) {
+        return dijkstra(new LinkedList<>(graph.getNodes().values()), graph.getNodebyId("1"));
+    }
+
+    public static HashMap<String, DistanceVector> dijkstra(Graph graph, AbstractNode abstractNode) {
+        return dijkstra(new LinkedList<>(graph.getNodes().values()), abstractNode);
+    }
 
     public static HashMap<String, DistanceVector> dijkstra(List<AbstractNode> graph, AbstractNode source) {
 

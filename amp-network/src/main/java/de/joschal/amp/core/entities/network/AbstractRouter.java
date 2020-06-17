@@ -13,7 +13,7 @@ import java.util.Set;
 @Getter
 public abstract class AbstractRouter {
 
-    public static final int DEFAULT_ROUTE_DISCOVERY_HOP_LIMIT = 16;
+    public static final int DEFAULT_ROUTE_DISCOVERY_HOP_LIMIT = 32;
 
     public AbstractRouter(Address localAddress, Set<Route> routingTable, List<NetworkInterface> networkInterfaces) {
         this.localAddress = localAddress;

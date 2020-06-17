@@ -20,10 +20,12 @@ public class SimpleNode extends AbstractNode {
         super(id, addressPools);
     }
 
+    private String receivedMessage = null;
+
     @Override
     public void receiveDatagram(String payload, Address source) {
         log.info("Business logic received data message: {}", payload);
-
+        this.receivedMessage = payload;
     }
 
     @Override
@@ -32,14 +34,18 @@ public class SimpleNode extends AbstractNode {
         return true;
     }
 
-    // For testing
-    public void action(String message, Address destination) {
+    public String getReceivedMessage() {
+        return receivedMessage;
+    }
+
+    // For Testing
+    public void sendDatagram(String message, Address destination) {
         log.info("Action triggered in node {}", this.id);
 
         Datagram datagram = new Datagram(this.address, destination, 42, message);
         boolean send = this.messageSender.sendMessageViaKnownRoute(datagram);
 
-        if (!send){
+        if (!send) {
             RouteDiscovery routeDiscovery = new RouteDiscovery(this.address, destination, 10);
             messageSender.floodMessage(routeDiscovery, null);
 
@@ -47,5 +53,4 @@ public class SimpleNode extends AbstractNode {
             this.jobManager.getRouteDiscoveryJobs().put(routeDiscovery.getDestinationAddress(), routeDiscoveryJob);
         }
     }
-
 }
