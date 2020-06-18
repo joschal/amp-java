@@ -20,7 +20,7 @@ public class SimpleNode extends AbstractNode {
         super(id, addressPools);
     }
 
-    private String receivedMessage = null;
+    private String receivedMessage = "";
 
     @Override
     public void receiveDatagram(String payload, Address source) {
