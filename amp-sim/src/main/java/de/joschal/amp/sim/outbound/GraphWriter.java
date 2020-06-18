@@ -1,7 +1,7 @@
 package de.joschal.amp.sim.outbound;
 
 import de.joschal.amp.core.entities.network.AbstractNode;
-import de.joschal.amp.core.entities.network.DataLink;
+import de.joschal.amp.io.DataLink;
 import de.joschal.amp.sim.core.entities.Graph;
 import de.joschal.amp.sim.core.outbound.IGraphWriter;
 import guru.nidi.graphviz.engine.Format;

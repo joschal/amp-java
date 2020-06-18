@@ -1,7 +1,7 @@
 package de.joschal.amp.sim.core.entities;
 
 import de.joschal.amp.core.entities.network.AbstractNode;
-import de.joschal.amp.core.entities.network.DataLink;
+import de.joschal.amp.io.DataLink;
 
 import java.util.HashMap;
 import java.util.Map;

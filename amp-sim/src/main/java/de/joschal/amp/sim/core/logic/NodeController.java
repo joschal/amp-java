@@ -1,7 +1,7 @@
 package de.joschal.amp.sim.core.logic;
 
 import de.joschal.amp.core.entities.network.AbstractNode;
-import de.joschal.amp.core.entities.network.DataLink;
+import de.joschal.amp.io.DataLink;
 import de.joschal.amp.sim.core.entities.Graph;
 import de.joschal.amp.sim.core.inbound.INodeController;
 import de.joschal.amp.sim.core.logic.utils.Linker;

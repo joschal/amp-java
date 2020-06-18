@@ -1,9 +1,7 @@
 package de.joschal.amp.core.entities.messages.routing;
 
-import de.joschal.amp.core.entities.Address;
+import de.joschal.amp.core.entities.network.addressing.Address;
 import de.joschal.amp.core.logic.router.Router;
-
-import java.util.LinkedList;
 
 public class RouteDiscovery extends AbstractRoutingMessage {
 

@@ -1,11 +1,11 @@
 package de.joschal.amp.sim;
 
-import de.joschal.amp.core.entities.Address;
-import de.joschal.amp.core.entities.AddressPool;
 import de.joschal.amp.core.entities.network.AbstractNode;
-import de.joschal.amp.core.entities.network.NetworkInterface;
-import de.joschal.amp.core.entities.network.Route;
+import de.joschal.amp.core.entities.network.addressing.Address;
+import de.joschal.amp.core.entities.network.addressing.AddressPool;
+import de.joschal.amp.core.entities.network.routing.Route;
 import de.joschal.amp.core.logic.nodes.SimpleNode;
+import de.joschal.amp.io.NetworkInterface;
 import de.joschal.amp.sim.core.entities.Graph;
 import de.joschal.amp.sim.core.logic.utils.Dijkstra;
 import de.joschal.amp.sim.core.logic.utils.Scheduler;

@@ -1,14 +1,13 @@
 package de.joschal.amp.core.logic.handler;
 
-import de.joschal.amp.core.entities.AbstractForwardableMessage;
-import de.joschal.amp.core.entities.messages.data.AbstractDataMessage;
+import de.joschal.amp.core.entities.messages.AbstractForwardableMessage;
 import de.joschal.amp.core.entities.messages.data.AcknowledgedDatagram;
 import de.joschal.amp.core.entities.messages.data.Datagram;
 import de.joschal.amp.core.entities.messages.data.DatagramAcknowledgement;
 import de.joschal.amp.core.entities.network.AbstractNode;
-import de.joschal.amp.core.entities.network.NetworkInterface;
-import de.joschal.amp.core.inbound.IForwardableMessageReceiver;
+import de.joschal.amp.core.inbound.layer3.IForwardableMessageReceiver;
 import de.joschal.amp.core.logic.sender.MessageSender;
+import de.joschal.amp.io.NetworkInterface;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,7 +33,7 @@ public class DataMessageHandler implements IForwardableMessageReceiver {
             boolean ack = node.receiveAcknowledgedDatagram(((AcknowledgedDatagram) message).getPayload(), message.getSourceAddress());
 
             // process acknowledgement if wanted by business logic
-            if (ack){
+            if (ack) {
                 DatagramAcknowledgement datagramAcknowledgement = new DatagramAcknowledgement((AcknowledgedDatagram) message);
                 messageSender.sendMessageViaKnownRoute(datagramAcknowledgement);
             }

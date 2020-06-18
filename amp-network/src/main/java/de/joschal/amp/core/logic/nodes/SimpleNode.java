@@ -1,12 +1,10 @@
 package de.joschal.amp.core.logic.nodes;
 
-import de.joschal.amp.core.entities.Address;
-import de.joschal.amp.core.entities.AddressPool;
-import de.joschal.amp.core.entities.messages.data.AbstractDataMessage;
 import de.joschal.amp.core.entities.messages.data.Datagram;
 import de.joschal.amp.core.entities.messages.routing.RouteDiscovery;
 import de.joschal.amp.core.entities.network.AbstractNode;
-import de.joschal.amp.core.entities.network.AbstractRouter;
+import de.joschal.amp.core.entities.network.addressing.Address;
+import de.joschal.amp.core.entities.network.addressing.AddressPool;
 import de.joschal.amp.core.logic.jobs.RouteDiscoveryJob;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;

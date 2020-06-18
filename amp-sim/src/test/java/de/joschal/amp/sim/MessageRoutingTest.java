@@ -1,10 +1,10 @@
 package de.joschal.amp.sim;
 
-import de.joschal.amp.core.entities.Address;
-import de.joschal.amp.core.entities.AddressPool;
 import de.joschal.amp.core.entities.network.AbstractNode;
-import de.joschal.amp.core.entities.network.NetworkInterface;
+import de.joschal.amp.core.entities.network.addressing.Address;
+import de.joschal.amp.core.entities.network.addressing.AddressPool;
 import de.joschal.amp.core.logic.nodes.SimpleNode;
+import de.joschal.amp.io.NetworkInterface;
 import de.joschal.amp.sim.core.entities.Graph;
 import de.joschal.amp.sim.core.logic.utils.Scheduler;
 import de.joschal.amp.sim.outbound.GraphReader;
@@ -22,7 +22,7 @@ public class MessageRoutingTest {
     @BeforeEach
     void setUp() {
         // read graph from file
-        graph = new GraphReader().readGraph(getClass().getResource("/randomTestFail.dot").getFile());
+        graph = new GraphReader().readGraph(getClass().getResource("/testGraph.dot").getFile());
 
         // assign initial address pool to forst node in the network
         AddressPool addressPool = new AddressPool(new Address(1024), 1024);

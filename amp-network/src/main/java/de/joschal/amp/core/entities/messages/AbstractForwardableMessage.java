@@ -1,6 +1,6 @@
-package de.joschal.amp.core.entities;
+package de.joschal.amp.core.entities.messages;
 
-import de.joschal.amp.core.entities.network.AbstractNode;
+import de.joschal.amp.core.entities.network.addressing.Address;
 import lombok.Getter;
 
 import java.util.LinkedList;
@@ -24,6 +24,7 @@ public abstract class AbstractForwardableMessage extends AbstractMessage impleme
 
     /**
      * Must be invoked by every node when receiving a message.
+     *
      * @return true, if message may be processed. False if message must be dropped.
      */
     public boolean hop(String nodeId) {

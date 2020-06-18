@@ -1,26 +1,23 @@
 package de.joschal.amp.core.logic.handler;
 
-import de.joschal.amp.core.entities.AbstractMessage;
-import de.joschal.amp.core.entities.Address;
-import de.joschal.amp.core.entities.AddressPool;
+import de.joschal.amp.core.entities.messages.AbstractMessage;
 import de.joschal.amp.core.entities.messages.addressing.PoolAdvertisement;
 import de.joschal.amp.core.entities.messages.control.Goodbye;
 import de.joschal.amp.core.entities.messages.control.GoodbyeAck;
 import de.joschal.amp.core.entities.messages.control.Hello;
 import de.joschal.amp.core.entities.network.AbstractNode;
-import de.joschal.amp.core.entities.network.AbstractRouter;
-import de.joschal.amp.core.entities.network.NetworkInterface;
-import de.joschal.amp.core.entities.network.Route;
-import de.joschal.amp.core.inbound.ILinkLocalMessageReceiver;
+import de.joschal.amp.core.entities.network.addressing.Address;
+import de.joschal.amp.core.entities.network.addressing.AddressPool;
+import de.joschal.amp.core.entities.network.routing.AbstractRouter;
+import de.joschal.amp.core.inbound.layer3.ILinkLocalMessageReceiver;
 import de.joschal.amp.core.logic.AddressManager;
-import de.joschal.amp.core.logic.router.Router;
 import de.joschal.amp.core.logic.sender.MessageSender;
+import de.joschal.amp.io.NetworkInterface;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @AllArgsConstructor

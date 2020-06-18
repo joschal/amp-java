@@ -1,9 +1,5 @@
 package de.joschal.amp.core.entities.messages.routing;
 
-import de.joschal.amp.core.entities.Address;
-
-import java.util.LinkedList;
-
 public class RouteReply extends AbstractRoutingMessage {
 
     /**

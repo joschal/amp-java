@@ -1,17 +1,20 @@
 package de.joschal.amp.core.logic.jobs;
 
-import de.joschal.amp.core.entities.Address;
 import de.joschal.amp.core.entities.messages.addressing.AbstractAddressingMessage;
 import de.joschal.amp.core.entities.messages.addressing.PoolAccepted;
 import de.joschal.amp.core.entities.messages.addressing.PoolAdvertisement;
 import de.joschal.amp.core.entities.messages.addressing.PoolAssigned;
 import de.joschal.amp.core.entities.messages.control.Hello;
-import de.joschal.amp.core.entities.network.NetworkInterface;
+import de.joschal.amp.core.entities.network.addressing.Address;
 import de.joschal.amp.core.logic.AddressManager;
 import de.joschal.amp.core.logic.sender.MessageSender;
+import de.joschal.amp.io.NetworkInterface;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * This class implements the asynchronous ZAL/AQ algorithm
@@ -60,9 +63,9 @@ public class AddressAcquisitionJob implements IJob {
     @Override
     public void tick() {
 
-        if (backoffTimer > 0){
-           backoffTimer--;
-           return;
+        if (backoffTimer > 0) {
+            backoffTimer--;
+            return;
         }
 
         // pools were assigned. Process them locally

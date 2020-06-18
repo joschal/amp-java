@@ -1,8 +1,8 @@
 package de.joschal.amp.performance;
 
 import de.joschal.amp.core.entities.network.AbstractNode;
-import de.joschal.amp.core.entities.network.DataLink;
 import de.joschal.amp.core.logic.nodes.SimpleNode;
+import de.joschal.amp.io.DataLink;
 import de.joschal.amp.sim.core.entities.Graph;
 import de.joschal.amp.sim.core.logic.utils.Dijkstra;
 import de.joschal.amp.sim.core.logic.utils.Linker;
@@ -104,11 +104,9 @@ public class GraphGenerator {
     }
 
     private static boolean checkConnectednessWithDijsktra(Graph graph) {
-        HashMap dijkstra = Dijkstra.dijkstra(new ArrayList(graph.getNodes().values()), graph.getNodebyId("1"));
+        HashMap<String, Dijkstra.DistanceVector> dijkstra = Dijkstra.dijkstra(new ArrayList(graph.getNodes().values()), graph.getNodebyId("1"));
 
-        for (Iterator it = dijkstra.values().iterator(); it.hasNext(); ) {
-            Dijkstra.DistanceVector distanceVector = (Dijkstra.DistanceVector) it.next();
-
+        for (Dijkstra.DistanceVector distanceVector : dijkstra.values()) {
             if (distanceVector.getDistance() == Integer.MAX_VALUE) {
                 log.info("Graph is disconnected. Will need to generate a new one");
                 return false;

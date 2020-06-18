@@ -1,4 +1,4 @@
-package de.joschal.amp.core.entities;
+package de.joschal.amp.core.entities.network.addressing;
 
 import lombok.Getter;
 import lombok.ToString;

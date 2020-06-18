@@ -1,24 +1,20 @@
 package de.joschal.amp.core.logic.handler;
 
-import de.joschal.amp.core.entities.AbstractMessage;
-import de.joschal.amp.core.entities.AddressPool;
+import de.joschal.amp.core.entities.messages.AbstractMessage;
 import de.joschal.amp.core.entities.messages.addressing.PoolAccepted;
 import de.joschal.amp.core.entities.messages.addressing.PoolAdvertisement;
 import de.joschal.amp.core.entities.messages.addressing.PoolAssigned;
-import de.joschal.amp.core.entities.network.AbstractNode;
-import de.joschal.amp.core.entities.network.NetworkInterface;
-import de.joschal.amp.core.inbound.ILinkLocalMessageReceiver;
+import de.joschal.amp.core.entities.network.addressing.AddressPool;
+import de.joschal.amp.core.inbound.layer3.ILinkLocalMessageReceiver;
 import de.joschal.amp.core.logic.AddressManager;
 import de.joschal.amp.core.logic.jobs.JobManager;
 import de.joschal.amp.core.logic.sender.MessageSender;
-import jdk.dynalink.linker.LinkerServices;
+import de.joschal.amp.io.NetworkInterface;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @AllArgsConstructor

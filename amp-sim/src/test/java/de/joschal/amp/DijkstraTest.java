@@ -1,13 +1,12 @@
 package de.joschal.amp;
 
 import de.joschal.amp.core.entities.network.AbstractNode;
-import de.joschal.amp.sim.core.logic.utils.Dijkstra;
 import de.joschal.amp.sim.core.entities.Graph;
+import de.joschal.amp.sim.core.logic.utils.Dijkstra;
 import de.joschal.amp.sim.outbound.GraphReader;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 

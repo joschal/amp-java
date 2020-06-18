@@ -1,8 +1,8 @@
 package de.joschal.amp.core.entities.network;
 
-import de.joschal.amp.core.entities.Address;
-import de.joschal.amp.core.entities.AddressPool;
-import de.joschal.amp.core.entities.messages.control.Hello;
+import de.joschal.amp.core.entities.network.addressing.Address;
+import de.joschal.amp.core.entities.network.addressing.AddressPool;
+import de.joschal.amp.core.entities.network.routing.AbstractRouter;
 import de.joschal.amp.core.logic.AddressManager;
 import de.joschal.amp.core.logic.handler.AddressingMessageHandler;
 import de.joschal.amp.core.logic.handler.ControlMessageHandler;
@@ -13,6 +13,7 @@ import de.joschal.amp.core.logic.jobs.JobManager;
 import de.joschal.amp.core.logic.router.Router;
 import de.joschal.amp.core.logic.sender.MessageForwarder;
 import de.joschal.amp.core.logic.sender.MessageSender;
+import de.joschal.amp.io.NetworkInterface;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -136,7 +137,7 @@ public abstract class AbstractNode {
             }
         }
 
-        if (neighbors.contains(this)){
+        if (neighbors.contains(this)) {
             throw new RuntimeException("Node was listed as its own neighbor. Something went very wrong");
         }
 

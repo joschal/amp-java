@@ -1,9 +1,9 @@
-package de.joschal.amp.core.entities.network;
+package de.joschal.amp.core.entities.network.routing;
 
-import de.joschal.amp.core.entities.AbstractForwardableMessage;
-import de.joschal.amp.core.entities.AbstractMessage;
-import de.joschal.amp.core.entities.Address;
-import lombok.AllArgsConstructor;
+import de.joschal.amp.core.entities.messages.AbstractForwardableMessage;
+import de.joschal.amp.core.entities.messages.AbstractMessage;
+import de.joschal.amp.core.entities.network.addressing.Address;
+import de.joschal.amp.io.NetworkInterface;
 import lombok.Getter;
 
 import java.util.List;
@@ -48,7 +48,7 @@ public abstract class AbstractRouter {
                 .findFirst();
     }
 
-    public void deleteRoute(Address destination){
+    public void deleteRoute(Address destination) {
 
         Optional<Route> optionalRoute = getRoute(destination);
         optionalRoute.ifPresent(route -> routingTable.remove(route));

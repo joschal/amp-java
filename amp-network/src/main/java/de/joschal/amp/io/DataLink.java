@@ -1,6 +1,6 @@
-package de.joschal.amp.core.entities.network;
+package de.joschal.amp.io;
 
-import de.joschal.amp.core.entities.AbstractMessage;
+import de.joschal.amp.core.entities.messages.AbstractMessage;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,4 +1,4 @@
-package de.joschal.amp.core.entities;
+package de.joschal.amp.core.entities.network.addressing;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -19,5 +19,7 @@ public class Address implements Serializable {
         return Long.toString(value);
     }
 
-    public static Address undefined(){return new Address(0);}
+    public static Address undefined() {
+        return new Address(0);
+    }
 }

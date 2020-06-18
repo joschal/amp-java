@@ -1,10 +1,8 @@
 package de.joschal.amp.core.entities.messages.data;
 
-import de.joschal.amp.core.entities.Address;
+import de.joschal.amp.core.entities.network.addressing.Address;
 import lombok.Getter;
 import lombok.ToString;
-
-import java.util.LinkedList;
 
 @Getter
 @ToString

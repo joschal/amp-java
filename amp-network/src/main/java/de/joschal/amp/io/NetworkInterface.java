@@ -1,16 +1,15 @@
-package de.joschal.amp.core.entities.network;
+package de.joschal.amp.io;
 
-import de.joschal.amp.core.entities.AbstractForwardableMessage;
-import de.joschal.amp.core.entities.AbstractMessage;
-import de.joschal.amp.core.entities.Address;
+import de.joschal.amp.core.entities.messages.AbstractForwardableMessage;
+import de.joschal.amp.core.entities.messages.AbstractMessage;
 import de.joschal.amp.core.entities.messages.addressing.AbstractAddressingMessage;
 import de.joschal.amp.core.entities.messages.control.AbstractControlMessage;
 import de.joschal.amp.core.entities.messages.data.AbstractDataMessage;
 import de.joschal.amp.core.entities.messages.routing.AbstractRoutingMessage;
-import de.joschal.amp.core.inbound.IDataLinkReceiver;
-import de.joschal.amp.core.logic.sender.MessageForwarder;
+import de.joschal.amp.core.entities.network.AbstractNode;
+import de.joschal.amp.core.entities.network.addressing.Address;
+import de.joschal.amp.core.inbound.layer2.IDataLinkReceiver;
 import de.joschal.amp.core.outbound.layer2.IDataLinkSender;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -70,9 +69,9 @@ public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
     private void handleLinkLocalMessage(AbstractMessage message) {
         // handle message by type -> hand up to control plane
         if (message instanceof AbstractAddressingMessage) {
-            node.addressingMessageHandler.handleMessage(message, this);
+            node.getAddressingMessageHandler().handleMessage(message, this);
         } else if (message instanceof AbstractControlMessage) {
-            node.controlMessageHandler.handleMessage(message, this);
+            node.getControlMessageHandler().handleMessage(message, this);
         } else {
             log.error("Received a message of unknown type");
         }
@@ -82,15 +81,15 @@ public class NetworkInterface implements IDataLinkReceiver, IDataLinkSender {
 
         // This needs to be done for every forwardable message
         message.hop(this.nodeId);
-        this.node.router.updateRoutingTable(this, message);
+        this.node.getRouter().updateRoutingTable(this, message);
 
         if (message.getDestinationAddress().getValue() == this.node.getAddress().getValue()) {
             // Message is addressed to this node
             // handle message by type -> hand up to control plane
             if (message instanceof AbstractRoutingMessage) {
-                node.routingMessageHandler.handleMessage(message, this);
+                node.getRoutingMessageHandler().handleMessage(message, this);
             } else if (message instanceof AbstractDataMessage) {
-                node.dataMessageHandler.handleMessage(message, this);
+                node.getDataMessageHandler().handleMessage(message, this);
             }
         } else {
             // message is not indented for this node

@@ -1,7 +1,7 @@
 package de.joschal.amp.performance;
 
 import de.joschal.amp.core.entities.network.AbstractNode;
-import de.joschal.amp.core.entities.network.Route;
+import de.joschal.amp.core.entities.network.routing.Route;
 import de.joschal.amp.core.logic.nodes.SimpleNode;
 import de.joschal.amp.sim.core.entities.Graph;
 import de.joschal.amp.sim.core.logic.utils.Dijkstra;
@@ -9,7 +9,6 @@ import de.joschal.amp.sim.core.logic.utils.Scheduler;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.UUID;
@@ -23,7 +22,7 @@ public class RandomActivity {
     void average() {
 
         // How many tests are run
-        int cycles = 1000;
+        int runs = 10;
 
         // how many messages are send per run
         int messages = 200;
@@ -32,11 +31,11 @@ public class RandomActivity {
         LinkedList<RouteQualityLogger> routeQualityLoggers = new LinkedList<>();
 
         // run tests
-        for (int i = 0; i < cycles; i++) {
+        for (int i = 0; i < runs; i++) {
             routeQualityLoggers.add(randomActivity(messages));
         }
 
-        // preprare logged data for csv export
+        // prepare logged data for csv export
         RouteQualityLogger rootLogger = new RouteQualityLogger();
         rootLogger.rounds = messages;
         for (int i = 0; i < messages; i++) {
@@ -44,16 +43,21 @@ public class RandomActivity {
             int differenceToOptimalRouteoverTimeSum = 0;
             double averageOfRoutesPerNodeOverTimeSum = 0;
             double qualityOverTimeSum = 0;
+            double countOfAlreadyKnownRoutes = 0;
             for (RouteQualityLogger logger : routeQualityLoggers) {
                 totalHopsOfKnownRoutesOverTimeSum += logger.totalHopsOfKnownRoutesOverTime.get(i);
                 differenceToOptimalRouteoverTimeSum += logger.differenceToOptimalRouteoverTime.get(i);
                 averageOfRoutesPerNodeOverTimeSum += logger.averageOfRoutesPerNodeOverTime.get(i);
                 qualityOverTimeSum += logger.qualityOverTime.get(i);
+                if (logger.routeToDestinationWasAlreadyKnownOverTime.get(i)) {
+                    countOfAlreadyKnownRoutes++;
+                }
             }
             rootLogger.totalHopsOfKnownRoutesOverTime.add(totalHopsOfKnownRoutesOverTimeSum / messages);
             rootLogger.differenceToOptimalRouteoverTime.add(differenceToOptimalRouteoverTimeSum / messages);
             rootLogger.averageOfRoutesPerNodeOverTime.add(averageOfRoutesPerNodeOverTimeSum / messages);
             rootLogger.qualityOverTime.add(qualityOverTimeSum / messages);
+            rootLogger.routeToDestinationWasKnownAverage.add(countOfAlreadyKnownRoutes / messages);
         }
 
         // print results
@@ -62,14 +66,14 @@ public class RandomActivity {
 
     }
 
-    RouteQualityLogger randomActivity(int cycles) {
+    RouteQualityLogger randomActivity(int messages) {
 
         int nodeCount = 32;
         Graph graph = NetworkUtil.getRandomBootedGraph(nodeCount);
 
         RouteQualityLogger routeQualityLogger = new RouteQualityLogger();
 
-        for (int i = 1; i <= cycles; i++) {
+        for (int i = 1; i <= messages; i++) {
 
             // randomly select source and destination node
             String sourceId = "";
@@ -85,6 +89,9 @@ public class RandomActivity {
             // Prepare datagram with random payload
             String payload = UUID.randomUUID().toString();
             source.sendDatagram(payload, destination.getAddress());
+
+            // Log, if route discovery is needed
+            boolean routeWasKnown = source.getRouter().getRoute(destination.getAddress()).isPresent();
 
             // Network ticks until datagram was received or timeout happens
             for (int ticks = 0; ticks <= nodeCount * 10; ticks++) {
@@ -105,7 +112,7 @@ public class RandomActivity {
                 }
             }
             // When datagram was successfully delivered, reset logger
-            routeQualityLogger.roundFinished();
+            routeQualityLogger.roundFinished(routeWasKnown);
         }
 
         return routeQualityLogger;
@@ -143,79 +150,5 @@ public class RandomActivity {
             routeQualityLogger.tick(totelHopsStoredByCurrentNode, differenceToOptimalRoutesInCurrentNode, node.getRouter().getRoutingTable().size());
         }
         return routeQualityLogger;
-    }
-
-
-    class RouteQualityLogger {
-        private int rounds = 0; // count of delivered datagrams
-        private int ticks = 0; // ticks within the delivery of a datagram
-        private int totalHopsOfKnownRoutes = 0; // accumulated hops of all known routes of all nodes during the delivery of one datagram
-        private int differenceToOptimalRoutes = 0; // accumulated difference to the optimal routes during the delivery of one datagram
-        private int countOfRoutesPerNode = 0; //
-
-        // The lists log the data over miltiple rounds of datagram delivery
-        private LinkedList<Integer> totalHopsOfKnownRoutesOverTime = new LinkedList<>();
-        private LinkedList<Integer> differenceToOptimalRouteoverTime = new LinkedList<>();
-        private LinkedList<Double> averageOfRoutesPerNodeOverTime = new LinkedList<>();
-        private LinkedList<Double> qualityOverTime = new LinkedList<>();
-
-        /**
-         * One network tick during the delivery of a datagram
-         *
-         * @param totalHops                 sum of hops of all routes known to a node
-         * @param differenceToOptimalRoutes difference ot the known routes to the optimal ones of the current node
-         * @param countOfRoutesPerNode      Number of known routes to the node
-         */
-        public void tick(int totalHops, int differenceToOptimalRoutes, int countOfRoutesPerNode) {
-            this.ticks++;
-            this.totalHopsOfKnownRoutes += totalHops;
-            this.differenceToOptimalRoutes += differenceToOptimalRoutes;
-            this.countOfRoutesPerNode += countOfRoutesPerNode;
-        }
-
-        /**
-         * Datagram was delievred sucesfully. Data is logged and logger is reset for the next round
-         */
-        public void roundFinished() {
-            this.totalHopsOfKnownRoutesOverTime.add(this.totalHopsOfKnownRoutes);
-            this.differenceToOptimalRouteoverTime.add(this.differenceToOptimalRoutes);
-            this.qualityOverTime.add((double) this.differenceToOptimalRoutes / this.totalHopsOfKnownRoutes);
-            this.averageOfRoutesPerNodeOverTime.add((double) this.countOfRoutesPerNode / ticks);
-            this.ticks = 0;
-            this.totalHopsOfKnownRoutes = 0;
-            this.differenceToOptimalRoutes = 0;
-            this.countOfRoutesPerNode = 0;
-            this.rounds++;
-        }
-
-        /**
-         * Formats the logged data for external processing
-         *
-         * @return formatted csv String
-         */
-        @Override
-        public String toString() {
-
-            StringBuilder sb = new StringBuilder();
-            DecimalFormat df = new DecimalFormat("#");
-            df.setMaximumFractionDigits(8);
-
-            sb.append("count;Hops of known routes;difference to optimal routes;average counts of routes per node;overall route quality\n");
-
-            for (int i = 0; i < rounds; i++) {
-                sb.
-                        append(i).
-                        append(";").
-                        append(this.totalHopsOfKnownRoutesOverTime.get(i)).
-                        append(";").
-                        append(this.differenceToOptimalRouteoverTime.get(i)).
-                        append(";").
-                        append(df.format(this.averageOfRoutesPerNodeOverTime.get(i))).
-                        append(";").
-                        append(df.format(this.qualityOverTime.get(i))).
-                        append("\n");
-            }
-            return sb.toString();
-        }
     }
 }

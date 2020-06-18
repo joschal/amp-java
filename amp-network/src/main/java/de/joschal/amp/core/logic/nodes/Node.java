@@ -1,8 +1,8 @@
 package de.joschal.amp.core.logic.nodes;
 
-import de.joschal.amp.core.entities.Address;
-import de.joschal.amp.core.entities.AddressPool;
 import de.joschal.amp.core.entities.network.AbstractNode;
+import de.joschal.amp.core.entities.network.addressing.Address;
+import de.joschal.amp.core.entities.network.addressing.AddressPool;
 
 public class Node extends AbstractNode {
 

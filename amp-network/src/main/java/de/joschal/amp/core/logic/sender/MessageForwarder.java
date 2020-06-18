@@ -1,8 +1,8 @@
 package de.joschal.amp.core.logic.sender;
 
-import de.joschal.amp.core.entities.AbstractForwardableMessage;
-import de.joschal.amp.core.entities.network.AbstractRouter;
-import de.joschal.amp.core.entities.network.NetworkInterface;
+import de.joschal.amp.core.entities.messages.AbstractForwardableMessage;
+import de.joschal.amp.core.entities.network.routing.AbstractRouter;
+import de.joschal.amp.io.NetworkInterface;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

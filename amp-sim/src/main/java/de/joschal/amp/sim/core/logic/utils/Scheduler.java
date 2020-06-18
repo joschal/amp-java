@@ -1,10 +1,10 @@
 package de.joschal.amp.sim.core.logic.utils;
 
 import de.joschal.amp.core.entities.network.AbstractNode;
-import de.joschal.amp.core.entities.network.DataLink;
 import de.joschal.amp.core.logic.jobs.DatagramAckJob;
 import de.joschal.amp.core.logic.jobs.IJob;
 import de.joschal.amp.core.logic.jobs.RouteDiscoveryJob;
+import de.joschal.amp.io.DataLink;
 import de.joschal.amp.sim.core.entities.Graph;
 
 import java.util.Collection;

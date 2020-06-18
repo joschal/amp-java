@@ -1,8 +1,8 @@
 package de.joschal.amp.performance;
 
-import de.joschal.amp.core.entities.Address;
-import de.joschal.amp.core.entities.AddressPool;
 import de.joschal.amp.core.entities.network.AbstractNode;
+import de.joschal.amp.core.entities.network.addressing.Address;
+import de.joschal.amp.core.entities.network.addressing.AddressPool;
 import de.joschal.amp.sim.core.entities.Graph;
 import de.joschal.amp.sim.core.logic.utils.Scheduler;
 import de.joschal.amp.sim.outbound.GraphWriter;

@@ -1,7 +1,6 @@
 package de.joschal.amp.sim.inbound;
 
 import de.joschal.amp.core.logic.nodes.SimpleNode;
-import de.joschal.amp.core.logic.router.Router;
 import de.joschal.amp.sim.core.inbound.INodeController;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

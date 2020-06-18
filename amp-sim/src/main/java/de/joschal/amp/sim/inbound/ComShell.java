@@ -20,7 +20,7 @@ public class ComShell {
             @ShellOption String destinationId,
             @ShellOption String message
     ) {
-        messageController.sendMessage(sourceId, destinationId, message);
+        messageController.sendDatagram(sourceId, destinationId, message);
     }
 
 }

@@ -1,8 +1,8 @@
 package de.joschal.amp.core.outbound.layer3;
 
-import de.joschal.amp.core.entities.AbstractMessage;
-import de.joschal.amp.core.entities.Address;
-import de.joschal.amp.core.entities.network.NetworkInterface;
+import de.joschal.amp.core.entities.messages.AbstractMessage;
+import de.joschal.amp.core.entities.network.addressing.Address;
+import de.joschal.amp.io.NetworkInterface;
 
 import java.util.List;
 

@@ -1,23 +1,24 @@
 package de.joschal.amp.core.entities.messages.control;
 
-import de.joschal.amp.core.entities.Address;
+import de.joschal.amp.core.entities.network.addressing.Address;
 import lombok.ToString;
 
 /**
  * Destination Address is always empty, since this is the first message of a given connection and there is no way to
  * know the destination address.
- *
+ * <p>
  * Two cases for the source address are possible:
  * 1.   sourceAddress is empty (0). This means, that the current node does not have an address yet and therefore
- *      implicitly requests an address pool from the destination node
+ * implicitly requests an address pool from the destination node
  * 2.   sourceAddress is populated. This means the node does have an assigned address (pool) and establishes an
- *      additional mesh connection
+ * additional mesh connection
  */
 @ToString
 public class Hello extends AbstractControlMessage {
 
     /**
      * Use, if the node already has an address assigned
+     *
      * @param sourceAddress Currently assigned address
      */
     public Hello(Address sourceAddress) {
@@ -31,9 +32,6 @@ public class Hello extends AbstractControlMessage {
     public Hello() {
         super(Address.undefined(), Address.undefined());
     }
-
-
-
 
 
 }

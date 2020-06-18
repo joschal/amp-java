@@ -1,13 +1,13 @@
 package de.joschal.amp.core.logic.handler;
 
-import de.joschal.amp.core.entities.AbstractForwardableMessage;
+import de.joschal.amp.core.entities.messages.AbstractForwardableMessage;
 import de.joschal.amp.core.entities.messages.routing.RouteDiscovery;
 import de.joschal.amp.core.entities.messages.routing.RouteReply;
-import de.joschal.amp.core.entities.network.NetworkInterface;
-import de.joschal.amp.core.inbound.IForwardableMessageReceiver;
+import de.joschal.amp.core.inbound.layer3.IForwardableMessageReceiver;
 import de.joschal.amp.core.logic.jobs.JobManager;
 import de.joschal.amp.core.logic.jobs.RouteDiscoveryJob;
 import de.joschal.amp.core.logic.sender.MessageSender;
+import de.joschal.amp.io.NetworkInterface;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

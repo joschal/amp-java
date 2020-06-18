@@ -1,13 +1,13 @@
 package de.joschal.amp.core.logic.sender;
 
-import de.joschal.amp.core.entities.Address;
 import de.joschal.amp.core.entities.messages.data.Datagram;
 import de.joschal.amp.core.entities.network.AbstractNode;
-import de.joschal.amp.core.entities.network.AbstractRouter;
-import de.joschal.amp.core.entities.network.DataLink;
-import de.joschal.amp.core.entities.network.NetworkInterface;
+import de.joschal.amp.core.entities.network.addressing.Address;
+import de.joschal.amp.core.entities.network.routing.AbstractRouter;
 import de.joschal.amp.core.logic.nodes.SimpleNode;
 import de.joschal.amp.core.logic.router.Router;
+import de.joschal.amp.io.DataLink;
+import de.joschal.amp.io.NetworkInterface;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;

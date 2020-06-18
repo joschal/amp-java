@@ -1,19 +1,16 @@
 package de.joschal.amp.core.logic.router;
 
-import de.joschal.amp.core.entities.AbstractForwardableMessage;
-import de.joschal.amp.core.entities.AbstractMessage;
-import de.joschal.amp.core.entities.Address;
+import de.joschal.amp.core.entities.messages.AbstractForwardableMessage;
 import de.joschal.amp.core.entities.messages.routing.RouteDiscovery;
-import de.joschal.amp.core.entities.network.AbstractNode;
-import de.joschal.amp.core.entities.network.AbstractRouter;
-import de.joschal.amp.core.entities.network.NetworkInterface;
-import de.joschal.amp.core.entities.network.Route;
+import de.joschal.amp.core.entities.network.addressing.Address;
+import de.joschal.amp.core.entities.network.routing.AbstractRouter;
+import de.joschal.amp.core.entities.network.routing.Route;
+import de.joschal.amp.io.NetworkInterface;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Slf4j
 public class Router extends AbstractRouter {
@@ -25,7 +22,6 @@ public class Router extends AbstractRouter {
     /**
      * If there is no route known for a desired node, the route discovery procedure is invoked.
      * It floods all interfaces with route discovery messages, which recursively traverse the whole network
-     * TODO To avoid large numbers of messages clogging the network, this algorithm could be optimized by gradually incrementing the hop count
      *
      * @param destination Address of the node, which is to be discovered
      */
@@ -42,7 +38,7 @@ public class Router extends AbstractRouter {
      * This is the route/network optimisation logic
      *
      * @param networkInterface network interface from which the message was received
-     * @param message the received message with the necessary header values
+     * @param message          the received message with the necessary header values
      */
     public void updateRoutingTable(NetworkInterface networkInterface, AbstractForwardableMessage message) {
 

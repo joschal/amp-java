@@ -1,8 +1,8 @@
 package de.joschal.amp.sim.core.logic.utils;
 
 import de.joschal.amp.core.entities.network.AbstractNode;
-import de.joschal.amp.core.entities.network.DataLink;
-import de.joschal.amp.core.entities.network.NetworkInterface;
+import de.joschal.amp.io.DataLink;
+import de.joschal.amp.io.NetworkInterface;
 
 import java.util.UUID;
 
@@ -13,7 +13,7 @@ public class Linker {
 
     public static DataLink linkNodes(AbstractNode node1, AbstractNode node2) {
 
-        if (node1.getId() == node2.getId()){
+        if (node1.getId().equals(node2.getId())) {
             throw new RuntimeException("Invalid Data Link. A node should not be linked to itself");
         }
 

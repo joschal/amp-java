@@ -1,5 +1,6 @@
-package de.joschal.amp.core.entities;
+package de.joschal.amp.core.entities.messages;
 
+import de.joschal.amp.core.entities.network.addressing.Address;
 import lombok.Getter;
 
 import java.io.Serializable;

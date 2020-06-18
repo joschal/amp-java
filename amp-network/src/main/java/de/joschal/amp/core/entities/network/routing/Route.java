@@ -1,6 +1,7 @@
-package de.joschal.amp.core.entities.network;
+package de.joschal.amp.core.entities.network.routing;
 
-import de.joschal.amp.core.entities.Address;
+import de.joschal.amp.core.entities.network.addressing.Address;
+import de.joschal.amp.io.NetworkInterface;
 import lombok.Getter;
 import lombok.ToString;
 import org.joda.time.DateTime;
@@ -13,7 +14,7 @@ public class Route {
 
     public Route(long timeoutinMs, NetworkInterface networkInterface, Address address, int hops) {
         this.creationTime = DateTime.now();
-        this.timeoutinMs = timeoutinMs;
+        this.timeoutInMs = timeoutinMs;
         this.networkInterface = networkInterface;
         this.address = address;
         this.hops = hops;
@@ -24,14 +25,14 @@ public class Route {
     }
 
     private DateTime creationTime;
-    private long timeoutinMs;
+    private long timeoutInMs;
 
     public NetworkInterface networkInterface;
     public Address address;
     public int hops;
 
     public boolean isValid() {
-        return this.creationTime.plus(timeoutinMs).isAfterNow();
+        return this.creationTime.plus(timeoutInMs).isAfterNow();
     }
 
     public void refresh() {

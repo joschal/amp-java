@@ -1,12 +1,12 @@
 package de.joschal.amp.core.logic.sender;
 
-import de.joschal.amp.core.entities.AbstractForwardableMessage;
-import de.joschal.amp.core.entities.AbstractMessage;
+import de.joschal.amp.core.entities.messages.AbstractForwardableMessage;
+import de.joschal.amp.core.entities.messages.AbstractMessage;
 import de.joschal.amp.core.entities.network.AbstractNode;
-import de.joschal.amp.core.entities.network.AbstractRouter;
-import de.joschal.amp.core.entities.network.NetworkInterface;
-import de.joschal.amp.core.entities.network.Route;
+import de.joschal.amp.core.entities.network.routing.AbstractRouter;
+import de.joschal.amp.core.entities.network.routing.Route;
 import de.joschal.amp.core.outbound.layer3.IMessageSender;
+import de.joschal.amp.io.NetworkInterface;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
@@ -105,7 +105,7 @@ public class MessageSender implements IMessageSender {
                                 // taken path is better than known route. Flood message
                                 return true;
                             } else {
-                                // MEssage should not be forwarded. Taken path is inefficient;
+                                // Message should not be forwarded. Taken path is inefficient;
                                 return false;
                             }
                         } else {
