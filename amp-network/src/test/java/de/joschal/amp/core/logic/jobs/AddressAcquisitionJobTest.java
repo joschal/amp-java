@@ -7,7 +7,7 @@ import de.joschal.amp.core.entities.network.AbstractNode;
 import de.joschal.amp.core.entities.network.addressing.Address;
 import de.joschal.amp.core.entities.network.addressing.AddressPool;
 import de.joschal.amp.core.logic.nodes.SimpleNode;
-import de.joschal.amp.core.logic.sender.MessageSender;
+import de.joschal.amp.core.logic.controlplane.MessageSender;
 import de.joschal.amp.io.NetworkInterface;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

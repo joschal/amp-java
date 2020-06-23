@@ -1,13 +1,13 @@
 package de.joschal.amp.core.logic.jobs;
 
-import de.joschal.amp.core.entities.messages.addressing.AbstractAddressingMessage;
+import de.joschal.amp.core.entities.messages.AbstractMessage;
 import de.joschal.amp.core.entities.messages.addressing.PoolAccepted;
 import de.joschal.amp.core.entities.messages.addressing.PoolAdvertisement;
 import de.joschal.amp.core.entities.messages.addressing.PoolAssigned;
 import de.joschal.amp.core.entities.messages.control.Hello;
 import de.joschal.amp.core.entities.network.addressing.Address;
 import de.joschal.amp.core.logic.AddressManager;
-import de.joschal.amp.core.logic.sender.MessageSender;
+import de.joschal.amp.core.logic.controlplane.MessageSender;
 import de.joschal.amp.io.NetworkInterface;
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,13 +47,16 @@ public class AddressAcquisitionJob implements IJob {
     // Used to keep track of the number of invocations
     private int waitForAdvertisementsTickCounter = 0;
     private int waitForAssignmentTickCounter = 0;
-    private int backoffTimer;
+    private int backoffTimer = 0;
+    private int backOffTimerFactor = 1;
 
     @Override
     public void init() {
         log.info("[{}] Will init/reset AddressAcquisitionJob", this.nodeId);
         this.waitForAdvertisementsTickCounter = 0;
         this.waitForAssignmentTickCounter = 0;
+        this.backoffTimer = 0;
+        this.backOffTimerFactor = 1;
         this.advertisements = new HashMap<>();
         this.acceptedPoolAdvertisement = null;
         this.poolAssigned = null;
@@ -146,7 +149,8 @@ public class AddressAcquisitionJob implements IJob {
 
         // All Advertisements were empty. Reset Job.
         log.info("[{}] All Advertisements were empty will reset job, and apply backoff timer", this.nodeId);
-        backoffTimer = maxTicks;
+        this.backoffTimer = maxTicks * backOffTimerFactor;
+        this.backOffTimerFactor = backOffTimerFactor++;
         init();
     }
 
@@ -157,7 +161,8 @@ public class AddressAcquisitionJob implements IJob {
         this.addressManager.assignAddressToSelf();
     }
 
-    public void receiveMessage(AbstractAddressingMessage message, NetworkInterface source) {
+    @Override
+    public void receiveMessage(AbstractMessage message, NetworkInterface source) {
         if (message instanceof PoolAdvertisement) {
             // add advertisement to local cache
             advertisements.put((PoolAdvertisement) message, source);

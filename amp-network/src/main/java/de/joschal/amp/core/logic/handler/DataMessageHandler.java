@@ -6,7 +6,7 @@ import de.joschal.amp.core.entities.messages.data.Datagram;
 import de.joschal.amp.core.entities.messages.data.DatagramAcknowledgement;
 import de.joschal.amp.core.entities.network.AbstractNode;
 import de.joschal.amp.core.inbound.layer3.IForwardableMessageReceiver;
-import de.joschal.amp.core.logic.sender.MessageSender;
+import de.joschal.amp.core.logic.controlplane.MessageSender;
 import de.joschal.amp.io.NetworkInterface;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

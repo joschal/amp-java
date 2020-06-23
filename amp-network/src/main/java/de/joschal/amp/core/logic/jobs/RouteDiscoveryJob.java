@@ -1,7 +1,9 @@
 package de.joschal.amp.core.logic.jobs;
 
+import de.joschal.amp.core.entities.messages.AbstractMessage;
 import de.joschal.amp.core.entities.messages.data.AbstractDataMessage;
-import de.joschal.amp.core.logic.sender.MessageSender;
+import de.joschal.amp.core.logic.controlplane.MessageSender;
+import de.joschal.amp.io.NetworkInterface;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,6 +30,11 @@ public class RouteDiscoveryJob implements IJob {
     public void tearDown() {
         log.info("Received route reply from {}", dataMessage.getDestinationAddress());
         messageSender.sendMessageViaKnownRoute(dataMessage);
+
+    }
+
+    @Override
+    public void receiveMessage(AbstractMessage message, NetworkInterface source) {
 
     }
 }

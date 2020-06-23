@@ -1,4 +1,4 @@
-package de.joschal.amp.core.logic.sender;
+package de.joschal.amp.core.logic.controlplane;
 
 import de.joschal.amp.core.entities.messages.AbstractForwardableMessage;
 import de.joschal.amp.core.entities.messages.AbstractMessage;

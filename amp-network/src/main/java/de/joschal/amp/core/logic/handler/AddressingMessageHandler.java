@@ -8,7 +8,7 @@ import de.joschal.amp.core.entities.network.addressing.AddressPool;
 import de.joschal.amp.core.inbound.layer3.ILinkLocalMessageReceiver;
 import de.joschal.amp.core.logic.AddressManager;
 import de.joschal.amp.core.logic.jobs.JobManager;
-import de.joschal.amp.core.logic.sender.MessageSender;
+import de.joschal.amp.core.logic.controlplane.MessageSender;
 import de.joschal.amp.io.NetworkInterface;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
