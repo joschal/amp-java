@@ -3,15 +3,15 @@ package de.joschal.amp.sim.core.logic;
 import de.joschal.amp.core.entities.messages.data.Datagram;
 import de.joschal.amp.sim.core.entities.Graph;
 import de.joschal.amp.sim.core.inbound.IMessageController;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Slf4j
-@AllArgsConstructor
 public class MessageController implements IMessageController {
 
     public static final int DEFAULT_DATAGRAM_HOP_LIMIT = 32;
 
+    @Autowired
     private Graph graph;
 
     @Override

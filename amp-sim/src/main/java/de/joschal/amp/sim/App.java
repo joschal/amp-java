@@ -19,8 +19,6 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class App {
 
-    public static final int DEFAULT_MAX_HOPS = 10;
-
     public static void main(String[] args) {
         SpringApplication.run(App.class, args);
     }
@@ -47,17 +45,17 @@ public class App {
 
     @Bean
     INetworkController netController(Graph graph, IGraphReader graphReader, IGraphWriter graphWriter, Scheduler scheduler) {
-        return new NetController(graph, scheduler, graphReader, graphWriter);
+        return new NetController(scheduler, graphReader, graphWriter);
     }
 
     @Bean
     INodeController nodeController(Graph graph) {
-        return new NodeController(graph);
+        return new NodeController();
     }
 
     @Bean
     IMessageController messageController(Graph graph) {
-        return new MessageController(graph);
+        return new MessageController();
     }
 
 }

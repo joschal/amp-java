@@ -5,13 +5,13 @@ import de.joschal.amp.io.DataLink;
 import de.joschal.amp.sim.core.entities.Graph;
 import de.joschal.amp.sim.core.inbound.INodeController;
 import de.joschal.amp.sim.core.logic.utils.Linker;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Slf4j
-@AllArgsConstructor
 public class NodeController implements INodeController {
 
+    @Autowired
     Graph graph;
 
     @Override

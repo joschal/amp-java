@@ -7,6 +7,7 @@ import de.joschal.amp.io.NetworkInterface;
 import java.util.UUID;
 
 /**
+ * Helper class
  * This class links two nodes on layer 2
  */
 public class Linker {

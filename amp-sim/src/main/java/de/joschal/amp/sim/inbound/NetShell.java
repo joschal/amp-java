@@ -43,4 +43,8 @@ public class NetShell {
         return "ok";
     }
 
+    @ShellMethod(value = "Triggers a scheduler tick", key = "network tick")
+    public void tick() {
+        netController.networkTick();
+    }
 }
