@@ -30,7 +30,7 @@ public class BootSequenceRandomGraph {
     void bootSequenceGraphFromFile() {
 
         // read graph from file
-        Graph graph = new GraphReader().readGraph(getClass().getResource("/testGraph.dot").getFile());
+        Graph graph = new GraphReader().readGraph(getClass().getResource("/randomBootTestExport.dot").getFile());
         performAddressAsignment(graph);
 
     }
@@ -70,8 +70,8 @@ public class BootSequenceRandomGraph {
             assertEquals(node.getNeighbours().size(), node.getNetworkInterfaces().size());
 
             if (node.getAddress().equals(Address.undefined())) {
-                new GraphWriter().graphToDot(graph, "randomTestFail.dot");
-                new GraphWriter().graphToGraphic(graph, "test.png");
+                new GraphWriter().graphToDot(graph, "randomBootTestExport.dot");
+                new GraphWriter().graphToGraphic(graph, "randomBootTestExport.png");
             }
 
         }

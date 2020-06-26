@@ -17,6 +17,7 @@ public class RouteQualityLogger {
     public LinkedList<Double> qualityOverTime = new LinkedList<>();
     public LinkedList<Boolean> routeToDestinationWasAlreadyKnownOverTime = new LinkedList<>();
     public LinkedList<Double> routeToDestinationWasKnownAverage = new LinkedList<>();
+    public int sendMessagesCounter = 0;
 
     /**
      * One network tick during the delivery of a datagram
@@ -40,7 +41,7 @@ public class RouteQualityLogger {
     public void roundFinished(boolean routeToDestinaitonWasAlreadyKnown) {
         this.totalHopsOfKnownRoutesOverTime.add(this.totalHopsOfKnownRoutes);
         this.differenceToOptimalRouteoverTime.add(this.differenceToOptimalRoutes);
-        this.qualityOverTime.add((double) this.differenceToOptimalRoutes / this.totalHopsOfKnownRoutes);
+        this.qualityOverTime.add((double) this.totalHopsOfKnownRoutes / (double) (this.totalHopsOfKnownRoutes + this.differenceToOptimalRoutes));
         this.averageOfRoutesPerNodeOverTime.add((double) this.countOfRoutesPerNode / ticks);
         this.routeToDestinationWasAlreadyKnownOverTime.add(routeToDestinaitonWasAlreadyKnown);
         this.ticks = 0;
@@ -66,7 +67,7 @@ public class RouteQualityLogger {
 
         for (int i = 0; i < rounds; i++) {
             sb.
-                    append(i).
+                    append(i + 1).
                     append(";").
                     append(this.totalHopsOfKnownRoutesOverTime.get(i)).
                     append(";").

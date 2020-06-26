@@ -3,6 +3,7 @@ package de.joschal.amp.performance;
 import de.joschal.amp.core.entities.network.AbstractNode;
 import de.joschal.amp.core.entities.network.routing.Route;
 import de.joschal.amp.core.logic.nodes.SimpleNode;
+import de.joschal.amp.io.DataLink;
 import de.joschal.amp.sim.core.entities.Graph;
 import de.joschal.amp.sim.core.logic.utils.Dijkstra;
 import de.joschal.amp.sim.core.logic.utils.Scheduler;
@@ -18,14 +19,16 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 @Slf4j
 public class RandomActivity {
 
+    private static final int NODE_COUNT = 32;
+
     @Test
     void average() {
 
         // How many tests are run
-        int runs = 10;
+        int runs = 500;
 
         // how many messages are send per run
-        int messages = 200;
+        int messages = 250;
 
         // list of accumulated loggers
         LinkedList<RouteQualityLogger> routeQualityLoggers = new LinkedList<>();
@@ -33,17 +36,22 @@ public class RandomActivity {
         // run tests
         for (int i = 0; i < runs; i++) {
             routeQualityLoggers.add(randomActivity(messages));
+            System.out.println("------------------ Test run " + i + " -------------------------");
         }
 
         // prepare logged data for csv export
         RouteQualityLogger rootLogger = new RouteQualityLogger();
         rootLogger.rounds = messages;
         for (int i = 0; i < messages; i++) {
+
+            // local strage of accumulated data
             int totalHopsOfKnownRoutesOverTimeSum = 0;
             int differenceToOptimalRouteoverTimeSum = 0;
             double averageOfRoutesPerNodeOverTimeSum = 0;
             double qualityOverTimeSum = 0;
             double countOfAlreadyKnownRoutes = 0;
+
+            // accumulate data from all loggers
             for (RouteQualityLogger logger : routeQualityLoggers) {
                 totalHopsOfKnownRoutesOverTimeSum += logger.totalHopsOfKnownRoutesOverTime.get(i);
                 differenceToOptimalRouteoverTimeSum += logger.differenceToOptimalRouteoverTime.get(i);
@@ -53,23 +61,29 @@ public class RandomActivity {
                     countOfAlreadyKnownRoutes++;
                 }
             }
-            rootLogger.totalHopsOfKnownRoutesOverTime.add(totalHopsOfKnownRoutesOverTimeSum / messages);
-            rootLogger.differenceToOptimalRouteoverTime.add(differenceToOptimalRouteoverTimeSum / messages);
-            rootLogger.averageOfRoutesPerNodeOverTime.add(averageOfRoutesPerNodeOverTimeSum / messages);
-            rootLogger.qualityOverTime.add(qualityOverTimeSum / messages);
+
+            // store accumulated data in root loggers vectors
+            rootLogger.totalHopsOfKnownRoutesOverTime.add(totalHopsOfKnownRoutesOverTimeSum / runs);
+            rootLogger.differenceToOptimalRouteoverTime.add(differenceToOptimalRouteoverTimeSum / runs);
+            rootLogger.averageOfRoutesPerNodeOverTime.add(averageOfRoutesPerNodeOverTimeSum / runs);
+            rootLogger.qualityOverTime.add(1 - (qualityOverTimeSum / runs));
             rootLogger.routeToDestinationWasKnownAverage.add(countOfAlreadyKnownRoutes / messages);
+        }
+
+        for (RouteQualityLogger logger : routeQualityLoggers) {
+            rootLogger.sendMessagesCounter += logger.sendMessagesCounter;
         }
 
         // print results
         System.out.println("Root Logger \n\n\n");
+        System.out.println("Total messages " + rootLogger.sendMessagesCounter + " \n\n\n");
         System.out.println(rootLogger.toString());
 
     }
 
     RouteQualityLogger randomActivity(int messages) {
 
-        int nodeCount = 32;
-        Graph graph = NetworkUtil.getRandomBootedGraph(nodeCount);
+        Graph graph = NetworkUtil.getRandomBootedGraph(NODE_COUNT);
 
         RouteQualityLogger routeQualityLogger = new RouteQualityLogger();
 
@@ -79,8 +93,8 @@ public class RandomActivity {
             String sourceId = "";
             String destinationId = "";
             while (sourceId.equals(destinationId)) {
-                sourceId = NetworkUtil.getRandomNodeId(nodeCount);
-                destinationId = NetworkUtil.getRandomNodeId(nodeCount);
+                sourceId = NetworkUtil.getRandomNodeId(NODE_COUNT);
+                destinationId = NetworkUtil.getRandomNodeId(NODE_COUNT);
             }
             SimpleNode source = (SimpleNode) graph.getNodebyId(sourceId);
             SimpleNode destination = (SimpleNode) graph.getNodebyId(destinationId);
@@ -94,7 +108,7 @@ public class RandomActivity {
             boolean routeWasKnown = source.getRouter().getRoute(destination.getAddress()).isPresent();
 
             // Network ticks until datagram was received or timeout happens
-            for (int ticks = 0; ticks <= nodeCount * 10; ticks++) {
+            for (int ticks = 0; ticks <= NODE_COUNT * 10; ticks++) {
 
                 // log data
                 routeQualityLogger = compareToDijsktra(graph, routeQualityLogger);
@@ -106,13 +120,17 @@ public class RandomActivity {
                     break;
                 } else {
                     // Check for timeout, fail test iof reached
-                    assertNotEquals(nodeCount * 10, ticks, "Message was not received in " + ticks + " ticks");
+                    assertNotEquals(NODE_COUNT * 10, ticks, "Message was not received in " + ticks + " ticks");
                     // If the datagram was not delivered, log the current state and to network tick
                     Scheduler.tick(graph);
                 }
             }
             // When datagram was successfully delivered, reset logger
             routeQualityLogger.roundFinished(routeWasKnown);
+        }
+
+        for (DataLink dataLink : graph.getEdges().values()) {
+            routeQualityLogger.sendMessagesCounter += dataLink.getMessageCounter();
         }
 
         return routeQualityLogger;
